@@ -115,7 +115,7 @@ export function LiveSalesCounter() {
                 </div>
                 
                 <p className="text-sm text-gray-900 font-medium">
-                  {notification.name} vient d&apos;acheter {notification.quantity} RK01
+                  Quelqu&apos;un vient d&apos;acheter {notification.quantity} RK01
                 </p>
                 
                 <div className="flex items-center gap-3 mt-2 text-xs text-gray-500">

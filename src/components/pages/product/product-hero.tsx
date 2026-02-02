@@ -47,13 +47,6 @@ export function ProductHero() {
             className="sticky top-28"
           >
             <div className="relative bg-white rounded-3xl border border-gray-200/80 overflow-hidden shadow-xl shadow-gray-200/50">
-              {/* Best Seller Badge */}
-              <div className="absolute top-4 left-4 z-20">
-                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-orange-500 to-orange-600 text-white text-xs font-semibold shadow-lg shadow-orange-500/30">
-                  <Sparkles className="w-3.5 h-3.5" />
-                  Best-seller
-                </div>
-              </div>
               
               {/* Main Image */}
               <div className="relative aspect-[4/3] bg-gradient-to-br from-gray-50 to-white">

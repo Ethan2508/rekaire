@@ -1,7 +1,7 @@
 "use client";
 
 // ============================================
-// REKAIRE - Specifications Section (Dark Innovative)
+// REKAIRE - Specifications Section (Light Clean)
 // ============================================
 
 import { motion } from "framer-motion";
@@ -44,22 +44,16 @@ export function SpecificationsSection() {
   ];
 
   const colorClasses = {
-    orange: "from-orange-500/20 to-orange-600/20 border-orange-500/30",
-    blue: "from-blue-500/20 to-blue-600/20 border-blue-500/30",
-    emerald: "from-emerald-500/20 to-emerald-600/20 border-emerald-500/30",
-    purple: "from-purple-500/20 to-purple-600/20 border-purple-500/30"
+    orange: "bg-orange-50 border-orange-200 hover:border-orange-300",
+    blue: "bg-blue-50 border-blue-200 hover:border-blue-300",
+    emerald: "bg-emerald-50 border-emerald-200 hover:border-emerald-300",
+    purple: "bg-purple-50 border-purple-200 hover:border-purple-300"
   };
 
   return (
-    <section id="specifications" className="relative py-20 lg:py-28 bg-[#0A0A0B] overflow-hidden">
-      {/* Background Elements */}
-      <div className="absolute inset-0">
-        <div className="absolute top-1/4 right-0 w-[500px] h-[500px] bg-orange-500/5 rounded-full blur-[150px]" />
-        <div className="absolute bottom-1/4 left-0 w-[400px] h-[400px] bg-blue-500/5 rounded-full blur-[150px]" />
-      </div>
-
+    <section id="specifications" className="relative py-20 lg:py-24 bg-gray-50 overflow-hidden">
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Content */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
@@ -67,24 +61,22 @@ export function SpecificationsSection() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-orange-500/10 border border-orange-500/20 mb-6">
-              <Sparkles className="w-4 h-4 text-orange-400" />
-              <span className="text-orange-400 font-medium text-sm">Fiche technique</span>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-orange-100 border border-orange-200 mb-6">
+              <Sparkles className="w-4 h-4 text-orange-500" />
+              <span className="text-orange-600 font-medium text-sm">Fiche technique</span>
             </div>
             
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
               Spécifications{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">
-                techniques
-              </span>
+              <span className="text-orange-500">techniques</span>
             </h2>
             
-            <p className="text-white/60 text-lg mb-10 leading-relaxed">
+            <p className="text-gray-600 text-lg mb-8 leading-relaxed">
               Le RK01 est conçu pour une protection maximale avec une simplicité d&apos;utilisation totale.
             </p>
 
             {/* Specs table */}
-            <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden">
+            <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
               {Object.entries(product.specifications).map(([key, value], index) => (
                 <motion.div
                   key={key}
@@ -93,14 +85,14 @@ export function SpecificationsSection() {
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.05, duration: 0.4 }}
                   className={`flex justify-between items-center px-6 py-4 ${
-                    index !== Object.entries(product.specifications).length - 1 ? 'border-b border-white/5' : ''
-                  } hover:bg-white/5 transition-colors`}
+                    index !== Object.entries(product.specifications).length - 1 ? 'border-b border-gray-100' : ''
+                  } hover:bg-gray-50 transition-colors`}
                 >
-                  <span className="text-white/60 text-sm flex items-center gap-3">
-                    <CheckCircle2 className="w-4 h-4 text-orange-400" />
+                  <span className="text-gray-600 text-sm flex items-center gap-3">
+                    <CheckCircle2 className="w-4 h-4 text-orange-500" />
                     {key}
                   </span>
-                  <span className="text-white font-medium text-sm">{value}</span>
+                  <span className="text-gray-900 font-medium text-sm">{value}</span>
                 </motion.div>
               ))}
             </div>
@@ -114,8 +106,8 @@ export function SpecificationsSection() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="relative"
           >
-            <div className="bg-gradient-to-br from-white/5 to-transparent backdrop-blur-sm rounded-2xl border border-white/10 p-8">
-              <div className="space-y-4">
+            <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+              <div className="space-y-3">
                 {parts.map((part, index) => (
                   <motion.div
                     key={index}
@@ -123,11 +115,32 @@ export function SpecificationsSection() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: 0.3 + index * 0.1, duration: 0.5 }}
-                    whileHover={{ scale: 1.02, x: 10 }}
-                    className={`flex items-center gap-5 p-4 rounded-xl bg-gradient-to-r ${colorClasses[part.color as keyof typeof colorClasses]} border transition-all cursor-default`}
+                    whileHover={{ scale: 1.02, x: 5 }}
+                    className={`flex items-center gap-4 p-4 rounded-xl ${colorClasses[part.color as keyof typeof colorClasses]} border transition-all cursor-default`}
                   >
-                    <div className="w-16 h-16 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0">
+                    <div className="w-14 h-14 rounded-lg bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
                       <Image
+                        src={part.src}
+                        alt={part.alt}
+                        width={80}
+                        height={80}
+                        className="w-10 h-10 object-contain"
+                      />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-gray-900">{part.title}</p>
+                      <p className="text-gray-500 text-sm">{part.desc}</p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+}
                         src={part.src}
                         alt={part.alt}
                         width={80}

@@ -8,7 +8,7 @@ import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { trackCTAClick } from "@/lib/tracking";
 import { getMainProduct, formatPrice } from "@/config/product";
-import { ArrowRight, ShoppingBag } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 interface CTAButtonProps {
@@ -59,10 +59,6 @@ export function CTAButton({
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
     >
-      <ShoppingBag className={cn(
-        "transition-transform duration-300 group-hover:scale-110",
-        size === "default" ? "w-4 h-4" : "w-5 h-5"
-      )} />
       <span>{children || "Commander maintenant"}</span>
       {showPrice && (
         <span className="opacity-80">

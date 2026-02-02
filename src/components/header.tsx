@@ -1,7 +1,7 @@
 "use client";
 
 // ============================================
-// REKAIRE - Header Component (Dark Innovative)
+// REKAIRE - Header Component (Light Clean)
 // ============================================
 
 import { useState, useEffect } from "react";
@@ -39,14 +39,14 @@ export function Header() {
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           scrolled
-            ? "bg-[#0A0A0B]/80 backdrop-blur-xl border-b border-white/10"
-            : "bg-transparent"
+            ? "bg-white/95 backdrop-blur-lg border-b border-gray-200 shadow-sm"
+            : "bg-white/80 backdrop-blur-sm"
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20">
+          <div className="flex items-center justify-between h-16 lg:h-20">
             {/* Logo */}
             <Link href="/" className="flex items-center group">
               <Image
@@ -54,7 +54,7 @@ export function Header() {
                 alt="Rekaire"
                 width={140}
                 height={40}
-                className="h-8 md:h-10 w-auto brightness-0 invert transition-transform duration-300 group-hover:scale-105"
+                className="h-8 md:h-9 w-auto transition-transform duration-300 group-hover:scale-105"
                 priority
               />
             </Link>
@@ -69,15 +69,15 @@ export function Header() {
                     href={link.href}
                     className={`relative px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
                       isActive
-                        ? "text-orange-400"
-                        : "text-white/70 hover:text-white"
+                        ? "text-orange-500"
+                        : "text-gray-600 hover:text-gray-900"
                     }`}
                   >
                     {link.label}
                     {isActive && (
                       <motion.div
                         layoutId="activeNav"
-                        className="absolute inset-0 bg-orange-500/10 border border-orange-500/20 rounded-full -z-10"
+                        className="absolute inset-0 bg-orange-100 border border-orange-200 rounded-full -z-10"
                         transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                       />
                     )}
@@ -94,7 +94,7 @@ export function Header() {
             {/* Mobile Menu Button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-colors"
+              className="lg:hidden w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-gray-200 transition-colors"
               aria-label="Menu"
             >
               <AnimatePresence mode="wait">
@@ -135,7 +135,7 @@ export function Header() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setMobileMenuOpen(false)}
-              className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
+              className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm lg:hidden"
             />
             
             {/* Menu Panel */}
@@ -144,7 +144,7 @@ export function Header() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3, ease: "easeOut" }}
-              className="fixed inset-x-4 top-24 z-50 bg-[#1a1a1b] rounded-2xl border border-white/10 overflow-hidden lg:hidden"
+              className="fixed inset-x-4 top-24 z-50 bg-white rounded-2xl border border-gray-200 shadow-xl overflow-hidden lg:hidden"
             >
               <nav className="p-4 space-y-1">
                 {navLinks.map((link, index) => {
@@ -161,8 +161,8 @@ export function Header() {
                         onClick={() => setMobileMenuOpen(false)}
                         className={`block px-4 py-3 rounded-xl text-base font-medium transition-all ${
                           isActive
-                            ? "bg-orange-500/20 text-orange-400"
-                            : "text-white/70 hover:bg-white/10 hover:text-white"
+                            ? "bg-orange-100 text-orange-600"
+                            : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
                         }`}
                       >
                         {link.label}
@@ -174,7 +174,7 @@ export function Header() {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: navLinks.length * 0.05 }}
-                  className="pt-4 border-t border-white/10"
+                  className="pt-4 border-t border-gray-200"
                 >
                   <CTAButton
                     location="header"
