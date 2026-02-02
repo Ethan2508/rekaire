@@ -1,19 +1,18 @@
 "use client";
 
 // ============================================
-// REKAIRE - CTA Button Component
-// Redirige vers la page produit pour choisir la quantité
+// REKAIRE - CTA Button Component (Premium Design)
 // ============================================
 
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { trackCTAClick } from "@/lib/tracking";
 import { getMainProduct, formatPrice } from "@/config/product";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ShoppingBag } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 interface CTAButtonProps {
-  location: string; // Pour tracking (hero, features, footer, etc.)
+  location: string;
   variant?: "primary" | "secondary";
   size?: "default" | "large";
   showPrice?: boolean;
@@ -33,25 +32,22 @@ export function CTAButton({
   const product = getMainProduct();
 
   const handleClick = () => {
-    // Track CTA click
     trackCTAClick(location);
-
-    // Rediriger vers la page produit pour choisir la quantité
     router.push("/produit#commander");
   };
 
   const baseStyles = cn(
-    "relative inline-flex items-center justify-center gap-2 font-semibold rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white",
+    "group relative inline-flex items-center justify-center gap-2.5 font-semibold rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 btn-shine",
     {
-      // Primary variant
-      "bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white shadow-lg hover:shadow-xl hover:shadow-orange-500/25 hover:-translate-y-0.5 focus:ring-orange-500":
+      // Primary variant - Premium gradient
+      "bg-gradient-to-r from-orange-500 via-orange-500 to-orange-600 hover:from-orange-600 hover:via-orange-600 hover:to-orange-700 text-white shadow-lg shadow-orange-500/25 hover:shadow-xl hover:shadow-orange-500/30 hover:-translate-y-0.5 focus:ring-orange-500":
         variant === "primary",
       // Secondary variant
-      "bg-gray-100 hover:bg-gray-200 text-gray-900 border border-gray-200 hover:border-gray-300 focus:ring-gray-300":
+      "bg-white hover:bg-gray-50 text-gray-900 border-2 border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-md focus:ring-gray-300":
         variant === "secondary",
       // Sizes
-      "px-6 py-3 text-base": size === "default",
-      "px-8 py-4 text-lg": size === "large",
+      "px-6 py-3 text-sm": size === "default",
+      "px-8 py-4 text-base": size === "large",
     },
     className
   );
@@ -60,15 +56,23 @@ export function CTAButton({
     <motion.button
       onClick={handleClick}
       className={baseStyles}
+      whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
     >
+      <ShoppingBag className={cn(
+        "transition-transform duration-300 group-hover:scale-110",
+        size === "default" ? "w-4 h-4" : "w-5 h-5"
+      )} />
       <span>{children || "Commander maintenant"}</span>
       {showPrice && (
         <span className="opacity-80">
           {formatPrice(product.priceCents, product.currency)}
         </span>
       )}
-      <ArrowRight className="w-5 h-5" />
+      <ArrowRight className={cn(
+        "transition-transform duration-300 group-hover:translate-x-1",
+        size === "default" ? "w-4 h-4" : "w-5 h-5"
+      )} />
     </motion.button>
   );
 }

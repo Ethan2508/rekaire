@@ -1,7 +1,7 @@
 "use client";
 
 // ============================================
-// REKAIRE - Product Hero Section
+// REKAIRE - Product Hero Section (Premium Design)
 // ============================================
 
 import { useState } from "react";
@@ -10,7 +10,7 @@ import Image from "next/image";
 import { formatPrice, PRICES } from "@/config/product";
 import { ProductOrder } from "@/components/product-order";
 import { VideoModal } from "@/components/video-modal";
-import { Check, Shield, Zap, Clock, ChevronLeft, ChevronRight } from "lucide-react";
+import { Check, Shield, Zap, Clock, ChevronLeft, ChevronRight, Sparkles, ShieldCheck, Truck } from "lucide-react";
 
 // Nouvelles images produit depuis les fiches marketing
 const productImages = [
@@ -31,163 +31,188 @@ export function ProductHero() {
   };
 
   return (
-    <section className="pt-28 pb-16 bg-gradient-to-b from-gray-50 to-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="relative pt-28 pb-20 overflow-hidden">
+      {/* Background Effects */}
+      <div className="absolute inset-0 bg-gradient-to-br from-gray-50 via-white to-orange-50/30" />
+      <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-gradient-to-bl from-orange-100/40 to-transparent rounded-full blur-3xl" />
+      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-gradient-to-tr from-gray-100/50 to-transparent rounded-full blur-3xl" />
+      
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
-          {/* Product Images - Carousel */}
+          {/* Product Images - Premium Carousel */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
             className="sticky top-28"
           >
-            <div className="relative bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-lg">
+            <div className="relative bg-white rounded-3xl border border-gray-200/80 overflow-hidden shadow-xl shadow-gray-200/50">
+              {/* Best Seller Badge */}
+              <div className="absolute top-4 left-4 z-20">
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-orange-500 to-orange-600 text-white text-xs font-semibold shadow-lg shadow-orange-500/30">
+                  <Sparkles className="w-3.5 h-3.5" />
+                  Best-seller
+                </div>
+              </div>
+              
               {/* Main Image */}
-              <div className="relative aspect-[4/3] bg-gray-50">
+              <div className="relative aspect-[4/3] bg-gradient-to-br from-gray-50 to-white">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={currentImage}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.3 }}
+                    initial={{ opacity: 0, scale: 0.98 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.98 }}
+                    transition={{ duration: 0.4 }}
                     className="absolute inset-0"
                   >
                     <Image
                       src={productImages[currentImage].src}
                       alt={productImages[currentImage].alt}
                       fill
-                      className="object-contain p-4"
+                      className="object-contain p-6"
                       priority
                     />
                   </motion.div>
                 </AnimatePresence>
                 
-                {/* Navigation Arrows */}
-                <button
+                {/* Navigation Arrows - Premium Style */}
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={prevImage}
-                  className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 shadow-md flex items-center justify-center hover:bg-white transition-colors z-10"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white shadow-lg shadow-gray-300/50 flex items-center justify-center hover:shadow-xl transition-shadow z-10 border border-gray-100"
                 >
                   <ChevronLeft className="w-5 h-5 text-gray-700" />
-                </button>
-                <button
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={nextImage}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 shadow-md flex items-center justify-center hover:bg-white transition-colors z-10"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white shadow-lg shadow-gray-300/50 flex items-center justify-center hover:shadow-xl transition-shadow z-10 border border-gray-100"
                 >
                   <ChevronRight className="w-5 h-5 text-gray-700" />
-                </button>
+                </motion.button>
               </div>
 
-              {/* Dots indicator */}
-              <div className="flex justify-center gap-2 py-4 bg-white border-t border-gray-100">
+              {/* Premium Dots indicator */}
+              <div className="flex justify-center gap-2 py-5 bg-gradient-to-t from-gray-50 to-white border-t border-gray-100">
                 {productImages.map((_, index) => (
                   <button
                     key={index}
                     onClick={() => setCurrentImage(index)}
-                    className={`w-2.5 h-2.5 rounded-full transition-colors ${
-                      index === currentImage ? "bg-orange-500" : "bg-gray-300 hover:bg-gray-400"
+                    className={`h-2 rounded-full transition-all duration-300 ${
+                      index === currentImage 
+                        ? "bg-gradient-to-r from-orange-500 to-orange-600 w-8" 
+                        : "bg-gray-300 hover:bg-gray-400 w-2"
                     }`}
                   />
                 ))}
               </div>
             </div>
 
-            {/* Thumbnails */}
-            <div className="flex justify-center gap-3 mt-4">
+            {/* Premium Thumbnails */}
+            <div className="flex justify-center gap-4 mt-5">
               {productImages.map((img, index) => (
-                <button
+                <motion.button
                   key={index}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={() => setCurrentImage(index)}
-                  className={`w-20 h-20 rounded-lg border-2 transition-all cursor-pointer bg-white p-1 overflow-hidden ${
+                  className={`relative w-24 h-24 rounded-2xl border-2 transition-all cursor-pointer bg-white p-2 overflow-hidden ${
                     index === currentImage 
-                      ? "border-orange-500 shadow-md" 
-                      : "border-gray-200 hover:border-orange-300"
+                      ? "border-orange-500 shadow-lg shadow-orange-500/20 ring-4 ring-orange-500/10" 
+                      : "border-gray-200 hover:border-orange-300 hover:shadow-md"
                   }`}
                 >
                   <Image
                     src={img.src}
                     alt={`Miniature ${index + 1}`}
-                    width={80}
-                    height={80}
+                    width={96}
+                    height={96}
                     className="w-full h-full object-contain"
                   />
-                </button>
+                </motion.button>
               ))}
             </div>
           </motion.div>
 
-          {/* Product Info */}
+          {/* Product Info - Premium */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
+            className="lg:pl-4"
           >
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm font-medium mb-4">
-              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-              En stock
+            {/* Status Badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-emerald-50 to-emerald-100 border border-emerald-200 text-emerald-700 text-sm font-semibold mb-5">
+              <span className="relative w-2.5 h-2.5">
+                <span className="absolute inset-0 rounded-full bg-emerald-500 animate-ping opacity-75" />
+                <span className="relative block w-2.5 h-2.5 rounded-full bg-emerald-500" />
+              </span>
+              En stock - Expédition sous 24h
             </div>
 
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              RK01 - Système Autonome d&apos;Extinction Incendie
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 leading-tight">
+              RK01 - Système Autonome{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-orange-600">
+                d&apos;Extinction
+              </span>
             </h1>
 
-            <p className="text-lg text-gray-600 mb-6">
+            <p className="text-lg md:text-xl text-gray-600 mb-8 leading-relaxed">
               Protection automatique et préventive pour tableaux électriques. 
               Détection et extinction autonome sans intervention humaine.
             </p>
 
-            {/* Key Features */}
+            {/* Key Features - Premium Grid */}
             <div className="grid grid-cols-2 gap-4 mb-8">
-              <div className="flex items-center gap-3 text-gray-700">
-                <div className="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center">
-                  <Shield className="w-5 h-5 text-orange-500" />
-                </div>
-                <span className="text-sm">Protection 24/7</span>
-              </div>
-              <div className="flex items-center gap-3 text-gray-700">
-                <div className="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center">
-                  <Clock className="w-5 h-5 text-orange-500" />
-                </div>
-                <span className="text-sm">Durée de vie 5 ans</span>
-              </div>
-              <div className="flex items-center gap-3 text-gray-700">
-                <div className="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center">
-                  <Zap className="w-5 h-5 text-orange-500" />
-                </div>
-                <span className="text-sm">Sans électricité</span>
-              </div>
-              <div className="flex items-center gap-3 text-gray-700">
-                <div className="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center">
-                  <Check className="w-5 h-5 text-orange-500" />
-                </div>
-                <span className="text-sm">Sans maintenance</span>
-              </div>
+              {[
+                { icon: Shield, label: "Protection 24/7", color: "from-orange-500 to-orange-600" },
+                { icon: Clock, label: "Durée de vie 5 ans", color: "from-blue-500 to-blue-600" },
+                { icon: Zap, label: "Sans électricité", color: "from-amber-500 to-amber-600" },
+                { icon: Check, label: "Sans maintenance", color: "from-emerald-500 to-emerald-600" },
+              ].map((feature, index) => (
+                <motion.div
+                  key={feature.label}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 + index * 0.1 }}
+                  className="flex items-center gap-3 p-3 rounded-2xl bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow"
+                >
+                  <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${feature.color} flex items-center justify-center shadow-lg`}>
+                    <feature.icon className="w-5 h-5 text-white" />
+                  </div>
+                  <span className="text-sm font-medium text-gray-700">{feature.label}</span>
+                </motion.div>
+              ))}
             </div>
 
-            {/* Order Box avec sélecteur quantité */}
-            <div className="bg-gray-50 rounded-xl border border-gray-200 p-6 mb-6">
-              <ProductOrder location="product-page" />
+            {/* Premium Order Box */}
+            <div className="relative bg-gradient-to-br from-gray-50 to-white rounded-2xl border border-gray-200 p-6 mb-6 shadow-sm overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-orange-100/50 to-transparent rounded-full blur-2xl" />
+              <div className="relative">
+                <ProductOrder location="product-page" />
+              </div>
             </div>
 
             {/* Vidéo */}
-            <div className="flex justify-center mb-6">
+            <div className="flex justify-center mb-8">
               <VideoModal videoSrc="/videos/video-rk01.mp4" buttonText="Voir en action" />
             </div>
 
-            {/* Trust badges */}
-            <div className="flex flex-wrap gap-4 text-sm text-gray-500">
-              <div className="flex items-center gap-2">
-                <Check className="w-4 h-4 text-green-500" />
-                Paiement sécurisé
-              </div>
-              <div className="flex items-center gap-2">
-                <Check className="w-4 h-4 text-green-500" />
-                Livraison 24-48h
-              </div>
-              <div className="flex items-center gap-2">
-                <Check className="w-4 h-4 text-green-500" />
-                Garantie 5 ans
-              </div>
+            {/* Premium Trust badges */}
+            <div className="flex flex-wrap justify-center gap-6 p-4 rounded-2xl bg-gray-50 border border-gray-100">
+              {[
+                { icon: ShieldCheck, label: "Paiement sécurisé", color: "text-emerald-500" },
+                { icon: Truck, label: "Livraison 24-48h", color: "text-blue-500" },
+                { icon: Shield, label: "Garantie 5 ans", color: "text-orange-500" },
+              ].map((badge) => (
+                <div key={badge.label} className="flex items-center gap-2 text-sm text-gray-600">
+                  <badge.icon className={`w-5 h-5 ${badge.color}`} />
+                  <span className="font-medium">{badge.label}</span>
+                </div>
+              ))}
             </div>
           </motion.div>
         </div>
