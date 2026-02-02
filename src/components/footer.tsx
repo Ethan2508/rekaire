@@ -122,7 +122,7 @@ export function Footer() {
                 <div className="w-6 h-6 rounded-md bg-orange-100 flex items-center justify-center">
                   <Award className="w-3.5 h-3.5 text-orange-600" />
                 </div>
-                Garantie 2 ans
+                Garantie 5 ans
               </li>
             </ul>
           </div>
