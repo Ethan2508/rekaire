@@ -8,6 +8,8 @@ import { ProductDetails } from "@/components/pages/product/product-details";
 import { ProductSpecs } from "@/components/pages/product/product-specs";
 import { ProductFAQ } from "@/components/pages/product/product-faq";
 import { CTASection } from "@/components/sections";
+import { ProductSchema, BreadcrumbSchema } from "@/components/schema-org";
+import { siteConfig } from "@/config/site";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -16,8 +18,16 @@ export const metadata: Metadata = {
 };
 
 export default function ProductPage() {
+  const breadcrumbs = [
+    { name: "Accueil", url: siteConfig.url },
+    { name: "Produit", url: `${siteConfig.url}/produit` },
+    { name: "RK01", url: `${siteConfig.url}/produit` },
+  ];
+
   return (
     <>
+      <ProductSchema />
+      <BreadcrumbSchema items={breadcrumbs} />
       <Header />
       <main>
         <ProductHero />

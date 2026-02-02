@@ -6,6 +6,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Analytics, GTMNoScript } from "@/components/analytics";
+import { OrganizationSchema, WebSiteSchema, LocalBusinessSchema } from "@/components/schema-org";
 import { siteConfig } from "@/config/site";
 
 const inter = Inter({
@@ -92,6 +93,9 @@ export default function RootLayout({
     <html lang="fr" className={`${inter.variable}`}>
       <head>
         <Analytics />
+        <OrganizationSchema />
+        <WebSiteSchema />
+        <LocalBusinessSchema />
       </head>
       <body className="bg-white text-gray-900 antialiased">
         <GTMNoScript />
