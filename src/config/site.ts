@@ -25,7 +25,6 @@ export const siteConfig = {
     tva: "FR51989603907",
     capital: "1 260,00 €",
     rcs: "Lyon B 989 603 907",
-    directors: "Noam Kalfa, Ethan Harfi",
     creationDate: "23/07/2025",
     activity: "Commerce de gros de fournitures et équipements divers pour le commerce et les services",
   },
