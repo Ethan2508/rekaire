@@ -7,6 +7,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { verifyWebhookSignature, getCheckoutSession } from "@/lib/stripe";
 import { sendOrderConfirmationEmail, sendAdminNotificationEmail } from "@/lib/email";
 import { createOrder, upsertCustomer, type CreateOrderData, type OrderAddress } from "@/lib/sanity";
+import { incrementSalesCounter, decrementStock, createOrder as createSupabaseOrder } from "@/lib/supabase-admin";
 import Stripe from "stripe";
 
 // Désactive le body parser pour les webhooks Stripe
@@ -226,6 +227,49 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
   } catch (sanityError) {
     console.error("[Webhook] Error creating order in Sanity:", sanityError);
     // Ne pas bloquer le webhook même si Sanity échoue
+  }
+
+  // ============================================
+  // MISE À JOUR SUPABASE (Stock + Compteur + Commande)
+  // ============================================
+  try {
+    // Décrémenter le stock
+    await decrementStock('rk01', quantity);
+    console.log("[Webhook] Stock decremented by", quantity);
+
+    // Incrémenter le compteur de ventes
+    const newCount = await incrementSalesCounter(quantity);
+    console.log("[Webhook] Sales counter updated to", newCount);
+
+    // Créer la commande dans Supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const shippingDetails = (session as any).shipping_details;
+    const shippingCity = shippingDetails?.address?.city || 'France';
+    
+    const amountTotal = session.amount_total || 0;
+    const totalTTC = amountTotal;
+    const totalHT = Math.round(totalTTC / 1.2);
+    const unitPriceHT = Math.round(totalHT / quantity);
+
+    await createSupabaseOrder({
+      stripe_session_id: session.id,
+      stripe_payment_intent: typeof session.payment_intent === 'string' 
+        ? session.payment_intent 
+        : session.payment_intent?.id,
+      product_slug: 'rk01',
+      quantity,
+      unit_price_ht: unitPriceHT,
+      total_ht: totalHT,
+      total_ttc: totalTTC,
+      customer_email: customerEmail,
+      customer_name: session.customer_details?.name || undefined,
+      shipping_city: shippingCity,
+    });
+    console.log("[Webhook] Order created in Supabase");
+
+  } catch (supabaseError) {
+    console.error("[Webhook] Error updating Supabase:", supabaseError);
+    // Ne pas bloquer le webhook même si Supabase échoue
   }
 
   // ============================================

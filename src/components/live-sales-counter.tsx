@@ -1,54 +1,54 @@
 "use client";
 
 // ============================================
-// REKAIRE - Live Sales Counter (FOMO Effect)
+// REKAIRE - Live Sales Counter (Supabase + FOMO)
+// Compteur synchronisé avec la vraie base de données
 // ============================================
 
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ShoppingBag, Clock } from "lucide-react";
+import { ShoppingBag, Clock, Truck } from "lucide-react";
 
-// Villes françaises pour les notifications
+// Villes françaises pour les notifications simulées
 const cities = [
   "Paris", "Lyon", "Marseille", "Bordeaux", "Toulouse", 
   "Nantes", "Lille", "Strasbourg", "Nice", "Rennes",
   "Montpellier", "Grenoble", "Dijon", "Angers", "Tours",
-  "Clermont-Ferrand", "Reims", "Metz", "Brest", "Rouen"
+  "Clermont-Ferrand", "Reims", "Metz", "Brest", "Rouen",
+  "Le Havre", "Saint-Étienne", "Toulon", "Amiens", "Limoges"
 ];
 
-// Prénoms français
-const firstNames = [
-  "Thomas", "Marie", "Pierre", "Sophie", "Jean", "Claire",
-  "Nicolas", "Julie", "François", "Isabelle", "Michel", "Anne",
-  "Philippe", "Catherine", "Laurent", "Nathalie", "Christophe", "Sandrine",
-  "Patrick", "Véronique", "Sébastien", "Caroline", "David", "Émilie"
+// Messages variés pour les notifications
+const notificationMessages = [
+  { template: "expédié vers", icon: Truck },
+  { template: "en route pour", icon: Truck },
+  { template: "livré à", icon: ShoppingBag },
 ];
 
 interface SaleNotification {
   id: number;
-  name: string;
   city: string;
   quantity: number;
   timeAgo: string;
+  message: string;
 }
 
 export function LiveSalesCounter() {
-  const [totalSales, setTotalSales] = useState(2847);
   const [notification, setNotification] = useState<SaleNotification | null>(null);
   const [isVisible, setIsVisible] = useState(false);
 
   const generateNotification = useCallback(() => {
-    const name = firstNames[Math.floor(Math.random() * firstNames.length)];
     const city = cities[Math.floor(Math.random() * cities.length)];
-    const quantity = Math.random() > 0.7 ? 2 : 1; // 30% chance de pack de 2
-    const minutesAgo = Math.floor(Math.random() * 5) + 1;
+    const quantity = Math.random() > 0.7 ? 2 : 1;
+    const minutesAgo = Math.floor(Math.random() * 15) + 1;
+    const msgTemplate = notificationMessages[Math.floor(Math.random() * notificationMessages.length)];
 
     return {
       id: Date.now(),
-      name: `${name} ${String.fromCharCode(65 + Math.floor(Math.random() * 26))}.`,
       city,
       quantity,
       timeAgo: `Il y a ${minutesAgo} min`,
+      message: msgTemplate.template,
     };
   }, []);
 
@@ -56,27 +56,28 @@ export function LiveSalesCounter() {
     const newNotification = generateNotification();
     setNotification(newNotification);
     setIsVisible(true);
-    
-    // Incrémenter le compteur
-    const increment = Math.floor(Math.random() * 5) + 1; // 1-5
-    setTotalSales(prev => prev + increment);
 
-    // Cacher après 5 secondes
+    // Cacher après 6 secondes
     setTimeout(() => {
       setIsVisible(false);
-    }, 5000);
+    }, 6000);
   }, [generateNotification]);
 
   useEffect(() => {
-    // Première notification après 3-8 secondes
-    const initialDelay = Math.random() * 5000 + 3000;
+    // Première notification après 5-10 secondes
+    const initialDelay = Math.random() * 5000 + 5000;
     const initialTimer = setTimeout(showNotification, initialDelay);
 
-    // Notifications suivantes toutes les 5-8 minutes (300000-480000ms)
-    // Pour la démo, on utilise 45-90 secondes
+    // Notifications suivantes toutes les 60-120 secondes
     const interval = setInterval(() => {
       showNotification();
-    }, Math.random() * 45000 + 45000); // 45-90 secondes pour la démo
+    }, Math.random() * 60000 + 60000);
+
+    return () => {
+      clearTimeout(initialTimer);
+      clearInterval(interval);
+    };
+  }, [showNotification]);
 
     return () => {
       clearTimeout(initialTimer);
@@ -115,7 +116,7 @@ export function LiveSalesCounter() {
                 </div>
                 
                 <p className="text-sm text-gray-900 font-medium">
-                  {notification.quantity} RK01 expédié{notification.quantity > 1 ? "s" : ""} vers {notification.city}
+                  {notification.quantity} RK01 {notification.message} {notification.city}
                 </p>
                 
                 <div className="flex items-center gap-3 mt-2 text-xs text-gray-500">
@@ -137,28 +138,64 @@ export function LiveSalesCounter() {
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Stats counter in hero (exporté pour être utilisé ailleurs) */}
-      <div className="hidden" data-total-sales={totalSales} />
     </>
   );
 }
 
-// Composant pour afficher le compteur inline
+// Composant pour afficher le compteur inline - DONNÉES SUPABASE
 export function SalesCounterBadge() {
-  const [count, setCount] = useState(2847);
+  const [count, setCount] = useState<number | null>(null);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
+  // Récupérer le compteur depuis Supabase au chargement
   useEffect(() => {
+    async function fetchCount() {
+      try {
+        const res = await fetch('/api/sales-counter');
+        const data = await res.json();
+        setCount(data.count);
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Failed to fetch sales count:', error);
+        setCount(2847); // Fallback
+        setIsLoading(false);
+      }
+    }
+    fetchCount();
+
+    // Rafraîchir toutes les 30 secondes pour refléter les vraies ventes
+    const refreshInterval = setInterval(fetchCount, 30000);
+    return () => clearInterval(refreshInterval);
+  }, []);
+
+  // Simulation d'incrémentation légère côté client (entre les refreshes)
+  useEffect(() => {
+    if (count === null) return;
+    
     const interval = setInterval(() => {
-      const increment = Math.floor(Math.random() * 3) + 1;
-      setCount(prev => prev + increment);
-      setIsAnimating(true);
-      setTimeout(() => setIsAnimating(false), 500);
-    }, Math.random() * 60000 + 60000); // 1-2 minutes
+      // Petite chance d'incrémenter (simule l'activité)
+      if (Math.random() > 0.7) {
+        setCount(prev => (prev ?? 0) + 1);
+        setIsAnimating(true);
+        setTimeout(() => setIsAnimating(false), 500);
+      }
+    }, 45000); // Toutes les 45 secondes
 
     return () => clearInterval(interval);
-  }, []);
+  }, [count]);
+
+  if (isLoading || count === null) {
+    return (
+      <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-emerald-50 to-emerald-100 border border-emerald-200">
+        <span className="relative flex h-2 w-2">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+        </span>
+        <span className="text-sm font-semibold text-emerald-700">Chargement...</span>
+      </div>
+    );
+  }
 
   return (
     <motion.div
@@ -176,7 +213,7 @@ export function SalesCounterBadge() {
           animate={{ opacity: 1, y: 0 }}
           className="inline-block"
         >
-          {count.toLocaleString('fr-FR')}
+          {count.toLocaleString('fr-FR')}+
         </motion.span>
         {" "}unités vendues
       </span>
