@@ -93,7 +93,7 @@ export default function RootLayout({
       <head>
         <Analytics />
       </head>
-      <body className="bg-white text-gray-900 antialiased">
+      <body className="bg-[#0A0A0B] text-white antialiased">
         <GTMNoScript />
         {children}
       </body>

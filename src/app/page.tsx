@@ -15,6 +15,7 @@ import {
   GuaranteesSection,
   CTASection,
 } from "@/components";
+import { LiveSalesCounter } from "@/components/live-sales-counter";
 
 export default function HomePage() {
   return (
@@ -32,6 +33,8 @@ export default function HomePage() {
         <CTASection />
       </main>
       <Footer />
+      {/* Live Sales Notifications */}
+      <LiveSalesCounter />
     </>
   );
 }
