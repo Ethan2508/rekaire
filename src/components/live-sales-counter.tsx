@@ -79,12 +79,6 @@ export function LiveSalesCounter() {
     };
   }, [showNotification]);
 
-    return () => {
-      clearTimeout(initialTimer);
-      clearInterval(interval);
-    };
-  }, [showNotification]);
-
   return (
     <>
       {/* Floating notification */}
