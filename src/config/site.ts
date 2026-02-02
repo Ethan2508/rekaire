@@ -18,12 +18,16 @@ export const siteConfig = {
   // Company Info (pour mentions légales)
   company: {
     name: "Rekaire",
-    legalName: "Rekaire SAS", // À compléter
-    address: "123 Rue Exemple, 75001 Paris", // À compléter
-    siret: "XXX XXX XXX XXXXX", // À compléter
-    tva: "FR XX XXX XXX XXX", // À compléter
-    capital: "10 000 €", // À compléter
-    rcs: "Paris B XXX XXX XXX", // À compléter
+    legalName: "NELIOR SAS",
+    address: "5 Rue Mazenod, 69003 Lyon",
+    siret: "989 603 907 00019",
+    siren: "989 603 907",
+    tva: "FR51989603907",
+    capital: "1 260,00 €",
+    rcs: "Lyon B 989 603 907",
+    directors: "Noam Kalfa, Ethan Harfi",
+    creationDate: "23/07/2025",
+    activity: "Commerce de gros de fournitures et équipements divers pour le commerce et les services",
   },
 
   // Hosting

@@ -34,6 +34,9 @@ export default function MentionsLegalesPage() {
                   <strong>Siège social :</strong> {siteConfig.company.address}
                 </p>
                 <p className="text-gray-700 mb-2">
+                  <strong>SIREN :</strong> {siteConfig.company.siren}
+                </p>
+                <p className="text-gray-700 mb-2">
                   <strong>SIRET :</strong> {siteConfig.company.siret}
                 </p>
                 <p className="text-gray-700 mb-2">
@@ -44,6 +47,9 @@ export default function MentionsLegalesPage() {
                 </p>
                 <p className="text-gray-700 mb-2">
                   <strong>RCS :</strong> {siteConfig.company.rcs}
+                </p>
+                <p className="text-gray-700 mb-2">
+                  <strong>Dirigeants :</strong> {siteConfig.company.directors}
                 </p>
                 <p className="text-gray-700">
                   <strong>Email :</strong>{" "}
@@ -59,11 +65,11 @@ export default function MentionsLegalesPage() {
 
             <section className="mb-8">
               <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                2. Directeur de la publication
+                2. Directeurs de la publication
               </h2>
               <p className="text-gray-600">
-                Le directeur de la publication est le représentant légal de la
-                société {siteConfig.company.legalName}.
+                Les directeurs de la publication sont les représentants légaux de la
+                société {siteConfig.company.legalName} : {siteConfig.company.directors}.
               </p>
             </section>
 
