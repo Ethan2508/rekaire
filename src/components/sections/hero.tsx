@@ -4,9 +4,9 @@
 // REKAIRE - Hero Section (Light Clean Design)
 // ============================================
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import { formatPrice, PRICES } from "@/config/product";
 import { CTAButton } from "@/components/cta-button";
 import { VideoModal } from "@/components/video-modal";
@@ -18,15 +18,6 @@ const rotatingTexts = ["MAISON", "BUREAU", "LOCAL", "DÉPÔT"];
 
 export function HeroSection() {
   const [currentTextIndex, setCurrentTextIndex] = useState(0);
-  const containerRef = useRef<HTMLDivElement>(null);
-  
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end start"]
-  });
-  
-  const y = useTransform(scrollYProgress, [0, 1], [0, 100]);
-  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
 
   // Rotation du texte
   useEffect(() => {
@@ -37,14 +28,14 @@ export function HeroSection() {
   }, []);
 
   return (
-    <section ref={containerRef} className="relative min-h-screen overflow-hidden bg-gradient-to-br from-gray-50 via-white to-orange-50/30">
+    <section className="relative min-h-screen overflow-hidden bg-gradient-to-br from-gray-50 via-white to-orange-50/30">
       {/* Subtle background elements */}
       <div className="absolute inset-0">
         <div className="absolute top-20 right-1/4 w-[500px] h-[500px] bg-orange-100/50 rounded-full blur-[120px]" />
         <div className="absolute bottom-20 left-1/4 w-[400px] h-[400px] bg-orange-50/50 rounded-full blur-[100px]" />
       </div>
 
-      <motion.div style={{ y, opacity }} className="relative z-10 pt-28 lg:pt-36 pb-20">
+      <div className="relative z-10 pt-28 lg:pt-36 pb-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
           {/* Top badges */}
@@ -237,7 +228,7 @@ export function HeroSection() {
             </motion.div>
           </div>
         </div>
-      </motion.div>
+      </div>
 
       {/* Scroll indicator */}
       <motion.div
