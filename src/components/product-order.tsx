@@ -100,7 +100,7 @@ export function ProductOrder({ location, className = "" }: ProductOrderProps) {
           >
             <Minus className="w-4 h-4" />
           </button>
-          <span className="w-12 h-10 flex items-center justify-center font-semibold text-lg border-x border-gray-300">
+          <span className="w-12 h-10 flex items-center justify-center font-semibold text-lg border-x border-gray-300 bg-white text-gray-900">
             {quantity}
           </span>
           <button

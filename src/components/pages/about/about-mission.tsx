@@ -94,6 +94,20 @@ export function AboutMission() {
           >
             Un incendie domestique se déclare <strong className="text-gray-700">toutes les 2 minutes</strong> en France.
           </motion.p>
+
+          {/* Sources */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.6 }}
+            className="mt-6 p-4 bg-white rounded-xl border border-gray-200"
+          >
+            <p className="text-xs text-gray-400 text-center">
+              <strong className="text-gray-500">Sources :</strong> INSEE, Ministère de l&apos;Intérieur, ONSE (Observatoire National de la Sécurité Électrique), 
+              Direction Générale de la Sécurité Civile et de la Gestion des Crises (DGSCGC), Fédération Française de l&apos;Assurance (FFA).
+            </p>
+          </motion.div>
         </motion.div>
 
         <div className="grid lg:grid-cols-2 gap-16 items-center">

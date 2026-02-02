@@ -10,10 +10,10 @@ import {
   FeaturesSection,
   HowItWorksSection,
   SpecificationsSection,
-  SocialProofSection,
   PartnersSection,
   GuaranteesSection,
   CTASection,
+  BlogPreviewSection,
 } from "@/components";
 import { LiveSalesCounter } from "@/components/live-sales-counter";
 
@@ -28,7 +28,7 @@ export default function HomePage() {
         <FeaturesSection />
         <HowItWorksSection />
         <SpecificationsSection />
-        <SocialProofSection />
+        <BlogPreviewSection />
         <GuaranteesSection />
         <CTASection />
       </main>

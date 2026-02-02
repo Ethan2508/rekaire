@@ -59,7 +59,7 @@ export function HeroSection() {
             
             {/* Innovation badge */}
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-gray-200 shadow-sm">
-              <Zap className="w-4 h-4 text-orange-500" />
+              <span className="text-base">🇫🇷</span>
               <span className="text-sm font-medium text-gray-700">Innovation française</span>
             </div>
           </motion.div>
@@ -167,18 +167,18 @@ export function HeroSection() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className="relative"
+              className="relative min-h-[300px] lg:min-h-0"
             >
               {/* Glow effect behind product */}
               <div className="absolute inset-0 bg-gradient-to-br from-orange-200/40 to-orange-100/20 rounded-full blur-[80px] scale-75" />
               
               {/* Product container */}
               <div className="relative">
-                {/* Product card */}
+                {/* Product card - pas de bg blanc sur mobile */}
                 <motion.div
                   animate={{ y: [0, -8, 0] }}
                   transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                  className="relative bg-white rounded-3xl p-8 border border-gray-200 shadow-xl"
+                  className="relative lg:bg-white lg:rounded-3xl lg:p-8 lg:border lg:border-gray-200 lg:shadow-xl"
                 >
                   {/* Product image */}
                   <div className="relative aspect-square max-w-[320px] mx-auto">

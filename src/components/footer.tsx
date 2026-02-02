@@ -20,9 +20,9 @@ export function Footer() {
               <Image
                 src="/logo.png"
                 alt="Rekaire"
-                width={120}
-                height={35}
-                className="h-8 w-auto transition-transform duration-300 group-hover:scale-105"
+                width={156}
+                height={45}
+                className="h-10 w-auto transition-transform duration-300 group-hover:scale-105"
               />
             </Link>
             <p className="text-gray-500 text-sm mb-5 max-w-xs leading-relaxed">

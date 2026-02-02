@@ -6,7 +6,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ShoppingBag, MapPin, Clock } from "lucide-react";
+import { ShoppingBag, Clock } from "lucide-react";
 
 // Villes françaises pour les notifications
 const cities = [
@@ -115,14 +115,10 @@ export function LiveSalesCounter() {
                 </div>
                 
                 <p className="text-sm text-gray-900 font-medium">
-                  Quelqu&apos;un vient d&apos;acheter {notification.quantity} RK01
+                  {notification.quantity} RK01 expédié{notification.quantity > 1 ? "s" : ""} vers {notification.city}
                 </p>
                 
                 <div className="flex items-center gap-3 mt-2 text-xs text-gray-500">
-                  <span className="flex items-center gap-1">
-                    <MapPin className="w-3 h-3" />
-                    {notification.city}
-                  </span>
                   <span className="flex items-center gap-1">
                     <Clock className="w-3 h-3" />
                     {notification.timeAgo}

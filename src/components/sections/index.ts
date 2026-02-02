@@ -11,3 +11,4 @@ export { GuaranteesSection } from "./guarantees";
 export { CTASection } from "./cta";
 export { PartnersSection } from "./partners";
 export { FireStatsSection } from "./fire-stats";
+export { BlogPreviewSection } from "./blog-preview";
