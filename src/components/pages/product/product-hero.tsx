@@ -38,18 +38,18 @@ export function ProductHero() {
       <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-gradient-to-tr from-gray-100/50 to-transparent rounded-full blur-3xl" />
       
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-start">
           {/* Product Images - Premium Carousel */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
-            className="sticky top-28"
+            className="lg:sticky lg:top-28"
           >
             <div className="relative bg-white rounded-3xl border border-gray-200/80 overflow-hidden shadow-xl shadow-gray-200/50">
               
               {/* Main Image */}
-              <div className="relative aspect-[4/3] bg-gradient-to-br from-gray-50 to-white">
+              <div className="relative aspect-square sm:aspect-[4/3] bg-gradient-to-br from-gray-50 to-white">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={currentImage}
@@ -104,8 +104,8 @@ export function ProductHero() {
               </div>
             </div>
 
-            {/* Premium Thumbnails */}
-            <div className="flex justify-center gap-4 mt-5">
+            {/* Premium Thumbnails - Hidden on mobile */}
+            <div className="hidden sm:flex justify-center gap-4 mt-5">
               {productImages.map((img, index) => (
                 <motion.button
                   key={index}

@@ -89,7 +89,7 @@ export function LiveSalesCounter() {
             animate={{ opacity: 1, x: 0, y: 0 }}
             exit={{ opacity: 0, x: -100 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="fixed bottom-6 left-6 z-50 max-w-sm"
+            className="fixed bottom-20 sm:bottom-6 left-4 sm:left-6 right-4 sm:right-auto z-50 max-w-sm"
           >
             <div className="bg-white rounded-2xl shadow-2xl shadow-black/10 border border-gray-100 p-4 flex items-start gap-4">
               {/* Icon */}

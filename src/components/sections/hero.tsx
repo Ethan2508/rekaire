@@ -56,14 +56,14 @@ export function HeroSection() {
           </motion.div>
 
           {/* Main content */}
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
             
-            {/* Left - Content */}
+            {/* Left - Content (order-2 on mobile, order-1 on desktop) */}
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="text-center lg:text-left"
+              className="text-center lg:text-left order-2 lg:order-1"
             >
               {/* Badge with fire icon */}
               <motion.div
@@ -153,12 +153,12 @@ export function HeroSection() {
               </motion.div>
             </motion.div>
 
-            {/* Right - Product showcase */}
+            {/* Right - Product showcase (order-1 on mobile, order-2 on desktop) */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className="relative"
+              className="relative order-1 lg:order-2"
             >
               {/* Glow effect behind product */}
               <div className="absolute inset-0 bg-gradient-to-br from-orange-200/40 to-orange-100/20 rounded-full blur-[80px] scale-75" />
