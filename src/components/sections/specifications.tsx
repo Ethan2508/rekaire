@@ -141,27 +141,3 @@ export function SpecificationsSection() {
     </section>
   );
 }
-                        src={part.src}
-                        alt={part.alt}
-                        width={80}
-                        height={80}
-                        className="w-10 h-10 object-contain brightness-0 invert"
-                      />
-                    </div>
-                    <div>
-                      <p className="font-semibold text-white">{part.title}</p>
-                      <p className="text-white/50 text-sm">{part.desc}</p>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-
-              {/* Decorative line */}
-              <div className="absolute left-[60px] top-[100px] bottom-[100px] w-[2px] bg-gradient-to-b from-orange-500/0 via-orange-500/30 to-orange-500/0 hidden lg:block" />
-            </div>
-          </motion.div>
-        </div>
-      </div>
-    </section>
-  );
-}
