@@ -87,8 +87,8 @@ export default async function ArticlePage({
     notFound();
   }
 
-  // Incrémenter les vues (ignore les erreurs)
-  await supabase.rpc("increment_article_views", { article_slug: slug }).catch(() => {});
+  // Incrémenter les vues (fire and forget)
+  supabase.rpc("increment_article_views", { article_slug: slug });
 
   // Convertir le markdown en HTML (mode synchrone)
   const contentHtml = marked.parse(article.content || "") as string;
