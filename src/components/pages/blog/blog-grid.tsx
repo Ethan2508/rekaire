@@ -1,5 +1,6 @@
 // ============================================
 // REKAIRE - Blog Grid (Articles)
+// Lit les articles depuis Supabase
 // ============================================
 
 "use client";
@@ -8,19 +9,25 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { Calendar, Clock, ArrowRight } from "lucide-react";
 import { useEffect, useState } from "react";
-import { getArticles } from "@/lib/sanity";
+import { createClient } from "@supabase/supabase-js";
 
-// Type Article depuis Sanity
+// Supabase client
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
+
+// Type Article depuis Supabase
 interface Article {
-  _id: string;
+  id: string;
   title: string;
-  slug: { current: string };
+  slug: string;
   excerpt: string;
-  featuredImage?: any;
+  featured_image?: string;
   category: string;
   author?: string;
-  readTime?: number;
-  publishedAt: string;
+  read_time?: number;
+  published_at: string;
   featured?: boolean;
 }
 
@@ -122,7 +129,7 @@ function ArticleCard({ article, index, featured = false }: {
       transition={{ duration: 0.5, delay: index * 0.1 }}
       className={`group ${featured ? "md:col-span-2" : ""}`}
     >
-      <Link href={`/blog/${article.slug.current}`} className="block">
+      <Link href={`/blog/${article.slug}`} className="block">
         <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300">
           {/* Content */}
           <div className="p-6">
@@ -145,12 +152,12 @@ function ArticleCard({ article, index, featured = false }: {
             <div className="flex items-center gap-4 text-sm text-gray-500">
               <div className="flex items-center gap-1">
                 <Calendar className="w-4 h-4" />
-                {formatDate(article.publishedAt)}
+                {formatDate(article.published_at)}
               </div>
-              {article.readTime && (
+              {article.read_time && (
                 <div className="flex items-center gap-1">
                   <Clock className="w-4 h-4" />
-                  {article.readTime} min
+                  {article.read_time} min
                 </div>
               )}
             </div>
@@ -176,7 +183,13 @@ export function BlogGrid() {
   useEffect(() => {
     const loadArticles = async () => {
       try {
-        const data = await getArticles();
+        const { data, error } = await supabase
+          .from('articles')
+          .select('id, title, slug, excerpt, featured_image, category, author, read_time, published_at, featured')
+          .eq('published', true)
+          .order('published_at', { ascending: false });
+
+        if (error) throw error;
         setArticles(data || []);
       } catch (error) {
         console.error('Erreur chargement articles:', error);
@@ -221,7 +234,7 @@ export function BlogGrid() {
           </h2>
           <div className="grid md:grid-cols-2 gap-6">
             {featuredArticles.map((article, index) => (
-              <ArticleCard key={article._id} article={article} index={index} featured />
+              <ArticleCard key={article.id} article={article} index={index} featured />
             ))}
           </div>
         </section>
@@ -234,7 +247,7 @@ export function BlogGrid() {
         </h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {regularArticles.map((article, index) => (
-            <ArticleCard key={article._id} article={article} index={index} />
+            <ArticleCard key={article.id} article={article} index={index} />
           ))}
         </div>
       </section>
