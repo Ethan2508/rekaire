@@ -167,21 +167,21 @@ export function HeroSection() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className="relative min-h-[300px] lg:min-h-0"
+              className="relative"
             >
               {/* Glow effect behind product */}
               <div className="absolute inset-0 bg-gradient-to-br from-orange-200/40 to-orange-100/20 rounded-full blur-[80px] scale-75" />
               
               {/* Product container */}
-              <div className="relative">
-                {/* Product card - pas de bg blanc sur mobile */}
+              <div className="relative px-4 sm:px-8">
+                {/* Product card - sans fond blanc */}
                 <motion.div
                   animate={{ y: [0, -8, 0] }}
                   transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                  className="relative lg:bg-white lg:rounded-3xl lg:p-8 lg:border lg:border-gray-200 lg:shadow-xl"
+                  className="relative"
                 >
                   {/* Product image */}
-                  <div className="relative aspect-square max-w-[320px] mx-auto">
+                  <div className="relative aspect-square max-w-[280px] sm:max-w-[320px] mx-auto">
                     <Image
                       src="/images/product/rk01-main.png"
                       alt="RK01 - Système autonome d'extinction incendie"
@@ -192,7 +192,7 @@ export function HeroSection() {
                   </div>
 
                   {/* Stats */}
-                  <div className="grid grid-cols-3 gap-4 mt-6 pt-6 border-t border-gray-100">
+                  <div className="grid grid-cols-3 gap-4 mt-6 pt-6 border-t border-gray-200">
                     {[
                       { value: "90°C", label: "Activation" },
                       { value: "30s", label: "Installation" },
@@ -206,11 +206,11 @@ export function HeroSection() {
                   </div>
                 </motion.div>
 
-                {/* Floating feature badges */}
+                {/* Floating feature badges - hidden on mobile to avoid overflow issues */}
                 <motion.div
                   animate={{ y: [0, -5, 0] }}
                   transition={{ duration: 3, repeat: Infinity, delay: 0.5 }}
-                  className="absolute -left-2 top-1/4 px-3 py-2 rounded-xl bg-white border border-gray-200 shadow-md text-gray-700 text-xs font-medium flex items-center gap-1.5"
+                  className="hidden sm:flex absolute -left-2 top-1/4 px-3 py-2 rounded-xl bg-white border border-gray-200 shadow-md text-gray-700 text-xs font-medium items-center gap-1.5"
                 >
                   <Check className="w-3.5 h-3.5 text-emerald-500" />
                   Sans entretien
@@ -219,7 +219,7 @@ export function HeroSection() {
                 <motion.div
                   animate={{ y: [0, -5, 0] }}
                   transition={{ duration: 3, repeat: Infinity, delay: 1 }}
-                  className="absolute -right-2 top-1/3 px-3 py-2 rounded-xl bg-white border border-gray-200 shadow-md text-gray-700 text-xs font-medium flex items-center gap-1.5"
+                  className="hidden sm:flex absolute -right-2 top-1/3 px-3 py-2 rounded-xl bg-white border border-gray-200 shadow-md text-gray-700 text-xs font-medium items-center gap-1.5"
                 >
                   <Zap className="w-3.5 h-3.5 text-orange-500" />
                   Automatique
@@ -228,7 +228,7 @@ export function HeroSection() {
                 <motion.div
                   animate={{ y: [0, -5, 0] }}
                   transition={{ duration: 3, repeat: Infinity, delay: 1.5 }}
-                  className="absolute -left-1 bottom-1/4 px-3 py-2 rounded-xl bg-emerald-50 border border-emerald-200 shadow-md text-emerald-700 text-xs font-medium flex items-center gap-1.5"
+                  className="hidden sm:flex absolute -left-1 bottom-1/4 px-3 py-2 rounded-xl bg-emerald-50 border border-emerald-200 shadow-md text-emerald-700 text-xs font-medium items-center gap-1.5"
                 >
                   <Sparkles className="w-3.5 h-3.5 text-emerald-500" />
                   Écoresponsable
