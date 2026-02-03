@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
       messages: [
         {
           role: "system",
-          content: `Tu es un rédacteur expert en sécurité incendie pour Rekaire, une entreprise française.
+          content: `Tu es un rédacteur SEO expert en sécurité incendie pour Rekaire.
 
 PRODUIT RK01 :
 - Dispositif d'extinction automatique pour tableaux électriques
@@ -76,48 +76,45 @@ PRODUIT RK01 :
 - Durée de vie : 5 ans sans entretien
 - Installation en 30 secondes, sans outils
 - Fonctionne sans électricité ni batterie
-- Certifié et testé
 
-STYLE D'ÉCRITURE :
-- Professionnel mais accessible
-- Informatif avec des données concrètes
-- Structuré avec des sections claires
-- Engageant pour le lecteur`
+RÈGLES DE RÉDACTION :
+- Utilise UNIQUEMENT ## pour les titres (pas de ###)
+- Chaque section doit avoir 2-4 paragraphes
+- Utilise des listes à puces avec tirets -
+- Mets en **gras** les chiffres et mots importants
+- Sépare bien chaque paragraphe avec une ligne vide
+- Écris en français courant, pas de jargon`
         },
         {
           role: "user",
           content: `SUJET : ${topic}
 CATÉGORIE : ${category}
 
-Génère un article de blog complet et bien structuré. RÉPONDS UNIQUEMENT avec ce JSON valide :
+Écris un article de blog optimisé SEO. RÉPONDS UNIQUEMENT avec ce JSON :
 
 {
-  "title": "Titre accrocheur et informatif (50-70 caractères)",
-  "slug": "titre-en-minuscules-avec-tirets-sans-accents",
-  "excerpt": "Résumé captivant qui donne envie de lire (150-200 caractères)",
+  "title": "Titre accrocheur (50-65 caractères max)",
+  "slug": "titre-sans-accents-en-minuscules",
+  "excerpt": "Résumé captivant de 150-180 caractères qui donne envie de lire",
   "category": "${category}",
-  "tags": ["tag1", "tag2", "tag3", "tag4", "tag5"],
-  "content": "## Introduction\\n\\nAccroche qui capte l'attention avec une statistique ou question. Présentation du problème et de ce que l'article va couvrir.\\n\\n## Les chiffres clés\\n\\nStatistiques importantes avec **données en gras**. Utilise des listes :\\n\\n- Point important 1\\n- Point important 2\\n- Point important 3\\n\\n## Les causes principales\\n\\nExplication détaillée des causes avec exemples concrets.\\n\\n### Sous-section si nécessaire\\n\\nDétails supplémentaires.\\n\\n## Comment se protéger\\n\\nConseils pratiques et solutions.\\n\\n## Le RK01 : une solution automatique\\n\\nPrésentation naturelle du produit comme solution au problème évoqué. Avantages concrets.\\n\\n## Conclusion\\n\\nRésumé des points clés et appel à l'action subtil.",
-  "meta_title": "Titre SEO optimisé | Blog Rekaire",
-  "meta_description": "Description SEO de 150-160 caractères avec mots-clés principaux",
-  "keywords": ["mot-clé principal", "mot-clé secondaire", "mot-clé tertiaire"],
-  "read_time": 6
+  "tags": ["sécurité incendie", "protection électrique", "prévention", "RK01", "extincteur automatique"],
+  "content": "## Introduction\\n\\nParagraphe d'accroche avec une statistique choc. Présentation du sujet.\\n\\nDeuxième paragraphe qui explique l'importance du sujet.\\n\\n## Les chiffres clés en France\\n\\nEn France, **300 000 incendies domestiques** se déclarent chaque année. Parmi eux :\\n\\n- **25 à 30%** sont d'origine électrique\\n- **70%** des incendies mortels se déclarent la nuit\\n- Plus de **10 000 blessés** et **500 décès** par an\\n\\nCes statistiques montrent l'importance de la prévention.\\n\\n## Les causes principales des incendies électriques\\n\\nLes incendies d'origine électrique proviennent souvent de :\\n\\n- Tableaux électriques défectueux ou surchargés\\n- Prises multiples en surcharge\\n- Câbles endommagés ou vétustes\\n- Appareils défaillants laissés branchés\\n\\nUne installation non conforme multiplie les risques.\\n\\n## Comment se protéger efficacement\\n\\nLa prévention passe par plusieurs mesures :\\n\\n- Faire vérifier son installation par un professionnel\\n- Ne pas surcharger les prises électriques\\n- Installer des détecteurs de fumée\\n- Utiliser des dispositifs de protection automatique\\n\\nLa protection du tableau électrique est essentielle car c'est souvent le point de départ des incendies.\\n\\n## Le RK01 : une protection automatique 24h/24\\n\\nLe RK01 est un dispositif d'extinction automatique conçu pour les tableaux électriques. Ses avantages :\\n\\n- **Activation automatique** à 90°C sans intervention\\n- **Installation en 30 secondes** sans outils\\n- **Durée de vie de 5 ans** sans entretien\\n- Fonctionne **sans électricité ni batterie**\\n\\nÀ partir de **70€ HT**, c'est un investissement minime pour protéger votre famille et vos biens.\\n\\n## Conclusion\\n\\nLes incendies électriques représentent un danger réel mais évitable. En combinant bonnes pratiques et équipements de protection comme le RK01, vous réduisez considérablement les risques.",
+  "meta_title": "Titre SEO optimisé avec mot-clé | Rekaire",
+  "meta_description": "Description SEO de 155 caractères avec mots-clés principaux pour Google",
+  "keywords": ["incendie électrique", "protection tableau électrique", "extincteur automatique", "RK01", "sécurité incendie"],
+  "read_time": 5
 }
 
-RÈGLES IMPORTANTES :
-1. Article de 1000-1500 mots minimum
-2. Au moins 5 sections avec titres ## H2
-3. Utilise ### H3 pour les sous-sections si nécessaire
-4. **Gras** pour les données importantes et statistiques
-5. Listes à puces pour faciliter la lecture
-6. Mentionne le RK01 naturellement dans UNE section dédiée
-7. Ton professionnel mais accessible
-8. Slug en minuscules, sans accents, avec tirets
-9. Inclus des statistiques réelles sur les incendies en France`
+IMPORTANT : 
+- Article de 800-1000 mots
+- 5-6 sections avec titres ## uniquement
+- Chaque section = 2-4 paragraphes + liste si pertinent
+- Statistiques réelles sur les incendies en France
+- Mentionne le RK01 dans UNE SEULE section`
         }
       ],
       temperature: 0.7,
-      max_tokens: 3000,
+      max_tokens: 4000,
     });
 
     const responseText = completion.choices[0]?.message?.content || "";
