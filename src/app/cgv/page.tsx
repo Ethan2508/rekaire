@@ -1,219 +1,451 @@
 // ============================================
-// REKAIRE - Conditions Générales de Vente
+// REKAIRE - Conditions Générales de Vente (Consommateurs)
 // ============================================
 
 import { Header, Footer } from "@/components";
-import { siteConfig } from "@/config/site";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Conditions Générales de Vente",
-  description: "CGV du site Rekaire",
+  title: "Conditions Générales de Vente - Consommateurs",
+  description: "CGV applicables aux consommateurs et particuliers - Rekaire",
 };
 
 export default function CGVPage() {
   return (
-    <>
-      <Header />
-      <main className="pt-24 pb-16 min-h-screen bg-white">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8">
+    &lt;&gt;
+      &lt;Header /&gt;
+      &lt;main className="pt-24 pb-16 min-h-screen bg-white"&gt;
+        &lt;div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8"&gt;
+          &lt;h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2"&gt;
             Conditions Générales de Vente
-          </h1>
+          &lt;/h1&gt;
+          &lt;p className="text-lg text-orange-600 font-medium mb-8"&gt;
+            Applicables aux consommateurs et particuliers
+          &lt;/p&gt;
 
-          <div className="prose prose-gray max-w-none space-y-8">
-            <section>
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                Article 1 – Objet
-              </h2>
-              <p className="text-gray-600">
-                Les présentes Conditions Générales de Vente (CGV) régissent les
-                ventes de produits effectuées par {siteConfig.company.legalName}{" "}
-                via le site internet {siteConfig.url}. Toute commande implique
-                l&apos;acceptation sans réserve des présentes CGV.
-              </p>
-            </section>
+          &lt;div className="prose prose-gray max-w-none space-y-8 text-gray-600"&gt;
+            {/* Article 1 */}
+            &lt;section&gt;
+              &lt;h2 className="text-xl font-semibold text-gray-900 mb-4"&gt;
+                1. Champ d&apos;application
+              &lt;/h2&gt;
+              &lt;p&gt;
+                Les présentes conditions générales de vente («&nbsp;CGV&nbsp;») s&apos;appliquent sans restriction ni réserve à l&apos;ensemble des ventes conclues par la société NELIOR («&nbsp;Le Fournisseur&nbsp;») auprès de consommateurs et d&apos;acheteurs non professionnels («&nbsp;Les Acheteurs ou l&apos;Acheteur&nbsp;») désirant acquérir les produits suivants&nbsp;: Système autonome d&apos;extinction incendie + FT («&nbsp;les Produits&nbsp;») et les prestations de services associées («&nbsp;les Services&nbsp;»), via le site internet du Fournisseur (https://rekaire.com/), par contact direct ou via un support papier.
+              &lt;/p&gt;
+              &lt;p&gt;
+                Ces CGV sont systématiquement communiquées à tout Acheteur préalablement à la passation de commande et prévaudront, le cas échéant, sur toute autre version ou tout autre document contradictoire.
+              &lt;/p&gt;
+              &lt;p&gt;
+                La validation de la commande par l&apos;Acheteur vaut acceptation sans restriction ni réserve des présentes CGV.
+              &lt;/p&gt;
+              &lt;p&gt;
+                L&apos;Acheteur reconnaît avoir la capacité requise pour contracter et acquérir les Produits et Services proposés sur le site internet https://rekaire.com/.
+              &lt;/p&gt;
+              &lt;p&gt;
+                Les renseignements figurant sur les catalogues, prospectus et tarifs du Fournisseur sont donnés à titre indicatif et sont révisables à tout moment. Le Fournisseur est en droit d&apos;y apporter toutes modifications qui lui paraîtront utiles.
+              &lt;/p&gt;
+              &lt;p&gt;
+                Conformément à la réglementation en vigueur, le Fournisseur se réserve le droit de déroger à certaines clauses des présentes CGV, en fonction des négociations menées avec l&apos;Acheteur, par l&apos;établissement de Conditions Particulières de Vente.
+              &lt;/p&gt;
+            &lt;/section&gt;
 
-            <section>
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                Article 2 – Produits
-              </h2>
-              <p className="text-gray-600 mb-4">
-                Les produits proposés à la vente sont ceux qui figurent sur le
-                site, dans la limite des stocks disponibles. Les photographies
-                illustrant les produits n&apos;entrent pas dans le champ
-                contractuel.
-              </p>
-              <p className="text-gray-600">
-                {siteConfig.company.name} se réserve le droit de modifier
-                l&apos;assortiment de produits à tout moment.
-              </p>
-            </section>
+            {/* Article 2 */}
+            &lt;section&gt;
+              &lt;h2 className="text-xl font-semibold text-gray-900 mb-4"&gt;
+                2. Produits et Services
+              &lt;/h2&gt;
+              &lt;p&gt;
+                Les caractéristiques principales des Produits et Services, regroupant l&apos;ensemble des informations substantielles requises par la réglementation applicable et notamment les spécifications, illustrations et indications de dimensions ou de capacité des Produits, sont présentées sur le site internet (https://rekaire.com/), dans les fiches produits et le catalogue du Fournisseur.
+              &lt;/p&gt;
+              &lt;p&gt;
+                L&apos;Acheteur est tenu d&apos;en prendre connaissance avant toute passation de commande.
+              &lt;/p&gt;
+              &lt;p&gt;
+                Le choix et l&apos;achat d&apos;un Produit ou d&apos;un Service sont de la seule responsabilité de l&apos;Acheteur.
+              &lt;/p&gt;
+              &lt;p&gt;
+                Les photographies et graphismes présentés sur le site internet https://rekaire.com/ ne sont pas contractuels et ne sauraient engager la responsabilité du Fournisseur.
+              &lt;/p&gt;
+            &lt;/section&gt;
 
-            <section>
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                Article 3 – Prix
-              </h2>
-              <p className="text-gray-600 mb-4">
-                Les prix sont indiqués en euros, toutes taxes comprises (TTC).
-                La TVA applicable est celle en vigueur au jour de la commande.
-              </p>
-              <p className="text-gray-600">
-                {siteConfig.company.name} se réserve le droit de modifier ses
-                prix à tout moment, étant entendu que le prix figurant au
-                catalogue le jour de la commande sera le seul applicable.
-              </p>
-            </section>
+            {/* Article 3 */}
+            &lt;section&gt;
+              &lt;h2 className="text-xl font-semibold text-gray-900 mb-4"&gt;
+                3. Commandes - Tarifs
+              &lt;/h2&gt;
+              &lt;p&gt;
+                &lt;strong&gt;3.1&lt;/strong&gt; Les ventes ne sont parfaites qu&apos;après acceptation expresse et par écrit de la commande de l&apos;Acheteur, par le Fournisseur, qui s&apos;assurera notamment, de la disponibilité des Produits et Services demandés, matérialisée par l&apos;envoi d&apos;un devis, valable 30 jours. La commande ne deviendra ferme et définitive qu&apos;après le retour par l&apos;Acheteur du devis daté, signé et revêtu de la mention «&nbsp;bon pour accord&nbsp;», accompagné du versement de l&apos;acompte ou du prix total selon ce qui a été convenu.
+              &lt;/p&gt;
+              &lt;p&gt;
+                Le Fournisseur dispose également de moyens de commande électroniques via le site suivant&nbsp;: https://rekaire.com/
+              &lt;/p&gt;
+              &lt;p&gt;
+                Pour les commandes passées exclusivement sur internet, l&apos;enregistrement d&apos;une commande sur le site du Fournisseur est réalisé lorsque l&apos;Acheteur accepte les présentes CGV en cochant la case prévue à cet effet, valide sa commande et en règle le prix. L&apos;Acheteur a la possibilité de vérifier le détail de sa commande, son prix total et de corriger d&apos;éventuelles erreurs avant de confirmer son acceptation (article 1127-2 du Code Civil). Cette validation implique l&apos;acceptation de l&apos;intégralité des présentes CGV et constituent une preuve du contrat de vente. La prise en compte de la commande et l&apos;acceptation de celle-ci sont confirmées par l&apos;envoi d&apos;un mail.
+              &lt;/p&gt;
+              &lt;p&gt;
+                &lt;strong&gt;3.2&lt;/strong&gt; En cas d&apos;annulation de la commande par l&apos;Acheteur après son acceptation par le Fournisseur moins de 20 jours au moins avant la date prévue pour la fourniture des Produits et Services commandés, pour quelque raison que ce soit hormis la force majeure et l&apos;exercice du droit de rétractation, l&apos;acompte ou le prix versé à la commande sera de plein droit acquis au Fournisseur et ne pourra donner lieu à un quelconque remboursement.
+              &lt;/p&gt;
+              &lt;p&gt;
+                &lt;strong&gt;3.3&lt;/strong&gt; Les Produits et Services sont fournis aux tarifs du Fournisseur en vigueur au jour de la passation de la commande, et, le cas échéant, dans la proposition commerciale spécifique adressée à l&apos;Acquéreur. Ces tarifs sont fermes et non révisables pendant leur période de validité, telle qu&apos;indiquée par le Fournisseur.
+              &lt;/p&gt;
+              &lt;p&gt;
+                Ces prix sont nets et TTC, départ usine et emballage en sus. Ils ne comprennent pas le transport, ni les frais de douane éventuels et les assurances qui restent à la charge de l&apos;Acheteur et seront calculés préalablement à la passation de la commande.
+              &lt;/p&gt;
+              &lt;p&gt;
+                Des conditions tarifaires particulières peuvent être pratiquées en fonction des spécificités demandées par l&apos;Acheteur concernant, notamment, les modalités et délais de livraison ou les délais et conditions de règlement. Une offre commerciale particulière sera alors adressée à l&apos;Acheteur par le Fournisseur.
+              &lt;/p&gt;
+              &lt;p&gt;
+                &lt;strong&gt;3.4&lt;/strong&gt; En cas de commande vers un pays autre que la France métropolitaine, l&apos;Acheteur est l&apos;importateur du ou des Produits concernés. Pour tous les Produits expédiés hors Union européenne et DOM-TOM, le prix sera calculé hors taxes automatiquement sur la facture. Des droits de douane ou autres taxes locales ou droits d&apos;importation ou taxes d&apos;état sont susceptibles d&apos;être exigibles. Ils seront à la charge et relèvent de la seule responsabilité de l&apos;Acheteur.
+              &lt;/p&gt;
+            &lt;/section&gt;
 
-            <section>
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                Article 4 – Commande
-              </h2>
-              <p className="text-gray-600 mb-4">
-                Le client passe commande sur le site internet. La validation de
-                la commande implique l&apos;acceptation des présentes CGV et
-                constitue un contrat de vente.
-              </p>
-              <p className="text-gray-600">
-                Une confirmation de commande est envoyée par email à
-                l&apos;adresse fournie par le client.
-              </p>
-            </section>
+            {/* Article 4 */}
+            &lt;section&gt;
+              &lt;h2 className="text-xl font-semibold text-gray-900 mb-4"&gt;
+                4. Conditions de paiement
+              &lt;/h2&gt;
+              &lt;p&gt;
+                Pour les commandes par contact direct, un acompte minimum correspondant à 50&nbsp;% du prix total d&apos;acquisition des Produits et Services est exigé lors de la passation de la commande. Cet acompte ne pourra en aucun cas être qualifié d&apos;arrhes. Le solde du prix est payable au comptant, au jour de la livraison et de l&apos;installation, dans les conditions définies à l&apos;article «&nbsp;Livraisons&nbsp;» ci-après. Toute somme versée d&apos;avance sur le prix, arrhes ou acompte, est productive d&apos;intérêt au taux légal à l&apos;expiration d&apos;un délai de trois mois à compter du versement et jusqu&apos;à la date de livraison (article L 214-2 du Code de la consommation).
+              &lt;/p&gt;
+              &lt;p&gt;
+                Pour les commandes sur internet, le prix est intégralement payable à la commande sur le site https://rekaire.com/, par voie de paiement sécurisé.
+              &lt;/p&gt;
+              &lt;p&gt;
+                Le Fournisseur ne sera pas tenu de procéder à la livraison des Produits et Services commandés par l&apos;Acheteur si celui-ci ne lui en paye pas le prix dans les conditions et selon les modalités ci-dessus indiquées.
+              &lt;/p&gt;
+              &lt;p&gt;
+                Les modes de paiement suivants peuvent être utilisés&nbsp;: cartes bancaires ou chèque bancaire.
+              &lt;/p&gt;
+              &lt;p&gt;
+                En cas de paiement par chèque bancaire, celui-ci doit être émis par une banque domiciliée en France métropolitaine ou à Monaco. La mise à l&apos;encaissement du chèque est réalisée immédiatement.
+              &lt;/p&gt;
+              &lt;p&gt;
+                Les paiements effectués par l&apos;Acheteur ne seront considérés comme définitifs qu&apos;après encaissement effectif des sommes dues, par le Fournisseur.
+              &lt;/p&gt;
+              &lt;p&gt;
+                En cas de retard de paiement et de versement des sommes dues par l&apos;Acheteur au-delà du délai ci-dessus fixé, et après la date de paiement figurant sur la facture adressée à celui-ci, des pénalités de retard calculées au taux de 12&nbsp;% du montant TTC du prix figurant sur ladite facture, seront automatiquement et de plein droit acquises au Fournisseur, sans formalité aucune ni mise en demeure préalable.
+              &lt;/p&gt;
+              &lt;p&gt;
+                En cas de non-respect des conditions de paiement figurant ci-dessus, le Fournisseur se réserve en outre le droit de suspendre ou d&apos;annuler la livraison des commandes en cours de la part de l&apos;Acheteur.
+              &lt;/p&gt;
+              &lt;p&gt;
+                Enfin, une indemnité forfaitaire pour frais de recouvrement, d&apos;un montant de 40 euros sera due, de plein droit et sans notification préalable par l&apos;Acheteur en cas de retard de paiement. Le Fournisseur se réserve le droit de demander à l&apos;Acheteur une indemnisation complémentaire si les frais de recouvrement effectivement engagés dépassaient ce montant, sur présentation des justificatifs.
+              &lt;/p&gt;
+              &lt;p&gt;
+                Le Fournisseur se réserve, jusqu&apos;au complet paiement du prix par l&apos;Acheteur, un droit de propriété sur les Produits vendus, lui permettant de reprendre possession desdits Produits. Tout acompte versé par l&apos;Acheteur restera acquis au Fournisseur à titre d&apos;indemnisation forfaitaire, sans préjudice de toutes autres actions qu&apos;il serait en droit d&apos;intenter de ce fait à l&apos;encontre de l&apos;Acheteur.
+              &lt;/p&gt;
+              &lt;p&gt;
+                En revanche, le risque de perte et de détérioration sera transféré à l&apos;Acheteur dès la livraison des Produits commandés.
+              &lt;/p&gt;
+              &lt;p&gt;
+                L&apos;Acheteur s&apos;oblige, en conséquence, à faire assurer, à ses frais, les Produits commandés, au profit du Fournisseur, par une assurance ad hoc, jusqu&apos;au complet transfert de propriété et à en justifier à ce dernier lors de la livraison. A défaut, le Fournisseur serait en droit de retarder la livraison jusqu&apos;à la présentation de ce justificatif.
+              &lt;/p&gt;
+              &lt;p&gt;
+                Aucun escompte ne sera pratiqué par le Fournisseur pour paiement avant la date figurant sur la facture ou dans un délai inférieur à celui mentionné aux présentes CGV.
+              &lt;/p&gt;
+            &lt;/section&gt;
 
-            <section>
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                Article 5 – Paiement
-              </h2>
-              <p className="text-gray-600 mb-4">
-                Le paiement s&apos;effectue en ligne par carte bancaire (Visa,
-                Mastercard), Apple Pay ou Google Pay, via la plateforme
-                sécurisée Stripe.
-              </p>
-              <p className="text-gray-600">
-                La commande est validée après confirmation du paiement. Les
-                données bancaires sont transmises de manière chiffrée et ne sont
-                jamais stockées par {siteConfig.company.name}.
-              </p>
-            </section>
+            {/* Article 5 */}
+            &lt;section&gt;
+              &lt;h2 className="text-xl font-semibold text-gray-900 mb-4"&gt;
+                5. Livraisons
+              &lt;/h2&gt;
+              &lt;p&gt;
+                La délivrance des Produits s&apos;entend du transfert à l&apos;Acheteur de la possession physique ou du contrôle des Produits commandés.
+              &lt;/p&gt;
+              &lt;p&gt;
+                Conformément aux dispositions de l&apos;article L. 216-4 du Code de la consommation, la délivrance des Produits s&apos;accompagne de la remise de la notice d&apos;emploi, des instructions d&apos;installation et d&apos;un écrit mentionnant la possibilité de formuler des réserves.
+              &lt;/p&gt;
+              &lt;p&gt;
+                Les Produits et Services commandés par l&apos;Acheteur seront livrés ou fournis en France métropolitaine dans un délai maximum de 30 jours à compter de la réception par le Fournisseur du devis correspondant dûment signé et accompagné du montant de l&apos;acompte exigible à cette date, ou de la commande passée sur internet.
+              &lt;/p&gt;
+              &lt;p&gt;
+                Ce délai ne constitue pas un délai de rigueur et le Fournisseur ne pourra voir sa responsabilité engagée à l&apos;égard de l&apos;Acheteur en cas de retard de livraison n&apos;excédant pas 60 jours.
+              &lt;/p&gt;
+              &lt;p&gt;
+                En cas de retard supérieur à 60 jours, pour toute autre cause que la force majeure ou le fait de l&apos;Acheteur, l&apos;Acheteur pourra notifier au Fournisseur, dans les conditions prévues à l&apos;article L. 216-6 du Code de la consommation&nbsp;:
+              &lt;/p&gt;
+              &lt;ul className="list-disc pl-6 space-y-2"&gt;
+                &lt;li&gt;soit la suspension du paiement de tout ou partie du prix jusqu&apos;à ce que le Fournisseur s&apos;exécute, dans les conditions prévues aux articles 1219 et 1220 Code civil (exception d&apos;inexécution),&lt;/li&gt;
+                &lt;li&gt;soit la résolution de la vente, après avoir mis le Fournisseur en demeure de s&apos;exécuter dans un délai supplémentaire raisonnable, non respecté par le Fournisseur.&lt;/li&gt;
+              &lt;/ul&gt;
+              &lt;p&gt;
+                La résolution peut être immédiate si le Fournisseur refuse de s&apos;exécuter ou s&apos;il est manifeste qu&apos;il ne pourra pas délivrer les Produits ou fournir les Services ou si le délai de délivrance non respecté constituait, pour l&apos;Acheteur, une condition essentielle de la vente.
+              &lt;/p&gt;
+              &lt;p&gt;
+                En cas de résolution de la vente, les sommes versées par l&apos;Acheteur lui seront alors restituées au plus tard dans les quatorze jours qui suivent la date de dénonciation du contrat, à l&apos;exclusion de toute indemnisation ou retenue.
+              &lt;/p&gt;
+              &lt;p&gt;
+                Le Fournisseur prend à sa charge les risques du transport et est tenu de rembourser l&apos;Acheteur en cas de dommages causés pendant le transport.
+              &lt;/p&gt;
+              &lt;p&gt;
+                Les livraisons sont assurées par un transporteur indépendant, à l&apos;adresse mentionnée par l&apos;Acheteur lors de la commande et à laquelle le transporteur pourra facilement accéder.
+              &lt;/p&gt;
+              &lt;p&gt;
+                En cas de demande particulière de l&apos;Acheteur concernant les conditions d&apos;emballage ou de transport des Produits commandés, dûment acceptées par écrit par le Fournisseur, les coûts y liés feront l&apos;objet d&apos;une facturation spécifique complémentaire, sur acceptation préalable de l&apos;Acheteur.
+              &lt;/p&gt;
+              &lt;p&gt;
+                L&apos;Acheteur est tenu de vérifier l&apos;état des Produits délivrés. Il dispose d&apos;un délai de 3 jours à compter de la délivrance pour formuler par écrit (courrier postal, courrier électronique) toutes réserves ou réclamations pour non-conformité, défaut ou vice apparent des Produits délivrés (par exemple colis endommagé, déjà ouvert, etc.), comme en cas de défaut de remise de la notice d&apos;emploi ou des instructions d&apos;installation, avec tous les justificatifs y afférents (photographies notamment). Passé ce délai et à défaut d&apos;avoir respecté ces formalités, les Produits seront réputés conformes et exempts de tout vice apparent.
+              &lt;/p&gt;
+              &lt;p&gt;
+                Il est rappelé que l&apos;absence de réserves formulées par l&apos;Acheteur lors de la délivrance des Produits n&apos;exonère pas le Fournisseur de la garantie de conformité, telle que décrite ci-dessous.
+              &lt;/p&gt;
+              &lt;p&gt;
+                Les Services seront fournis à l&apos;adresse communiquée par l&apos;Acheteur au moment de la commande.
+              &lt;/p&gt;
+              &lt;p&gt;
+                Une fois les Services fournis, l&apos;Acheteur devra signer un procès-verbal de réception qui devra relever ses éventuelles réserves et réclamations&nbsp;; à défaut, les Services seront réputés conformes à la commande, en quantité et qualité.
+              &lt;/p&gt;
+            &lt;/section&gt;
 
-            <section>
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                Article 6 – Livraison
-              </h2>
-              <p className="text-gray-600 mb-4">
-                Les produits sont livrés en France métropolitaine uniquement. Le
-                délai de livraison est de 24 à 48 heures ouvrées après
-                validation du paiement.
-              </p>
-              <p className="text-gray-600 mb-4">
-                Les frais de livraison sont indiqués avant la validation de la
-                commande.
-              </p>
-              <p className="text-gray-600">
-                En cas de retard de livraison supérieur à 7 jours, le client
-                peut annuler sa commande et obtenir un remboursement intégral.
-              </p>
-            </section>
+            {/* Article 6 */}
+            &lt;section&gt;
+              &lt;h2 className="text-xl font-semibold text-gray-900 mb-4"&gt;
+                6. Transfert de propriété - Transfert des risques
+              &lt;/h2&gt;
+              &lt;p&gt;
+                &lt;strong&gt;6.1&lt;/strong&gt; Le transfert de propriété des Produits, au profit de l&apos;Acheteur, ne sera réalisé qu&apos;après complet paiement du prix par ce dernier, et ce quelle que soit la date de livraison desdits Produits.
+              &lt;/p&gt;
+              &lt;p&gt;
+                &lt;strong&gt;6.2&lt;/strong&gt; Quelle que soit la date du transfert de propriété des Produits, le transfert des risques de perte et de détérioration s&apos;y rapportant, ne sera réalisé qu&apos;au moment où l&apos;Acheteur prendra physiquement possession des Produits qui voyagent donc aux risques et périls du Fournisseur, sauf lorsque l&apos;Acheteur fait appel à un transporteur qu&apos;il a lui-même choisi, indépendant du Fournisseur, auquel cas le transfert des risques est effectué au moment de la remise des Produits commandés par le Fournisseur au transporteur choisi par l&apos;Acheteur.
+              &lt;/p&gt;
+            &lt;/section&gt;
 
-            <section>
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                Article 7 – Droit de rétractation
-              </h2>
-              <p className="text-gray-600 mb-4">
-                Conformément à l&apos;article L.221-18 du Code de la consommation,
-                le client dispose d&apos;un délai de 14 jours à compter de la
-                réception du produit pour exercer son droit de rétractation,
-                sans avoir à justifier de motif.
-              </p>
-              <p className="text-gray-600 mb-4">
-                Pour exercer ce droit, le client doit notifier sa décision par
-                email à {siteConfig.contact.email}.
-              </p>
-              <p className="text-gray-600">
-                Le produit doit être retourné dans son emballage d&apos;origine,
-                non utilisé et en parfait état. Les frais de retour sont à la
-                charge du client.
-              </p>
-            </section>
+            {/* Article 7 */}
+            &lt;section&gt;
+              &lt;h2 className="text-xl font-semibold text-gray-900 mb-4"&gt;
+                7. Droit de rétractation
+              &lt;/h2&gt;
+              &lt;p&gt;
+                Conformément aux dispositions légales en vigueur, en cas uniquement de vente à distance, l&apos;Acheteur dispose d&apos;un délai de quatorze jours à compter de la réception des Produits pour exercer son droit de rétractation auprès du Fournisseur, sans avoir à justifier de motifs ni à payer de pénalité, à fin d&apos;échange ou de remboursement, à condition que les Produits soient retournés dans leur emballage d&apos;origine et en parfait état dans les quatorze jours suivant la notification au Fournisseur de la décision de rétractation de l&apos;Acheteur.
+              &lt;/p&gt;
+              &lt;p&gt;
+                Les retours sont à effectuer dans leur état d&apos;origine et complets (emballage, accessoires, notice, etc.) permettant leur remise sur le marché à l&apos;état neuf, accompagnés de la facture d&apos;achat.
+              &lt;/p&gt;
+              &lt;p&gt;
+                Les Produits endommagés, salis ou incomplets ne sont pas repris.
+              &lt;/p&gt;
+              &lt;p&gt;
+                Le droit de rétractation peut être exercé en ligne, par déclaration dénuée d&apos;ambiguïté, exprimant la volonté de se rétracter, à l&apos;adresse suivante&nbsp;: &lt;a href="mailto:noam.kalfa@nelior.fr" className="text-orange-600 hover:underline"&gt;noam.kalfa@nelior.fr&lt;/a&gt;
+              &lt;/p&gt;
+              &lt;p&gt;
+                En cas d&apos;exercice du droit de rétractation dans le délai susvisé, seul le prix du ou des Produits achetés et les frais de livraison sont remboursés&nbsp;; les frais de retour restent à la charge de l&apos;Acheteur.
+              &lt;/p&gt;
+              &lt;p&gt;
+                Le remboursement sera effectué dans un délai de quatorze jours à compter de la notification au Fournisseur de la décision de rétractation.
+              &lt;/p&gt;
+            &lt;/section&gt;
 
-            <section>
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                Article 8 – Garantie
-              </h2>
-              <p className="text-gray-600 mb-4">
-                Les produits vendus bénéficient de la garantie légale de
-                conformité (articles L.217-4 et suivants du Code de la
-                consommation) et de la garantie des vices cachés (articles 1641
-                et suivants du Code civil).
-              </p>
-              <p className="text-gray-600">
-                Pour toute réclamation, contactez-nous à{" "}
-                <a
-                  href={`mailto:${siteConfig.contact.email}`}
-                  className="text-orange-500 hover:text-orange-600"
-                >
-                  {siteConfig.contact.email}
-                </a>
-                .
-              </p>
-            </section>
+            {/* Article 8 */}
+            &lt;section&gt;
+              &lt;h2 className="text-xl font-semibold text-gray-900 mb-4"&gt;
+                8. Responsabilité du Fournisseur - Garantie
+              &lt;/h2&gt;
+              &lt;p&gt;
+                Les Produits et Services vendus sont conformes à la réglementation en vigueur en France et ont des performances compatibles avec des usages non professionnels.
+              &lt;/p&gt;
+              &lt;p&gt;
+                Les Produits et Services fournis bénéficient de plein droit et sans paiement complémentaire, indépendamment du droit de rétractation, conformément aux dispositions légales&nbsp;:
+              &lt;/p&gt;
+              &lt;ul className="list-disc pl-6 space-y-2"&gt;
+                &lt;li&gt;de la garantie légale de conformité, pour les Produits et Services apparemment défectueux, abîmés ou endommagés ou ne correspondant pas à la commande,&lt;/li&gt;
+                &lt;li&gt;de la garantie légale contre les vices cachés provenant d&apos;un défaut de matière, de conception ou de fabrication affectant les Produits et Services livrés et les rendant impropres à l&apos;utilisation.&lt;/li&gt;
+              &lt;/ul&gt;
 
-            <section>
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                Article 9 – Responsabilité
-              </h2>
-              <p className="text-gray-600">
-                {siteConfig.company.name} ne saurait être tenue responsable de
-                l&apos;inexécution du contrat en cas de force majeure, de
-                perturbation ou grève des services postaux et transports, ou en
-                cas de fait imprévisible et insurmontable d&apos;un tiers.
-              </p>
-            </section>
+              &lt;h3 className="text-lg font-semibold text-gray-900 mt-6 mb-3"&gt;
+                8.1 Garantie légale de conformité
+              &lt;/h3&gt;
+              &lt;p&gt;
+                Le Fournisseur s&apos;engage à délivrer un Produit et à fournir un Service conformes à la description contractuelle ainsi qu&apos;aux critères énoncés à l&apos;article L. 217-5 du Code de la consommation.
+              &lt;/p&gt;
+              &lt;p&gt;
+                Il répond des défauts de conformité existant au moment de la délivrance des Produits et Services et qui apparaissent dans un délai de deux ans à compter de celle-ci.
+              &lt;/p&gt;
+              &lt;p&gt;
+                Ce délai de garantie s&apos;applique sans préjudice des articles 2224 et suivants du Code civil, la prescription commençant à courir au jour de la connaissance du défaut de conformité par l&apos;Acheteur.
+              &lt;/p&gt;
+              &lt;p&gt;
+                Les défauts de conformité qui apparaissent dans un délai de vingt-quatre mois ou de douze mois s&apos;il s&apos;agit d&apos;un bien d&apos;occasion à compter de la délivrance des Produits, sont, sauf preuve contraire, présumés exister au moment de la délivrance.
+              &lt;/p&gt;
+              &lt;p&gt;
+                En cas de défaut de conformité, l&apos;Acheteur peut exiger la mise en conformité des Produits et Services délivrés par réparation ou leur remplacement ou, à défaut, une réduction du prix ou la résolution de la vente, dans les conditions légales.
+              &lt;/p&gt;
+              &lt;p&gt;
+                Il peut également suspendre le paiement de tout ou partie du prix prévu au contrat jusqu&apos;à ce que le Fournisseur ait satisfait aux obligations qui lui incombent au titre de la garantie légale de conformité, dans les conditions des articles 1219 et 1220 du Code civil.
+              &lt;/p&gt;
+              &lt;p&gt;
+                Il appartient à l&apos;Acheteur de solliciter auprès du Fournisseur la mise en conformité des Produits et Services, en choisissant entre la réparation et le remplacement. La mise en conformité du bien a lieu dans un délai ne pouvant excéder trente jours suivant la demande de l&apos;Acheteur.
+              &lt;/p&gt;
+              &lt;p&gt;
+                La réparation ou le remplacement du Produit ou Service non conforme inclut, s&apos;il y a lieu, l&apos;enlèvement et la reprise de celui-ci ainsi que l&apos;installation du Produit mis en conformité ou remplacé.
+              &lt;/p&gt;
+              &lt;p&gt;
+                Tout Produit mis en conformité dans le cadre de la garantie légale de conformité bénéficie d&apos;une extension de cette garantie de six mois.
+              &lt;/p&gt;
+              &lt;p&gt;
+                En cas de remplacement du Produit ou Service non conforme lorsque, malgré le choix de l&apos;Acheteur, la mise en conformité n&apos;a pas été effectuée par le Fournisseur, le remplacement fait courir, au profit de l&apos;Acheteur, un nouveau délai de garantie légale de conformité, à compter de la délivrance du Produit ou Service remplacé.
+              &lt;/p&gt;
+              &lt;p&gt;
+                Si la mise en conformité sollicitée est impossible ou entraîne des coûts disproportionnés dans les conditions prévues à l&apos;article L. 217-12 du Code de la consommation, le Fournisseur peut refuser celle-ci. Si les conditions prévues à l&apos;article L. 217-12 du Code de la consommation ne sont pas remplies, l&apos;Acheteur peut, après mise en demeure, poursuivre l&apos;exécution forcée en nature de la solution initialement sollicitée, conformément aux articles 1221 et suivants du Code civil.
+              &lt;/p&gt;
+              &lt;p&gt;
+                L&apos;Acheteur peut enfin exiger une réduction de prix ou la résolution de la vente (sauf si le défaut de conformité est mineur) dans les cas prévus à l&apos;article L. 217-14 du Code de la consommation.
+              &lt;/p&gt;
+              &lt;p&gt;
+                Lorsque le défaut de conformité est si grave qu&apos;il justifie que la réduction du prix ou la résolution immédiate de la vente, l&apos;Acheteur n&apos;est alors pas tenu de demander au préalable la réparation ou le remplacement du Produit ou Service non conforme.
+              &lt;/p&gt;
+              &lt;p&gt;
+                La réduction du prix est proportionnelle à la différence entre la valeur du Produit ou Service délivré et la valeur de ces derniers en l&apos;absence du défaut de conformité.
+              &lt;/p&gt;
+              &lt;p&gt;
+                En cas de résolution de la vente, l&apos;Acheteur est remboursé du prix payé contre restitution des Produits non conformes au Fournisseur, aux frais de ce dernier.
+              &lt;/p&gt;
+              &lt;p&gt;
+                Le remboursement est effectué dès réception du Produit non conforme ou de la preuve de son renvoi par l&apos;Acheteur et au plus tard dans les quatorze jours suivants, avec le même moyen de paiement que celui utilisé par l&apos;Acheteur lors du paiement, sauf accord exprès de ce dernier et en tout état de cause sans frais supplémentaire.
+              &lt;/p&gt;
+              &lt;p&gt;
+                Les dispositions qui précèdent sont sans préjudice de l&apos;allocation éventuelle de dommages et intérêts à l&apos;Acheteur, à raison du préjudice subi par ce dernier du fait du défaut de conformité.
+              &lt;/p&gt;
 
-            <section>
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                Article 10 – Données personnelles
-              </h2>
-              <p className="text-gray-600">
-                Les données collectées lors de la commande sont nécessaires au
-                traitement de celle-ci. Elles sont traitées conformément à notre{" "}
-                <a
-                  href="/confidentialite"
-                  className="text-orange-500 hover:text-orange-600"
-                >
-                  Politique de confidentialité
-                </a>
-                .
-              </p>
-            </section>
+              &lt;h3 className="text-lg font-semibold text-gray-900 mt-6 mb-3"&gt;
+                8.2 Garantie légale contre les vices cachés
+              &lt;/h3&gt;
+              &lt;p&gt;
+                Le Fournisseur répond des vices cachés dans le cadre de la garantie légale contre les vices cachés provenant d&apos;un défaut de matière, de conception ou de fabrication affectant les Produits ou Services délivrés et les rendant impropres à l&apos;utilisation.
+              &lt;/p&gt;
+              &lt;p&gt;
+                L&apos;Acheteur peut décider de mettre en œuvre la garantie contre les défauts cachés des Produits ou Services conformément à l&apos;article 1641 du code Civil&nbsp;; dans ce cas, il peut choisir entre la résolution de la vente ou une réduction du prix de vente conformément à l&apos;article 1644 du Code civil.
+              &lt;/p&gt;
 
-            <section>
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                Article 11 – Litiges
-              </h2>
-              <p className="text-gray-600 mb-4">
-                Les présentes CGV sont soumises au droit français. En cas de
-                litige, une solution amiable sera recherchée avant toute action
-                judiciaire.
-              </p>
-              <p className="text-gray-400 mb-4">
-                Conformément aux articles L.616-1 et R.616-1 du Code de la
-                consommation, le client peut recourir gratuitement au service de
-                médiation de la consommation.
-              </p>
-              <p className="text-gray-600">
-                À défaut de résolution amiable, le litige sera porté devant les
-                tribunaux compétents.
-              </p>
-            </section>
-          </div>
+              &lt;h3 className="text-lg font-semibold text-gray-900 mt-6 mb-3"&gt;
+                8.3 Exclusions de garantie
+              &lt;/h3&gt;
+              &lt;p&gt;
+                La responsabilité du Fournisseur ne saurait être engagée dans les cas suivants&nbsp;:
+              &lt;/p&gt;
+              &lt;ul className="list-disc pl-6 space-y-2"&gt;
+                &lt;li&gt;en cas de non-respect de la législation du pays dans lequel les Produits ou Services sont délivrés, qu&apos;il appartient à l&apos;Acheteur de vérifier avant passation de sa commande,&lt;/li&gt;
+                &lt;li&gt;en cas de mauvaise utilisation, d&apos;utilisation à des fins professionnelles, négligence ou défaut d&apos;entretien de la part de l&apos;Acheteur, comme en cas d&apos;usure normale du Produit ou des Services, d&apos;accident ou de force majeure.&lt;/li&gt;
+              &lt;/ul&gt;
 
-          <p className="mt-12 text-sm text-gray-600">
-            Dernière mise à jour : Janvier 2026
-          </p>
-        </div>
-      </main>
-      <Footer />
-    </>
+              &lt;div className="bg-gray-50 p-4 rounded-lg mt-6"&gt;
+                &lt;p className="text-sm"&gt;
+                  &lt;strong&gt;Rappel légal&nbsp;:&lt;/strong&gt; Le consommateur dispose d&apos;un délai de deux ans à compter de la délivrance du bien pour obtenir la mise en œuvre de la garantie légale de conformité en cas d&apos;apparition d&apos;un défaut de conformité. Durant ce délai, le consommateur n&apos;est tenu d&apos;établir que l&apos;existence du défaut de conformité et non la date d&apos;apparition de celui-ci.
+                &lt;/p&gt;
+                &lt;p className="text-sm mt-2"&gt;
+                  La garantie légale de conformité emporte obligation pour le professionnel, le cas échéant, de fournir toutes les mises à jour nécessaires au maintien de la conformité du bien.
+                &lt;/p&gt;
+                &lt;p className="text-sm mt-2"&gt;
+                  La garantie légale de conformité donne au consommateur droit à la réparation ou au remplacement du bien dans un délai de trente jours suivant sa demande, sans frais et sans inconvénient majeur pour lui.
+                &lt;/p&gt;
+                &lt;p className="text-sm mt-2"&gt;
+                  Si le bien est réparé dans le cadre de la garantie légale de conformité, le consommateur bénéficie d&apos;une extension de six mois de la garantie initiale.
+                &lt;/p&gt;
+                &lt;p className="text-sm mt-2"&gt;
+                  Si le consommateur demande la réparation du bien, mais que le vendeur impose le remplacement, la garantie légale de conformité est renouvelée pour une période de deux ans à compter de la date de remplacement du bien.
+                &lt;/p&gt;
+                &lt;p className="text-sm mt-2"&gt;
+                  Le consommateur bénéficie également de la garantie légale des vices cachés en application des articles 1641 à 1649 du Code civil, pendant une durée de deux ans à compter de la découverte du défaut. Cette garantie donne droit à une réduction de prix si le bien est conservé ou à un remboursement intégral contre restitution du bien.
+                &lt;/p&gt;
+              &lt;/div&gt;
+
+              &lt;h3 className="text-lg font-semibold text-gray-900 mt-6 mb-3"&gt;
+                8.4 Installation
+              &lt;/h3&gt;
+              &lt;p&gt;
+                Le Fournisseur déclare et l&apos;Acheteur reconnaît que lors de l&apos;installation des Produits, l&apos;intervention se limite exclusivement à la pose des Produits à l&apos;intérieur du tableau électrique, sans modification ou manipulation du câblage, des disjoncteurs ou de tout autre élément électrique. En conséquence, le Fournisseur décline toute responsabilité en cas de dysfonctionnement, panne ou incident liés à l&apos;installation électrique ou à son câblage, ceux-ci demeurant sous l&apos;entière responsabilité de l&apos;Acheteur ou de l&apos;installateur initial.
+              &lt;/p&gt;
+            &lt;/section&gt;
+
+            {/* Article 9 */}
+            &lt;section&gt;
+              &lt;h2 className="text-xl font-semibold text-gray-900 mb-4"&gt;
+                9. Propriété intellectuelle
+              &lt;/h2&gt;
+              &lt;p&gt;
+                Le Fournisseur conserve l&apos;ensemble des droits de propriété industrielle et intellectuelle afférents aux Produits, photos, documentations techniques et autres contenus de son site internet, qui ne peuvent être communiqués ni exécutés sans son autorisation écrite. Toute reproduction totale ou partielle de ce contenu est strictement interdite et est susceptible de constituer un délit de contrefaçon.
+              &lt;/p&gt;
+            &lt;/section&gt;
+
+            {/* Article 10 */}
+            &lt;section&gt;
+              &lt;h2 className="text-xl font-semibold text-gray-900 mb-4"&gt;
+                10. Données personnelles
+              &lt;/h2&gt;
+              &lt;p&gt;
+                Les données personnelles recueillies auprès des Acheteurs font l&apos;objet d&apos;un traitement informatique réalisé par le Fournisseur. Elles sont enregistrées dans son fichier Clients et sont indispensables au traitement de sa commande. Ces informations et données personnelles sont également conservées à des fins de sécurité, afin de respecter les obligations légales et réglementaires. Elles seront conservées aussi longtemps que nécessaire pour l&apos;exécution des commandes et des garanties éventuellement applicables.
+              &lt;/p&gt;
+              &lt;p&gt;
+                Le responsable du traitement des données est le Fournisseur. L&apos;accès aux données personnelles sera strictement limité aux employés du responsable de traitement, habilités à les traiter en raison de leurs fonctions. Les informations recueillies pourront éventuellement être communiquées à des tiers liés à l&apos;entreprise par contrat pour l&apos;exécution de tâches sous-traitées, sans que l&apos;autorisation de l&apos;Acheteur soit nécessaire.
+              &lt;/p&gt;
+              &lt;p&gt;
+                Dans le cadre de l&apos;exécution de leurs prestations, les tiers n&apos;ont qu&apos;un accès limité aux données et ont l&apos;obligation de les utiliser en conformité avec les dispositions de la législation applicable en matière de protection des données personnelles. En dehors des cas énoncés ci-dessus, le Fournisseur s&apos;interdit de vendre, louer, céder ou donner accès à des tiers aux données sans consentement préalable de l&apos;Acheteur, à moins d&apos;y être contrainte en raison d&apos;un motif légitime.
+              &lt;/p&gt;
+              &lt;p&gt;
+                Si les données sont amenées à être transférées en dehors de l&apos;UE, l&apos;Acheteur en sera informé et les garanties prises afin de sécuriser les données lui seront précisées.
+              &lt;/p&gt;
+              &lt;p&gt;
+                Conformément à la réglementation applicable, l&apos;Acheteur dispose d&apos;un droit d&apos;accès, de rectification, d&apos;effacement, et de portabilité des données le concernant, ainsi que du droit de s&apos;opposer au traitement pour motif légitime, droits qu&apos;il peut exercer en s&apos;adressant au responsable de traitement à l&apos;adresse suivante&nbsp;: &lt;a href="mailto:contact@rekaire.fr" className="text-orange-600 hover:underline"&gt;contact@rekaire.fr&lt;/a&gt;
+              &lt;/p&gt;
+              &lt;p&gt;
+                En cas de réclamation, l&apos;Acheteur peut adresser une réclamation auprès du délégué à la protection des données personnelles du Fournisseur, joignable à l&apos;adresse suivante&nbsp;: &lt;a href="mailto:noam.kalfa@nelior.fr" className="text-orange-600 hover:underline"&gt;noam.kalfa@nelior.fr&lt;/a&gt;
+              &lt;/p&gt;
+            &lt;/section&gt;
+
+            {/* Article 11 */}
+            &lt;section&gt;
+              &lt;h2 className="text-xl font-semibold text-gray-900 mb-4"&gt;
+                11. Force majeure
+              &lt;/h2&gt;
+              &lt;p&gt;
+                Les Parties ne pourront être tenues pour responsables si la non-exécution ou le retard dans l&apos;exécution de l&apos;une quelconque de leurs obligations, telles que décrites dans les présentes découle d&apos;un cas de force majeure, au sens de l&apos;article 1218 du Code civil ou d&apos;aléas sanitaires ou climatiques exceptionnels indépendants de la volonté des Parties.
+              &lt;/p&gt;
+            &lt;/section&gt;
+
+            {/* Article 12 */}
+            &lt;section&gt;
+              &lt;h2 className="text-xl font-semibold text-gray-900 mb-4"&gt;
+                12. Résiliation du contrat
+              &lt;/h2&gt;
+              &lt;p&gt;
+                Il est rappelé que, conformément aux dispositions légales, la résiliation du contrat par voie électronique est possible lorsque le contrat a été conclu par voie électronique ou, lorsqu&apos;au jour de la résiliation le Fournisseur offre aux Acheteurs la possibilité de conclure des contrats par voie électronique.
+              &lt;/p&gt;
+              &lt;p&gt;
+                A cet effet, une fonctionnalité gratuite est mise à la disposition de l&apos;Acheteur, lui permettant d&apos;accomplir, par voie électronique, la notification et toutes les démarches nécessaires à la résiliation du contrat, dont le Fournisseur devra accuser réception en informant l&apos;Acheteur, sur un support durable et dans un délai raisonnable, de la date à laquelle le contrat prend fin et des effets de la résiliation.
+              &lt;/p&gt;
+            &lt;/section&gt;
+
+            {/* Article 13 */}
+            &lt;section&gt;
+              &lt;h2 className="text-xl font-semibold text-gray-900 mb-4"&gt;
+                13. Droit applicable - Litiges
+              &lt;/h2&gt;
+              &lt;p&gt;
+                Les présentes CGV et les opérations qui en découlent sont régies par le droit français.
+              &lt;/p&gt;
+              &lt;p&gt;
+                Elles sont rédigées en langue française. Dans le cas où elles seraient traduites en une ou plusieurs langues, seul le texte français ferait foi en cas de litige.
+              &lt;/p&gt;
+              &lt;p&gt;
+                Tous les litiges auxquels les présentes et les accords qui en découlent pourraient donner lieu, concernant tant leur validité, leur interprétation, leur exécution, leur résolution, leurs conséquences et leurs suites, et qui n&apos;auraient pas pu être résolus à l&apos;amiable entre les parties, seront soumis aux Tribunaux compétents dans les conditions de droit commun.
+              &lt;/p&gt;
+              &lt;p&gt;
+                L&apos;Acheteur est informé qu&apos;il peut en tout état de cause recourir à une médiation conventionnelle, notamment auprès de la Commission de la médiation de la consommation (article L. 612-1 du Code de la consommation) ou auprès des instances de médiation sectorielles existantes, ou à tout mode alternatif de règlement des différends (conciliation, par exemple) en cas de contestation.
+              &lt;/p&gt;
+            &lt;/section&gt;
+
+            {/* Informations société */}
+            &lt;section className="border-t pt-8 mt-8"&gt;
+              &lt;p className="text-sm text-gray-500 text-center"&gt;
+                &lt;strong&gt;NELIOR&lt;/strong&gt;&lt;br /&gt;
+                Société par actions simplifiée au capital de 1.260 €&lt;br /&gt;
+                RCS LYON 989 603 907
+              &lt;/p&gt;
+            &lt;/section&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/main&gt;
+      &lt;Footer /&gt;
+    &lt;/&gt;
   );
 }
