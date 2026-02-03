@@ -94,17 +94,18 @@ function CheckoutContent() {
 
       setIsSearchingAddress(true);
       try {
+        // Recherche sans restriction de type pour plus de résultats
         const response = await fetch(
           `https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(
             addressQuery
-          )}&limit=5&type=housenumber`
+          )}&limit=6&autocomplete=1`
         );
         const data = await response.json();
 
         const suggestions: AddressSuggestion[] = data.features.map((f: any) => ({
           label: f.properties.label,
-          housenumber: f.properties.housenumber,
-          street: f.properties.street,
+          housenumber: f.properties.housenumber || "",
+          street: f.properties.street || f.properties.name,
           postcode: f.properties.postcode,
           city: f.properties.city,
           context: f.properties.context,
