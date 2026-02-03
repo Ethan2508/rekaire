@@ -67,36 +67,53 @@ export async function POST(request: NextRequest) {
       messages: [
         {
           role: "system",
-          content: `Tu es un rédacteur expert en sécurité incendie pour Rekaire.
+          content: `Tu es un rédacteur expert en sécurité incendie pour Rekaire, une entreprise française.
 
-Le RK01 est un dispositif d'extinction automatique :
-- Prix : 70€ HT (60€ HT à partir de 2 unités)
+PRODUIT RK01 :
+- Dispositif d'extinction automatique pour tableaux électriques
+- Prix : 70€ HT (60€ HT dès 2 unités)
 - Activation automatique à 90°C
 - Durée de vie : 5 ans sans entretien
 - Installation en 30 secondes, sans outils
-- Fonctionne sans électricité ni batterie`
+- Fonctionne sans électricité ni batterie
+- Certifié et testé
+
+STYLE D'ÉCRITURE :
+- Professionnel mais accessible
+- Informatif avec des données concrètes
+- Structuré avec des sections claires
+- Engageant pour le lecteur`
         },
         {
           role: "user",
           content: `SUJET : ${topic}
 CATÉGORIE : ${category}
 
-Génère un article complet. RÉPONDS UNIQUEMENT avec ce JSON valide :
+Génère un article de blog complet et bien structuré. RÉPONDS UNIQUEMENT avec ce JSON valide :
 
 {
-  "title": "Titre accrocheur de 50-70 caractères",
+  "title": "Titre accrocheur et informatif (50-70 caractères)",
   "slug": "titre-en-minuscules-avec-tirets-sans-accents",
-  "excerpt": "Résumé accrocheur de 150-200 caractères",
+  "excerpt": "Résumé captivant qui donne envie de lire (150-200 caractères)",
   "category": "${category}",
   "tags": ["tag1", "tag2", "tag3", "tag4", "tag5"],
-  "content": "## Introduction\\n\\nParagraphe...\\n\\n## Sous-titre 1\\n\\nContenu avec **gras**.\\n\\n## Le RK01 : une solution\\n\\nMention naturelle.\\n\\n## Conclusion\\n\\nRésumé.",
-  "meta_title": "Titre SEO | Rekaire",
-  "meta_description": "Description SEO 150-160 caractères",
-  "keywords": ["mot-clé 1", "mot-clé 2"],
-  "read_time": 5
+  "content": "## Introduction\\n\\nAccroche qui capte l'attention avec une statistique ou question. Présentation du problème et de ce que l'article va couvrir.\\n\\n## Les chiffres clés\\n\\nStatistiques importantes avec **données en gras**. Utilise des listes :\\n\\n- Point important 1\\n- Point important 2\\n- Point important 3\\n\\n## Les causes principales\\n\\nExplication détaillée des causes avec exemples concrets.\\n\\n### Sous-section si nécessaire\\n\\nDétails supplémentaires.\\n\\n## Comment se protéger\\n\\nConseils pratiques et solutions.\\n\\n## Le RK01 : une solution automatique\\n\\nPrésentation naturelle du produit comme solution au problème évoqué. Avantages concrets.\\n\\n## Conclusion\\n\\nRésumé des points clés et appel à l'action subtil.",
+  "meta_title": "Titre SEO optimisé | Blog Rekaire",
+  "meta_description": "Description SEO de 150-160 caractères avec mots-clés principaux",
+  "keywords": ["mot-clé principal", "mot-clé secondaire", "mot-clé tertiaire"],
+  "read_time": 6
 }
 
-RÈGLES : Article 800-1200 mots, Markdown (## H2, ### H3, **gras**), mentionne RK01 naturellement, ton professionnel, slug sans accents.`
+RÈGLES IMPORTANTES :
+1. Article de 1000-1500 mots minimum
+2. Au moins 5 sections avec titres ## H2
+3. Utilise ### H3 pour les sous-sections si nécessaire
+4. **Gras** pour les données importantes et statistiques
+5. Listes à puces pour faciliter la lecture
+6. Mentionne le RK01 naturellement dans UNE section dédiée
+7. Ton professionnel mais accessible
+8. Slug en minuscules, sans accents, avec tirets
+9. Inclus des statistiques réelles sur les incendies en France`
         }
       ],
       temperature: 0.7,
