@@ -1,5 +1,6 @@
 // ============================================
 // REKAIRE - Blog Categories Sidebar
+// Lit les catégories depuis Supabase
 // ============================================
 
 "use client";
@@ -17,7 +18,13 @@ import {
   TrendingUp,
   Tag
 } from "lucide-react";
-import { sanityClient } from "@/lib/sanity";
+import { createClient } from "@supabase/supabase-js";
+
+// Supabase client
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
 
 const categoryIcons: Record<string, any> = {
   "statistiques": { icon: BarChart3, color: "bg-blue-100 text-blue-600" },
@@ -43,16 +50,17 @@ export function BlogCategories() {
   useEffect(() => {
     const loadCategories = async () => {
       try {
-        // Récupérer tous les articles publiés avec leur catégorie
-        const articles = await sanityClient.fetch(`
-          *[_type == "article" && status == "published"]{
-            category
-          }
-        `);
+        // Récupérer tous les articles publiés avec leur catégorie depuis Supabase
+        const { data: articles, error } = await supabase
+          .from('articles')
+          .select('category')
+          .eq('published', true);
+
+        if (error) throw error;
 
         // Compter les articles par catégorie
         const categoryMap: Record<string, number> = {};
-        articles.forEach((article: any) => {
+        (articles || []).forEach((article: { category: string }) => {
           if (article.category) {
             categoryMap[article.category] = (categoryMap[article.category] || 0) + 1;
           }

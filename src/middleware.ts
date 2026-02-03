@@ -63,7 +63,7 @@ export function middleware(request: NextRequest) {
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: https: blob:",
       "font-src 'self'",
-      "connect-src 'self' https://api.stripe.com https://*.sanity.io https://www.google-analytics.com https://region1.google-analytics.com https://www.google.com https://www.googletagmanager.com https://googleads.g.doubleclick.net https://*.google.com",
+      "connect-src 'self' https://api.stripe.com https://*.sanity.io https://*.supabase.co https://www.google-analytics.com https://region1.google-analytics.com https://www.google.com https://www.googletagmanager.com https://googleads.g.doubleclick.net https://*.google.com",
       "frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://www.googletagmanager.com https://www.google.com",
       "media-src 'self' blob:",
       "object-src 'none'",
