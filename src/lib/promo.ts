@@ -28,17 +28,38 @@ export interface PromoValidation {
 
 /**
  * Valider un code promo
+ * ⚠️ ATTENTION : Validation côté CLIENT uniquement pour UX
+ * La validation RÉELLE se fait côté serveur dans /api/checkout
  */
 export async function validatePromoCode(
   code: string,
   orderAmount: number
 ): Promise<PromoValidation> {
   try {
+    // 🔒 Sanitisation du code
+    const sanitizedCode = code.toUpperCase().trim().slice(0, 50);
+    
+    // Vérifier format alphanumérique
+    if (!/^[A-Z0-9]+$/.test(sanitizedCode)) {
+      return {
+        valid: false,
+        error: "Code promo invalide",
+      };
+    }
+
+    // Vérifier montant positif
+    if (orderAmount <= 0) {
+      return {
+        valid: false,
+        error: "Montant invalide",
+      };
+    }
     // Récupérer le code promo
     const { data: promoCode, error } = await supabase
       .from("promo_codes")
       .select("*")
-      .eq("code", code.toUpperCase())
+      .eq("code", sanitizedCode)
+      .eq("active", true) // 🔒 Ne récupérer QUE les codes actifs
       .single();
 
     if (error || !promoCode) {
@@ -94,13 +115,15 @@ export async function validatePromoCode(
     // Calculer la réduction
     let discount = 0;
     if (promoCode.discount_type === "percentage") {
-      discount = (orderAmount * promoCode.discount_value) / 100;
+      // 🔒 Limiter à 100% maximum
+      const safePercentage = Math.min(Math.max(0, promoCode.discount_value), 100);
+      discount = (orderAmount * safePercentage) / 100;
     } else {
       discount = promoCode.discount_value;
     }
 
-    // S'assurer que la réduction ne dépasse pas le montant total
-    discount = Math.min(discount, orderAmount);
+    // 🔒 S'assurer que la réduction ne dépasse JAMAIS le montant total
+    discount = Math.max(0, Math.min(discount, orderAmount));
 
     return {
       valid: true,

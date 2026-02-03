@@ -7,6 +7,7 @@ import { createCheckoutSession } from "@/lib/stripe";
 import { getMainProduct, calculateTotal } from "@/config/product";
 import { isValidOrderId } from "@/lib/order";
 import { createClient } from "@supabase/supabase-js";
+import { rateLimit } from "@/lib/rate-limit";
 
 // Supabase admin client pour bypass RLS
 const supabaseAdmin = createClient(
@@ -27,16 +28,24 @@ interface CustomerData {
 }
 
 export async function POST(request: NextRequest) {
+  // 🔒 RATE LIMITING
+  const rateLimitResponse = rateLimit(request);
+  if (rateLimitResponse) {
+    return rateLimitResponse;
+  }
+
   try {
     const body = await request.json();
-    const { orderId, productId, quantity = 1, promoCode, promoDiscount = 0, customer } = body as {
+    const { orderId, productId, quantity = 1, promoCode, customer } = body as {
       orderId: string;
       productId: string;
       quantity: number;
       promoCode?: string;
-      promoDiscount?: number;
       customer?: CustomerData;
     };
+
+    // ⚠️ SÉCURITÉ : Ne JAMAIS faire confiance au promoDiscount du client
+    // On va le recalculer côté serveur
 
     // Validation
     if (!orderId || !isValidOrderId(orderId)) {
@@ -46,18 +55,37 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validation quantité max 2 pour achat direct
-    if (quantity > 2) {
+    // 🔒 VALIDATION STRICTE quantité
+    const validQuantity = Math.floor(Math.abs(quantity));
+    if (validQuantity < 1 || validQuantity > 2) {
       return NextResponse.json(
-        { error: "Maximum 2 units per order. Contact us for bulk orders." },
+        { error: "Invalid quantity. Must be 1 or 2 units." },
         { status: 400 }
       );
     }
 
-    // Validation client
+    // 🔒 VALIDATION STRICTE client
     if (!customer || !customer.email || !customer.firstName || !customer.lastName) {
       return NextResponse.json(
         { error: "Customer information required" },
+        { status: 400 }
+      );
+    }
+
+    // Sanitisation email
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(customer.email)) {
+      return NextResponse.json(
+        { error: "Invalid email format" },
+        { status: 400 }
+      );
+    }
+
+    // Sanitisation nom/prénom (pas de caractères spéciaux dangereux)
+    const nameRegex = /^[a-zA-ZÀ-ÿ\s'-]{1,100}$/;
+    if (!nameRegex.test(customer.firstName) || !nameRegex.test(customer.lastName)) {
+      return NextResponse.json(
+        { error: "Invalid name format" },
         { status: 400 }
       );
     }
@@ -72,11 +100,73 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Calcul du prix selon quantité (2+ = prix réduit)
-    const { unitPriceHT, totalHT, totalTTC } = calculateTotal(quantity);
+    // Calcul du prix selon quantité (2+ = prix réduit) - avec quantité VALIDÉE
+    const { unitPriceHT, totalHT, totalTTC } = calculateTotal(validQuantity);
     
-    // Appliquer le code promo si présent
-    const totalHTAfterPromo = Math.max(0, totalHT - (promoDiscount || 0));
+    // 🔒 VALIDATION CÔTÉ SERVEUR du code promo
+    let promoDiscount = 0;
+    let validatedPromoCode = null;
+    
+    if (promoCode) {
+      // Valider le code promo avec Supabase (côté serveur)
+      const { data: promo, error } = await supabaseAdmin
+        .from("promo_codes")
+        .select("*")
+        .eq("code", promoCode.toUpperCase())
+        .eq("active", true)
+        .single();
+
+      if (promo && !error) {
+        const now = new Date();
+        
+        // Vérifier dates de validité
+        const isValidDate = 
+          (!promo.valid_from || new Date(promo.valid_from) <= now) &&
+          (!promo.valid_until || new Date(promo.valid_until) >= now);
+        
+        // Vérifier limite d'utilisations
+        const hasUsesLeft = !promo.max_uses || promo.current_uses < promo.max_uses;
+        
+        // Vérifier montant minimum
+        const meetsMinOrder = !promo.min_order || totalHT >= promo.min_order;
+        
+        if (isValidDate && hasUsesLeft && meetsMinOrder) {
+          // Calculer la réduction
+          if (promo.discount_type === "percentage") {
+            // Limiter à 100% max
+            const percentage = Math.min(Math.max(0, promo.discount_value), 100);
+            promoDiscount = Math.round((totalHT * percentage / 100) * 100) / 100;
+          } else {
+            promoDiscount = Math.min(promo.discount_value, totalHT);
+          }
+          
+          validatedPromoCode = promo;
+          
+          // Incrémenter le compteur d'utilisation ATOMIQUEMENT
+          await supabaseAdmin.rpc("increment_promo_usage", {
+            promo_id: promo.id,
+          });
+          
+          // 🔒 AUDIT : Logger l'utilisation pour détection fraude
+          try {
+            await supabaseAdmin.rpc("log_promo_usage", {
+              p_promo_code_id: promo.id,
+              p_order_id: orderId,
+              p_customer_email: customer.email,
+              p_discount_amount: promoDiscount,
+              p_ip_address: request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || null,
+              p_user_agent: request.headers.get("user-agent") || null,
+            });
+          } catch (logError) {
+            console.error("[Checkout] Promo usage log error:", logError);
+            // Continue même si le log échoue
+          }
+        }
+      }
+    }
+    
+    // Appliquer la réduction validée
+    const totalHTAfterPromo = Math.max(0, totalHT - promoDiscount);
     const totalTTCAfterPromo = Math.round(totalHTAfterPromo * 1.2 * 100) / 100;
     
     // Convertir en TTC pour Stripe (en centimes)
@@ -118,12 +208,12 @@ export async function POST(request: NextRequest) {
       metadata: {
         product_id: product.id,
         product_name: product.shortName,
-        quantity: String(quantity),
+        quantity: String(validQuantity),
         unit_price_ht: String(unitPriceHT),
         total_ht: String(totalHTAfterPromo),
         total_ttc: String(totalTTCAfterPromo),
-        promo_code: promoCode || "",
-        promo_discount: String(promoDiscount || 0),
+        promo_code: validatedPromoCode?.code || "",
+        promo_discount: String(promoDiscount),
         customer_name: `${customer.firstName} ${customer.lastName}`,
         customer_phone: customer.phone,
         customer_company: customer.companyName || "",
