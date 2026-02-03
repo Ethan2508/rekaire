@@ -42,9 +42,6 @@ export default function ConfidentialitePage() {
                 <p className="text-gray-700 mb-2">
                   <strong>Société :</strong> {siteConfig.company.legalName}
                 </p>
-                <p className="text-gray-700 mb-2">
-                  <strong>Adresse :</strong> {siteConfig.company.address}
-                </p>
                 <p className="text-gray-700">
                   <strong>Email :</strong>{" "}
                   <a

@@ -16,13 +16,6 @@ export function OrganizationSchema() {
     legalName: siteConfig.company.legalName,
     url: siteConfig.url,
     logo: `${siteConfig.url}/logo.png`,
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: "5 Rue Mazenod",
-      addressLocality: "Lyon",
-      postalCode: "69003",
-      addressCountry: "FR",
-    },
     contactPoint: {
       "@type": "ContactPoint",
       email: siteConfig.contact.email,
@@ -269,19 +262,6 @@ export function LocalBusinessSchema() {
     url: siteConfig.url,
     telephone: siteConfig.contact.phone,
     email: siteConfig.contact.email,
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: "5 Rue Mazenod",
-      addressLocality: "Lyon",
-      postalCode: "69003",
-      addressRegion: "Auvergne-Rhône-Alpes",
-      addressCountry: "FR",
-    },
-    geo: {
-      "@type": "GeoCoordinates",
-      latitude: 45.7578,
-      longitude: 4.8351,
-    },
     priceRange: "€€",
     paymentAccepted: ["Cash", "Credit Card", "Debit Card"],
     currenciesAccepted: "EUR",

@@ -5,7 +5,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Mail, Phone, MapPin, Clock, MessageCircle, FileText, ArrowRight, Shield } from "lucide-react";
+import { Mail, Phone, Clock, MessageCircle, FileText, ArrowRight, Shield } from "lucide-react";
 import { siteConfig } from "@/config/site";
 import Link from "next/link";
 
@@ -27,15 +27,6 @@ const contactMethods = [
     description: "Lun-Ven, 9h-18h",
     color: "from-blue-500 to-blue-600",
     shadow: "shadow-blue-500/30",
-  },
-  {
-    icon: MapPin,
-    title: "Adresse",
-    value: siteConfig.company.address,
-    href: null,
-    description: "Siège social",
-    color: "from-emerald-500 to-emerald-600",
-    shadow: "shadow-emerald-500/30",
   },
 ];
 

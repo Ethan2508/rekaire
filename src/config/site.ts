@@ -19,7 +19,6 @@ export const siteConfig = {
   company: {
     name: "Rekaire",
     legalName: "NELIOR SAS",
-    address: "5 Rue Mazenod, 69003 Lyon",
     siret: "989 603 907 00019",
     siren: "989 603 907",
     tva: "FR51989603907",
