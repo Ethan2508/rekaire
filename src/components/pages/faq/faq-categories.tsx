@@ -16,7 +16,7 @@ const faqCategories = [
     faqs: [
       {
         question: "Qu'est-ce que le RK01 ?",
-        answer: "Le RK01 est un système autonome d'extinction incendie conçu spécifiquement pour les tableaux électriques. Il se déclenche automatiquement en cas de surchauffe (90°C) et éteint les départs de feu sans intervention humaine."
+        answer: "Le RK01 est un système autonome d'extinction incendie conçu spécifiquement pour les tableaux électriques. Il se déclenche automatiquement en cas de surchauffe (175°C) et éteint les départs de feu sans intervention humaine."
       },
       {
         question: "Le RK01 est-il adapté à mon tableau électrique ?",

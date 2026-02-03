@@ -63,12 +63,12 @@ export function FireStatsSection() {
           </div>
           
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            Les incendies sont une{" "}
-            <span className="text-red-400">tragédie évitable</span>
+            Les incendies domestiques :{" "}
+            <span className="text-red-400">un danger réel</span>
           </h2>
           
           <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-            Un incendie domestique se déclare <strong className="text-white">toutes les 2 minutes</strong>. 
+            <strong className="text-white">1 incendie toutes les 2 minutes</strong> en France. 
             La majorité pourrait être évitée avec une protection adaptée.
           </p>
         </motion.div>

@@ -52,9 +52,9 @@ export function Header() {
               <Image
                 src="/logo.png"
                 alt="Rekaire"
-                width={180}
-                height={52}
-                className="h-10 md:h-12 w-auto transition-transform duration-300 group-hover:scale-105"
+                width={234}
+                height={68}
+                className="h-13 md:h-16 w-auto transition-transform duration-300 group-hover:scale-105"
                 priority
               />
             </Link>

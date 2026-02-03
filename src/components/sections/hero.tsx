@@ -185,7 +185,7 @@ export function HeroSection() {
                   {/* Stats */}
                   <div className="grid grid-cols-3 gap-4 mt-6 pt-6 border-t border-gray-200">
                     {[
-                      { value: "90°C", label: "Activation" },
+                      { value: "175°C", label: "Activation" },
                       { value: "30s", label: "Installation" },
                       { value: "5 ans", label: "Durée de vie" },
                     ].map((stat) => (

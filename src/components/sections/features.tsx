@@ -33,7 +33,7 @@ export function FeaturesSection() {
             Fonctionnalités
           </span>
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            {content.features.title}
+            {content.features.title} ?
           </h2>
           <p className="text-lg text-gray-600">
             {content.features.subtitle}
@@ -55,17 +55,17 @@ export function FeaturesSection() {
                 className="group relative p-6 rounded-2xl bg-white border border-gray-200 hover:border-orange-300 hover:shadow-lg transition-all duration-300"
               >
                 {/* Icon */}
-                <div className="relative w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center mb-5 shadow-lg shadow-orange-500/20">
+                <div className="relative w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center mb-5 shadow-lg shadow-orange-500/20 mx-auto">
                   <Icon className="w-6 h-6 text-white" />
                 </div>
 
                 {/* Title */}
-                <h3 className="relative text-lg font-semibold text-gray-900 mb-3">
+                <h3 className="relative text-lg font-semibold text-gray-900 mb-3 text-center">
                   {feature.title}
                 </h3>
                 
                 {/* Description */}
-                <p className="relative text-sm text-gray-600 leading-relaxed">
+                <p className="relative text-sm text-gray-600 leading-relaxed text-center">
                   {feature.description}
                 </p>
               </motion.div>

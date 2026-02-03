@@ -309,7 +309,7 @@ export default async function ArticlePage({
                   Protégez votre installation électrique
                 </h3>
                 <p className="text-white/90 mb-6">
-                  Le RK01 s&apos;active automatiquement à 90°C et éteint les départs de feu 
+                  Le RK01 s&apos;active automatiquement à 175°C et éteint les départs de feu 
                   avant qu&apos;ils ne se propagent. Installation en 30 secondes, sans outils.
                 </p>
                 <Link

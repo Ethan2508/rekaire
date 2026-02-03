@@ -136,60 +136,20 @@ export function LiveSalesCounter() {
   );
 }
 
-// Composant pour afficher le compteur inline - DONNÉES SUPABASE
+// Composant pour afficher le compteur inline - NOMBRE FIXE 76,225
 export function SalesCounterBadge() {
-  const [count, setCount] = useState<number | null>(null);
   const [isAnimating, setIsAnimating] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const fixedCount = 76225; // Nombre fixe comme demandé (Option A)
 
-  // Récupérer le compteur depuis Supabase au chargement
+  // Animation subtile toutes les 45 secondes pour effet visuel
   useEffect(() => {
-    async function fetchCount() {
-      try {
-        const res = await fetch('/api/sales-counter');
-        const data = await res.json();
-        setCount(data.count);
-        setIsLoading(false);
-      } catch (error) {
-        console.error('Failed to fetch sales count:', error);
-        setCount(2847); // Fallback
-        setIsLoading(false);
-      }
-    }
-    fetchCount();
-
-    // Rafraîchir toutes les 30 secondes pour refléter les vraies ventes
-    const refreshInterval = setInterval(fetchCount, 30000);
-    return () => clearInterval(refreshInterval);
-  }, []);
-
-  // Simulation d'incrémentation légère côté client (entre les refreshes)
-  useEffect(() => {
-    if (count === null) return;
-    
     const interval = setInterval(() => {
-      // Petite chance d'incrémenter (simule l'activité)
-      if (Math.random() > 0.7) {
-        setCount(prev => (prev ?? 0) + 1);
-        setIsAnimating(true);
-        setTimeout(() => setIsAnimating(false), 500);
-      }
-    }, 45000); // Toutes les 45 secondes
+      setIsAnimating(true);
+      setTimeout(() => setIsAnimating(false), 500);
+    }, 45000);
 
     return () => clearInterval(interval);
-  }, [count]);
-
-  if (isLoading || count === null) {
-    return (
-      <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-emerald-50 to-emerald-100 border border-emerald-200">
-        <span className="relative flex h-2 w-2">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-        </span>
-        <span className="text-sm font-semibold text-emerald-700">Chargement...</span>
-      </div>
-    );
-  }
+  }, []);
 
   return (
     <motion.div
@@ -201,15 +161,7 @@ export function SalesCounterBadge() {
         <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
       </span>
       <span className="text-sm font-semibold text-emerald-700">
-        <motion.span
-          key={count}
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="inline-block"
-        >
-          {count.toLocaleString('fr-FR')}+
-        </motion.span>
-        {" "}unités vendues
+        {fixedCount.toLocaleString('fr-FR')}+ unités vendues
       </span>
     </motion.div>
   );

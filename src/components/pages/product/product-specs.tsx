@@ -12,7 +12,7 @@ export function ProductSpecs() {
 
   const additionalSpecs = {
     "Certifications": "CE, Norme EN3",
-    "Température de déclenchement": "90°C ± 5°C",
+    "Température de déclenchement": "175°C ± 5°C",
     "Temps de réaction": "< 3 secondes",
     "Couverture": "Jusqu'à 1m³",
     "Matériaux": "ABS haute résistance",

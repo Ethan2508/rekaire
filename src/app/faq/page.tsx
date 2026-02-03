@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 
 // FAQ principale pour le Schema
 const mainFAQs = [
-  { question: "Qu'est-ce que le RK01 ?", answer: "Le RK01 est un système autonome d'extinction incendie conçu spécifiquement pour les tableaux électriques. Il se déclenche automatiquement en cas de surchauffe (90°C) et éteint les départs de feu sans intervention humaine." },
+  { question: "Qu'est-ce que le RK01 ?", answer: "Le RK01 est un système autonome d'extinction incendie conçu spécifiquement pour les tableaux électriques. Il se déclenche automatiquement en cas de surchauffe (175°C) et éteint les départs de feu sans intervention humaine." },
   { question: "Comment installer le RK01 ?", answer: "L'installation est très simple : nettoyez la surface, retirez le film protecteur de l'adhésif fourni, positionnez le RK01 au plafond du tableau et appuyez fermement 30 secondes. Aucun outil nécessaire." },
   { question: "Quelle est la durée de vie du RK01 ?", answer: "Le RK01 a une durée de vie de 5 ans sans aucune maintenance nécessaire. Une date de péremption est indiquée sur chaque unité." },
   { question: "L'agent extincteur est-il dangereux ?", answer: "Non, l'agent extincteur est non toxique, écologique et ne laisse aucun résidu. Il est spécialement conçu pour les feux d'origine électrique." },

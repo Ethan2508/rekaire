@@ -136,25 +136,49 @@ function CheckoutContent() {
 
       setIsSearchingAddress(true);
       try {
-        // Recherche sans restriction de type pour plus de résultats
+        // Recherche optimisée : plus de résultats + détection ville
         const response = await fetch(
           `https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(
             addressQuery
-          )}&limit=6&autocomplete=1`
+          )}&limit=10&autocomplete=1`
         );
         const data = await response.json();
 
-        const suggestions: AddressSuggestion[] = data.features.map((f: any) => ({
-          label: f.properties.label,
-          housenumber: f.properties.housenumber || "",
-          street: f.properties.street || f.properties.name,
-          postcode: f.properties.postcode,
-          city: f.properties.city,
-          context: f.properties.context,
-        }));
+        if (!data.features || data.features.length === 0) {
+          // Fallback: recherche sans autocomplete si aucun résultat
+          const fallbackResponse = await fetch(
+            `https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(
+              addressQuery
+            )}&limit=10`
+          );
+          const fallbackData = await fallbackResponse.json();
+          
+          if (fallbackData.features) {
+            const suggestions: AddressSuggestion[] = fallbackData.features.map((f: any) => ({
+              label: f.properties.label,
+              housenumber: f.properties.housenumber || "",
+              street: f.properties.street || f.properties.name,
+              postcode: f.properties.postcode,
+              city: f.properties.city,
+              context: f.properties.context,
+            }));
+            
+            setAddressSuggestions(suggestions);
+            setShowSuggestions(suggestions.length > 0);
+          }
+        } else {
+          const suggestions: AddressSuggestion[] = data.features.map((f: any) => ({
+            label: f.properties.label,
+            housenumber: f.properties.housenumber || "",
+            street: f.properties.street || f.properties.name,
+            postcode: f.properties.postcode,
+            city: f.properties.city,
+            context: f.properties.context,
+          }));
 
-        setAddressSuggestions(suggestions);
-        setShowSuggestions(suggestions.length > 0);
+          setAddressSuggestions(suggestions);
+          setShowSuggestions(suggestions.length > 0);
+        }
       } catch (error) {
         console.error("Address search error:", error);
       } finally {

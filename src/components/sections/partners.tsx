@@ -1,18 +1,31 @@
 "use client";
 
 // ============================================
-// REKAIRE - Partners Section (Light Clean - Plus Visible)
+// REKAIRE - Partners Section (2 catégories)
 // ============================================
 
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { Handshake } from "lucide-react";
+import { Handshake, Users } from "lucide-react";
 
-const partners = [
-  { name: "Synexium", logo: "/images/partners/synexium.png" },
-  { name: "Viva", logo: "/images/partners/viva.png" },
-  { name: "Socoda", logo: "/images/partners/socoda.png" },
-  { name: "Brice Robert", logo: "/images/partners/bricerobert.webp" },
+// Partenaires par catégorie
+const partnersCategories = [
+  {
+    title: "Nos partenaires",
+    icon: Handshake,
+    partners: [
+      { name: "Socoda", logo: "/images/partners/socoda.png" },
+      { name: "Synexium", logo: "/images/partners/synexium.png" },
+    ]
+  },
+  {
+    title: "Ils sont protégés par le RK01",
+    icon: Users,
+    partners: [
+      { name: "Brice Robert", logo: "/images/partners/bricerobert.webp" },
+      { name: "Viva Energie", logo: "/images/partners/viva.png" },
+    ]
+  }
 ];
 
 export function PartnersSection() {
@@ -34,26 +47,44 @@ export function PartnersSection() {
           </h2>
         </motion.div>
         
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
-          {partners.map((partner, index) => (
-            <motion.div
-              key={partner.name}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="relative group"
-            >
-              <div className="p-6 md:p-8 rounded-2xl bg-white border border-gray-200 group-hover:border-orange-300 group-hover:shadow-lg transition-all flex items-center justify-center min-h-[120px] md:min-h-[140px]">
-                <Image
-                  src={partner.logo}
-                  alt={partner.name}
-                  width={200}
-                  height={100}
-                  className="max-h-16 md:max-h-20 w-auto object-contain opacity-80 group-hover:opacity-100 transition-opacity"
-                />
+        {/* Boucle sur les catégories */}
+        <div className="space-y-12">
+          {partnersCategories.map((category, catIndex) => (
+            <div key={category.title}>
+              <motion.h3 
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: catIndex * 0.1 }}
+                className="text-xl font-semibold text-gray-700 mb-6 flex items-center justify-center gap-2"
+              >
+                <category.icon className="w-5 h-5 text-orange-500" />
+                {category.title}
+              </motion.h3>
+              
+              <div className="grid grid-cols-2 md:grid-cols-2 gap-6 md:gap-8 max-w-3xl mx-auto">
+                {category.partners.map((partner, index) => (
+                  <motion.div
+                    key={partner.name}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: (catIndex * 0.2) + (index * 0.1) }}
+                    className="relative group"
+                  >
+                    <div className="p-6 md:p-8 rounded-2xl bg-white border border-gray-200 group-hover:border-orange-300 group-hover:shadow-lg transition-all flex items-center justify-center min-h-[120px] md:min-h-[140px]">
+                      <Image
+                        src={partner.logo}
+                        alt={partner.name}
+                        width={200}
+                        height={100}
+                        className="max-h-16 md:max-h-20 w-auto object-contain opacity-80 group-hover:opacity-100 transition-opacity"
+                      />
+                    </div>
+                  </motion.div>
+                ))}
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>

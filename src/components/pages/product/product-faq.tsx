@@ -16,7 +16,7 @@ const faqs = [
   },
   {
     question: "Comment se déclenche le RK01 ?",
-    answer: "Le RK01 se déclenche automatiquement lorsque la température ambiante atteint 90°C (±5°C). Il n'a besoin d'aucune source d'énergie externe : le mécanisme est entièrement mécanique et thermosensible, garantissant un fonctionnement même en cas de coupure de courant."
+    answer: "Le RK01 se déclenche automatiquement lorsque la température ambiante atteint 175°C (±5°C). Il n'a besoin d'aucune source d'énergie externe : le mécanisme est entièrement mécanique et thermosensible, garantissant un fonctionnement même en cas de coupure de courant."
   },
   {
     question: "L'agent extincteur est-il sans danger ?",

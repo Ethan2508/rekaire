@@ -24,7 +24,7 @@ export function HowItWorksSection() {
             Simple & Efficace
           </span>
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            {content.howItWorks.title}
+            {content.howItWorks.title} ?
           </h2>
           <p className="text-lg text-gray-600">
             {content.howItWorks.subtitle}
@@ -57,16 +57,16 @@ export function HowItWorksSection() {
               
               <div className="relative bg-white rounded-2xl p-6 border border-gray-200 hover:border-orange-300 hover:shadow-lg transition-all h-full">
                 {/* Number */}
-                <div className="relative w-14 h-14 mb-5">
+                <div className="relative w-14 h-14 mb-5 mx-auto">
                   <div className="w-full h-full rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center text-xl font-bold text-white shadow-lg shadow-orange-500/20">
                     {step.number}
                   </div>
                 </div>
                 
-                <h3 className="relative text-lg font-semibold text-gray-900 mb-3">
+                <h3 className="relative text-lg font-semibold text-gray-900 mb-3 text-center">
                   {step.title}
                 </h3>
-                <p className="relative text-sm text-gray-600 leading-relaxed">
+                <p className="relative text-sm text-gray-600 leading-relaxed text-center">
                   {step.description}
                 </p>
               </div>
