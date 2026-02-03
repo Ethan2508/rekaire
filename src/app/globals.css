@@ -37,6 +37,19 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-inter);
+  
+  /* Override Tailwind orange colors */
+  --color-orange-50: #fff7ed;
+  --color-orange-100: #ffedd5;
+  --color-orange-200: #fed7aa;
+  --color-orange-300: #fdba74;
+  --color-orange-400: #fb923c;
+  --color-orange-500: #eb5122;
+  --color-orange-600: #d4471e;
+  --color-orange-700: #c2410c;
+  --color-orange-800: #9a3412;
+  --color-orange-900: #7c2d12;
+  --color-orange-950: #431407;
 }
 
 /* Base Styles */
@@ -54,7 +67,7 @@ body {
 
 /* Selection */
 ::selection {
-  background-color: rgba(249, 115, 22, 0.3);
+  background-color: rgba(235, 81, 34, 0.3);
   color: white;
 }
 
@@ -75,12 +88,12 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(249, 115, 22, 0.3);
+  background: rgba(235, 81, 34, 0.3);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(249, 115, 22, 0.5);
+  background: rgba(235, 81, 34, 0.5);
 }
 
 /* Reduced Motion */
