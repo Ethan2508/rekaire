@@ -28,8 +28,10 @@ import {
   FileText,
 } from "lucide-react";
 import { Header, Footer } from "@/components";
+import { CheckoutProgress } from "@/components/checkout-progress";
 import { trackCTAClick, trackCheckoutStart } from "@/lib/tracking";
 import { generateOrderId } from "@/lib/order";
+import { validatePromoCode, incrementPromoUsage, formatDiscount } from "@/lib/promo";
 import { getMainProduct, formatPrice, calculateTotal } from "@/config/product";
 import Link from "next/link";
 import Image from "next/image";
@@ -58,6 +60,13 @@ function CheckoutContent() {
   const [cgvAccepted, setCgvAccepted] = useState(false);
   const [leadSaved, setLeadSaved] = useState(false);
 
+  // États code promo
+  const [promoCode, setPromoCode] = useState("");
+  const [promoDiscount, setPromoDiscount] = useState(0);
+  const [promoError, setPromoError] = useState("");
+  const [isValidatingPromo, setIsValidatingPromo] = useState(false);
+  const [appliedPromoCode, setAppliedPromoCode] = useState<any>(null);
+
   // Adresse autocomplétion
   const [addressQuery, setAddressQuery] = useState("");
   const [addressSuggestions, setAddressSuggestions] = useState<AddressSuggestion[]>([]);
@@ -83,6 +92,39 @@ function CheckoutContent() {
   const product = getMainProduct();
   const isQuoteMode = quantity >= QUOTE_THRESHOLD;
   const { totalHT, totalTTC, unitPriceHT } = calculateTotal(Math.min(quantity, 2));
+
+  // Calculs avec code promo
+  const totalHTAfterPromo = Math.max(0, totalHT - promoDiscount);
+  const totalTTCAfterPromo = Math.round(totalHTAfterPromo * 1.2 * 100) / 100;
+
+  // Fonction de validation du code promo
+  const handleApplyPromo = async () => {
+    if (!promoCode.trim()) return;
+
+    setIsValidatingPromo(true);
+    setPromoError("");
+
+    const validation = await validatePromoCode(promoCode.toUpperCase(), totalHT);
+
+    if (validation.valid && validation.discount && validation.code) {
+      setPromoDiscount(validation.discount);
+      setAppliedPromoCode(validation.code);
+      setPromoError("");
+    } else {
+      setPromoDiscount(0);
+      setAppliedPromoCode(null);
+      setPromoError(validation.error || "Code invalide");
+    }
+
+    setIsValidatingPromo(false);
+  };
+
+  const handleRemovePromo = () => {
+    setPromoCode("");
+    setPromoDiscount(0);
+    setAppliedPromoCode(null);
+    setPromoError("");
+  };
 
   // Recherche d'adresse
   useEffect(() => {
@@ -282,6 +324,11 @@ function CheckoutContent() {
       const orderId = generateOrderId();
       trackCheckoutStart(orderId, product.id, product.name, unitPriceHT, product.currency);
 
+      // Incrémenter l'usage du code promo si appliqué
+      if (appliedPromoCode) {
+        await incrementPromoUsage(appliedPromoCode.id);
+      }
+
       try {
         const response = await fetch("/api/checkout", {
           method: "POST",
@@ -290,6 +337,8 @@ function CheckoutContent() {
             orderId,
             productId: product.id,
             quantity,
+            promoCode: appliedPromoCode?.code || null,
+            promoDiscount: promoDiscount || 0,
             customer: {
               firstName: formData.firstName,
               lastName: formData.lastName,
@@ -827,7 +876,7 @@ function CheckoutContent() {
                                 </>
                               ) : (
                                 <>
-                                  <span>Payer {formatPrice(totalTTC, "EUR")}</span>
+                                  <span>Payer {formatPrice(totalTTCAfterPromo, "EUR")}</span>
                                   <ArrowRight className="w-5 h-5" />
                                 </>
                               )}
@@ -937,11 +986,79 @@ function CheckoutContent() {
                         <span className="text-gray-500">Livraison</span>
                         <span className="text-green-600 font-medium">Offerte</span>
                       </div>
+                      {promoDiscount > 0 && (
+                        <div className="flex justify-between text-sm">
+                          <span className="text-green-600 flex items-center gap-1">
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                            </svg>
+                            Code promo ({appliedPromoCode?.code})
+                          </span>
+                          <span className="text-green-600 font-medium">
+                            -{formatPrice(promoDiscount, "EUR")}
+                          </span>
+                        </div>
+                      )}
                       <div className="flex justify-between pt-3 border-t border-gray-200">
                         <span className="font-semibold text-gray-900">Total TTC</span>
-                        <span className="text-xl font-bold text-gray-900">
-                          {formatPrice(totalTTC, "EUR")}
-                        </span>
+                        <div className="text-right">
+                          {promoDiscount > 0 && (
+                            <div className="text-sm text-gray-400 line-through">
+                              {formatPrice(totalTTC, "EUR")}
+                            </div>
+                          )}
+                          <span className="text-xl font-bold text-gray-900">
+                            {formatPrice(totalTTCAfterPromo, "EUR")}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Champ code promo */}
+                      <div className="pt-4 border-t border-gray-200">
+                        {!appliedPromoCode ? (
+                          <div className="space-y-2">
+                            <label className="block text-sm font-medium text-gray-700">
+                              Code promo
+                            </label>
+                            <div className="flex gap-2">
+                              <input
+                                type="text"
+                                value={promoCode}
+                                onChange={(e) => {
+                                  setPromoCode(e.target.value.toUpperCase());
+                                  setPromoError("");
+                                }}
+                                placeholder="REKAIRE12"
+                                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm uppercase"
+                              />
+                              <button
+                                type="button"
+                                onClick={handleApplyPromo}
+                                disabled={!promoCode.trim() || isValidatingPromo}
+                                className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                              >
+                                {isValidatingPromo ? "..." : "Appliquer"}
+                              </button>
+                            </div>
+                            {promoError && (
+                              <p className="text-xs text-red-600">{promoError}</p>
+                            )}
+                          </div>
+                        ) : (
+                          <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                            <div className="flex items-center gap-2 text-sm text-green-700">
+                              <Check className="w-4 h-4" />
+                              <span className="font-medium">{appliedPromoCode.code} appliqué</span>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={handleRemovePromo}
+                              className="text-xs text-green-600 hover:text-green-700 underline"
+                            >
+                              Retirer
+                            </button>
+                          </div>
+                        )}
                       </div>
                     </>
                   )}

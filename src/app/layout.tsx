@@ -7,6 +7,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Analytics, GTMNoScript } from "@/components/analytics";
 import { OrganizationSchema, WebSiteSchema, LocalBusinessSchema } from "@/components/schema-org";
+import { ExitPopup } from "@/components/exit-popup";
 import { siteConfig } from "@/config/site";
 
 const inter = Inter({
@@ -102,6 +103,7 @@ export default function RootLayout({
       <body className="bg-white text-gray-900 antialiased">
         <GTMNoScript />
         {children}
+        <ExitPopup />
       </body>
     </html>
   );

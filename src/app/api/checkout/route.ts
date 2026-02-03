@@ -29,10 +29,12 @@ interface CustomerData {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { orderId, productId, quantity = 1, customer } = body as {
+    const { orderId, productId, quantity = 1, promoCode, promoDiscount = 0, customer } = body as {
       orderId: string;
       productId: string;
       quantity: number;
+      promoCode?: string;
+      promoDiscount?: number;
       customer?: CustomerData;
     };
 
@@ -72,8 +74,14 @@ export async function POST(request: NextRequest) {
 
     // Calcul du prix selon quantité (2+ = prix réduit)
     const { unitPriceHT, totalHT, totalTTC } = calculateTotal(quantity);
-    // Convertir en TTC pour Stripe
+    
+    // Appliquer le code promo si présent
+    const totalHTAfterPromo = Math.max(0, totalHT - (promoDiscount || 0));
+    const totalTTCAfterPromo = Math.round(totalHTAfterPromo * 1.2 * 100) / 100;
+    
+    // Convertir en TTC pour Stripe (en centimes)
     const unitPriceTTC = Math.round(unitPriceHT * 1.2);
+    const totalPriceInCents = Math.round(totalTTCAfterPromo * 100);
 
     // Stocker le lead dans Supabase (même si la commande n'aboutit pas)
     try {
@@ -103,17 +111,19 @@ export async function POST(request: NextRequest) {
       orderId,
       productName: product.name,
       productDescription: product.shortDescription,
-      priceInCents: unitPriceTTC,
+      priceInCents: Math.round(totalPriceInCents),
       currency: product.currency.toLowerCase(),
-      quantity,
+      quantity: 1, // On passe quantity = 1 car le prix total inclut déjà tout
       customerEmail: customer.email,
       metadata: {
         product_id: product.id,
         product_name: product.shortName,
         quantity: String(quantity),
         unit_price_ht: String(unitPriceHT),
-        total_ht: String(totalHT),
-        total_ttc: String(totalTTC),
+        total_ht: String(totalHTAfterPromo),
+        total_ttc: String(totalTTCAfterPromo),
+        promo_code: promoCode || "",
+        promo_discount: String(promoDiscount || 0),
         customer_name: `${customer.firstName} ${customer.lastName}`,
         customer_phone: customer.phone,
         customer_company: customer.companyName || "",
