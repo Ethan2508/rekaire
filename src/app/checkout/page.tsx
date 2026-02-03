@@ -94,9 +94,11 @@ function CheckoutContent() {
 
       setIsSearchingAddress(true);
       try {
-        // Utilise notre proxy API pour éviter les problèmes CORS
+        // Recherche sans restriction de type pour plus de résultats
         const response = await fetch(
-          `/api/address?q=${encodeURIComponent(addressQuery)}`
+          `https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(
+            addressQuery
+          )}&limit=6&autocomplete=1`
         );
         const data = await response.json();
 
