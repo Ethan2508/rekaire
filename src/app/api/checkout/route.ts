@@ -213,10 +213,12 @@ export async function POST(request: NextRequest) {
         product_name: product.shortName,
         quantity: String(validQuantity),
         unit_price_ht: String(unitPriceHT),
+        unit_price: String(Math.round(unitPriceHT * 1.2)), // Prix unitaire TTC pour emails
         total_ht: String(totalHTAfterPromo),
         total_ttc: String(totalTTCAfterPromo),
         promo_code: validatedPromoCode?.code || "",
-        promo_discount: String(promoDiscount),
+        promo_discount: String(promoDiscount), // Réduction HT
+        discount_amount: String(Math.round(promoDiscount * 1.2)), // Réduction TTC pour emails
         customer_name: `${customer.firstName} ${customer.lastName}`,
         customer_phone: customer.phone,
         customer_company: customer.companyName || "",

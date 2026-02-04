@@ -167,32 +167,81 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
   // ============================================
   // MISE À JOUR SUPABASE (Stock + Compteur + Commande)
   // ============================================
+  
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const shippingDetails = (session as any).shipping_details;
+  const billingAddress = session.customer_details?.address;
+  
+  // Récupérer la facture Stripe (générée par invoice_creation)
+  let invoiceUrl: string | undefined;
+  let invoiceNumber: string | undefined;
+  
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const invoiceId = (session as any).invoice;
+  if (invoiceId) {
+    try {
+      const { stripe } = await import("@/lib/stripe");
+      const invoice = await stripe.invoices.retrieve(invoiceId);
+      invoiceUrl = invoice.hosted_invoice_url || undefined;
+      invoiceNumber = invoice.number || undefined;
+      console.log("[Webhook] Invoice retrieved:", invoiceNumber, invoiceUrl);
+    } catch (invoiceError) {
+      console.error("[Webhook] Could not retrieve invoice:", invoiceError);
+    }
+  }
+  
   try {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const shippingDetails = (session as any).shipping_details;
-    const shippingCity = shippingDetails?.address?.city || 'France';
-    
     const amountTotal = session.amount_total || 0;
     const totalTTC = amountTotal;
     const totalHT = Math.round(totalTTC / 1.2);
     const unitPriceHT = Math.round(totalHT / expectedQuantity);
+    
+    // Récupérer les infos du code promo depuis les metadata
+    const promoCode = session.metadata?.promo_code || undefined;
+    const promoDiscount = session.metadata?.promo_discount ? parseInt(session.metadata.promo_discount) : undefined;
 
-    // Créer la commande dans Supabase
+    // Déterminer si adresse facturation = adresse livraison
+    const billingSameAsShipping = !billingAddress || (
+      billingAddress.line1 === shippingDetails?.address?.line1 &&
+      billingAddress.city === shippingDetails?.address?.city &&
+      billingAddress.postal_code === shippingDetails?.address?.postal_code
+    );
+
+    // Créer la commande dans Supabase avec TOUTES les données
     await createSupabaseOrder({
       stripe_session_id: session.id,
       stripe_payment_intent: typeof session.payment_intent === 'string' 
         ? session.payment_intent 
         : session.payment_intent?.id,
       product_slug: 'rk01',
-      quantity: expectedQuantity, // 🔒 Utiliser la quantité validée
+      quantity: expectedQuantity,
       unit_price_ht: unitPriceHT,
       total_ht: totalHT,
       total_ttc: totalTTC,
       customer_email: customerEmail,
       customer_name: session.customer_details?.name || undefined,
-      shipping_city: shippingCity,
+      customer_phone: session.customer_details?.phone || session.metadata?.customer_phone || undefined,
+      // Adresse de LIVRAISON
+      shipping_address_line1: shippingDetails?.address?.line1 || session.metadata?.shipping_address || undefined,
+      shipping_address_line2: shippingDetails?.address?.line2 || undefined,
+      shipping_postal_code: shippingDetails?.address?.postal_code || session.metadata?.shipping_postal_code || undefined,
+      shipping_city: shippingDetails?.address?.city || session.metadata?.shipping_city || undefined,
+      shipping_country: shippingDetails?.address?.country || 'France',
+      // Adresse de FACTURATION
+      billing_same_as_shipping: billingSameAsShipping,
+      billing_name: session.customer_details?.name || undefined,
+      billing_address_line1: billingAddress?.line1 || undefined,
+      billing_address_line2: billingAddress?.line2 || undefined,
+      billing_postal_code: billingAddress?.postal_code || undefined,
+      billing_city: billingAddress?.city || undefined,
+      billing_country: billingAddress?.country || 'France',
+      // Code promo & Facture Stripe
+      promo_code: promoCode,
+      promo_discount: promoDiscount,
+      invoice_number: invoiceNumber,
+      invoice_url: invoiceUrl,
     });
-    console.log("[Webhook] Order created in Supabase");
+    console.log("[Webhook] Order created in Supabase with full billing/shipping addresses");
 
     // Décrémenter le stock
     await decrementStock('rk01', expectedQuantity); // 🔒 Utiliser la quantité validée
@@ -208,19 +257,55 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
   }
 
   // ============================================
-  // ENVOI DES EMAILS
+  // ENVOI DES EMAILS (avec données complètes)
   // ============================================
   
-  // Envoie l'email de confirmation
-  const emailResult = await sendOrderConfirmationEmail({
+  // Extraction des données détaillées
+  const customerPhone = session.customer_details?.phone;
+  const promoCode = session.metadata?.promo_code;
+  const discountAmount = session.metadata?.discount_amount ? parseInt(session.metadata.discount_amount) : undefined;
+  const unitPrice = session.metadata?.unit_price ? parseInt(session.metadata.unit_price) : undefined;
+  const paymentIntentId = typeof session.payment_intent === 'string' 
+    ? session.payment_intent 
+    : session.payment_intent?.id;
+
+  // Prépare l'objet complet pour les emails
+  const emailData = {
     orderId,
     customerEmail,
     customerName: session.customer_details?.name || undefined,
+    customerPhone: customerPhone || undefined,
     productName,
     quantity,
+    unitPriceCents: unitPrice || Math.round((session.amount_total || 0) / quantity),
     amountCents: session.amount_total || 0,
     currency: (session.currency || "EUR").toUpperCase(),
-  });
+    shippingAddress: shippingDetails?.address ? {
+      name: shippingDetails.name || session.customer_details?.name || undefined,
+      line1: shippingDetails.address.line1,
+      line2: shippingDetails.address.line2,
+      city: shippingDetails.address.city,
+      postalCode: shippingDetails.address.postal_code,
+      country: shippingDetails.address.country || 'France',
+    } : undefined,
+    billingAddress: billingAddress ? {
+      name: session.customer_details?.name || undefined,
+      line1: billingAddress.line1 || undefined,
+      line2: billingAddress.line2 || undefined,
+      city: billingAddress.city || undefined,
+      postalCode: billingAddress.postal_code || undefined,
+      country: billingAddress.country || 'France',
+    } : undefined,
+    promoCode: promoCode || undefined,
+    discountCents: discountAmount,
+    stripePaymentId: paymentIntentId || undefined,
+    // Facture Stripe
+    invoiceUrl: invoiceUrl || undefined,
+    invoiceNumber: invoiceNumber || undefined,
+  };
+
+  // Envoie l'email de confirmation au client
+  const emailResult = await sendOrderConfirmationEmail(emailData);
 
   if (emailResult.success) {
     console.log("[Webhook] Confirmation email sent to:", customerEmail);
@@ -228,15 +313,8 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
     console.error("[Webhook] Failed to send confirmation email");
   }
 
-  // Envoie notification admin
-  await sendAdminNotificationEmail({
-    orderId,
-    customerEmail,
-    productName,
-    quantity,
-    amountCents: session.amount_total || 0,
-    currency: (session.currency || "EUR").toUpperCase(),
-  });
+  // Envoie notification admin (avec tous les détails)
+  await sendAdminNotificationEmail(emailData);
   
   console.log("[Webhook] Order processed successfully:", orderId);
 }

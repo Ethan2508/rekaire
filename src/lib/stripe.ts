@@ -25,7 +25,7 @@ export interface CreateCheckoutParams {
   metadata?: Record<string, string>;
 }
 
-// Créer une session Checkout
+// Créer une session Checkout avec Invoicing
 export async function createCheckoutSession({
   orderId,
   productName,
@@ -37,6 +37,31 @@ export async function createCheckoutSession({
   metadata = {},
 }: CreateCheckoutParams): Promise<Stripe.Checkout.Session> {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+
+  // D'abord créer ou récupérer le customer Stripe pour l'invoicing
+  let customerId: string | undefined;
+  
+  if (customerEmail) {
+    // Chercher si le customer existe déjà
+    const existingCustomers = await stripe.customers.list({
+      email: customerEmail,
+      limit: 1,
+    });
+    
+    if (existingCustomers.data.length > 0) {
+      customerId = existingCustomers.data[0].id;
+    } else {
+      // Créer un nouveau customer
+      const customer = await stripe.customers.create({
+        email: customerEmail,
+        metadata: {
+          source: 'rekaire_checkout',
+          first_order_id: orderId,
+        },
+      });
+      customerId = customer.id;
+    }
+  }
 
   const session = await stripe.checkout.sessions.create({
     mode: "payment",
@@ -61,8 +86,9 @@ export async function createCheckoutSession({
     success_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}&order_id=${orderId}`,
     cancel_url: `${baseUrl}/cancel?order_id=${orderId}`,
 
-    // Email client (pré-rempli si fourni)
-    ...(customerEmail && { customer_email: customerEmail }),
+    // Customer pour l'invoicing
+    ...(customerId && { customer: customerId }),
+    ...(!customerId && customerEmail && { customer_email: customerEmail }),
 
     // Metadata pour tracking
     metadata: {
@@ -74,6 +100,25 @@ export async function createCheckoutSession({
     billing_address_collection: "required",
     shipping_address_collection: {
       allowed_countries: ["FR"],
+    },
+    
+    // ============================================
+    // STRIPE INVOICING - Génère une facture automatique
+    // ============================================
+    invoice_creation: {
+      enabled: true,
+      invoice_data: {
+        description: `Commande ${orderId} - ${productName}`,
+        metadata: {
+          order_id: orderId,
+        },
+        // Pied de facture
+        footer: "Rekaire - NELIOR SAS | SIRET: 989 603 907 00019 | TVA: FR51989603907",
+        // Infos de rendu
+        rendering_options: {
+          amount_tax_display: "include_inclusive_tax",
+        },
+      },
     },
 
     // Expiration (30 min)

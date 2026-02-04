@@ -536,44 +536,40 @@ export default function AdminDashboard() {
   // ============================================
 
   async function handleAddTracking(orderId: string) {
-    if (!trackingNumber.trim()) return;
+    if (!trackingNumber.trim()) {
+      showToast('Veuillez entrer un numéro de suivi', 'error');
+      return;
+    }
     
     setIsUpdating(true);
     try {
-      const trackingUrl = trackingNumber.startsWith('6') || trackingNumber.startsWith('8')
-        ? `https://www.laposte.fr/outils/suivre-vos-envois?code=${trackingNumber}`
-        : trackingNumber.length > 12
-          ? `https://www.chronopost.fr/tracking-no-cms/suivi-page?liession=${trackingNumber}`
-          : `https://www.laposte.fr/outils/suivre-vos-envois?code=${trackingNumber}`;
+      // Utiliser la nouvelle API qui envoie l'email automatiquement
+      const response = await fetch('/api/admin/tracking', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
+        },
+        body: JSON.stringify({
+          orderId,
+          trackingNumber: trackingNumber.trim(),
+        }),
+      });
 
-      const { error } = await supabase
-        .from('orders')
-        .update({
-          status: 'shipped',
-          tracking_number: trackingNumber,
-          tracking_url: trackingUrl,
-          shipped_at: new Date().toISOString()
-        })
-        .eq('id', orderId);
+      const result = await response.json();
 
-      if (error) throw error;
+      if (!response.ok) {
+        throw new Error(result.error || 'Erreur lors de la mise à jour');
+      }
 
-      showToast('Commande expédiée avec suivi', 'success');
+      showToast(`✅ Expédié ! Email envoyé au client (${result.data.carrier})`, 'success');
       fetchOrders();
       setSelectedOrder(null);
       setTrackingNumber('');
 
-      // Log action
-      await supabase.from('admin_audit_log').insert({
-        admin_email: userEmail,
-        action: 'ORDER_SHIPPED',
-        target_type: 'order',
-        target_id: orderId,
-        details: { tracking_number: trackingNumber }
-      });
     } catch (error) {
       console.error('Add tracking error:', error);
-      showToast('Erreur lors de la mise à jour', 'error');
+      showToast(error instanceof Error ? error.message : 'Erreur lors de la mise à jour', 'error');
     } finally {
       setIsUpdating(false);
     }

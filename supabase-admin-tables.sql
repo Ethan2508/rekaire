@@ -1,6 +1,50 @@
 -- ============================================
--- REKAIRE - Table Audit Log Admin
+-- REKAIRE - Tables Admin + Colonnes Commandes
 -- À exécuter dans Supabase SQL Editor
+-- ============================================
+
+-- ============================================
+-- 1. COLONNES MANQUANTES TABLE ORDERS
+-- ============================================
+
+-- Colonnes adresse de LIVRAISON
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS shipping_address_line1 TEXT;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS shipping_address_line2 TEXT;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS shipping_postal_code TEXT;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS shipping_country TEXT DEFAULT 'France';
+
+-- Colonnes adresse de FACTURATION
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS billing_same_as_shipping BOOLEAN DEFAULT true;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS billing_name TEXT;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS billing_company TEXT;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS billing_address_line1 TEXT;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS billing_address_line2 TEXT;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS billing_postal_code TEXT;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS billing_city TEXT;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS billing_country TEXT DEFAULT 'France';
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS billing_vat_number TEXT; -- N° TVA intracommunautaire
+
+-- Colonnes téléphone et promo
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS customer_phone TEXT;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS promo_code TEXT;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS promo_discount INTEGER;
+
+-- Colonnes de tracking et facture
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS tracking_number TEXT;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS tracking_url TEXT;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS invoice_number TEXT;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS invoice_url TEXT;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS shipped_at TIMESTAMPTZ;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS delivered_at TIMESTAMPTZ;
+
+-- Index pour recherches rapides
+CREATE INDEX IF NOT EXISTS idx_orders_customer_email ON orders(customer_email);
+CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status);
+CREATE INDEX IF NOT EXISTS idx_orders_created_at ON orders(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_orders_promo_code ON orders(promo_code);
+
+-- ============================================
+-- 2. TABLE AUDIT LOG ADMIN
 -- ============================================
 
 -- Table pour l'historique des actions admin

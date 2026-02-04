@@ -83,7 +83,28 @@ export async function createOrder(orderData: {
   total_ttc: number;
   customer_email?: string;
   customer_name?: string;
+  customer_phone?: string;
+  // Adresse de livraison
+  shipping_address_line1?: string;
+  shipping_address_line2?: string;
+  shipping_postal_code?: string;
   shipping_city?: string;
+  shipping_country?: string;
+  // Adresse de facturation
+  billing_same_as_shipping?: boolean;
+  billing_name?: string;
+  billing_company?: string;
+  billing_address_line1?: string;
+  billing_address_line2?: string;
+  billing_postal_code?: string;
+  billing_city?: string;
+  billing_country?: string;
+  billing_vat_number?: string;
+  // Promo & Facture
+  promo_code?: string;
+  promo_discount?: number;
+  invoice_number?: string;
+  invoice_url?: string;
 }): Promise<string | null> {
   // Récupérer le product_id
   const { data: product } = await supabaseAdmin
@@ -109,7 +130,28 @@ export async function createOrder(orderData: {
       total_ttc: orderData.total_ttc,
       customer_email: orderData.customer_email,
       customer_name: orderData.customer_name,
+      customer_phone: orderData.customer_phone,
+      // Livraison
+      shipping_address_line1: orderData.shipping_address_line1,
+      shipping_address_line2: orderData.shipping_address_line2,
+      shipping_postal_code: orderData.shipping_postal_code,
       shipping_city: orderData.shipping_city,
+      shipping_country: orderData.shipping_country || 'France',
+      // Facturation
+      billing_same_as_shipping: orderData.billing_same_as_shipping ?? true,
+      billing_name: orderData.billing_name,
+      billing_company: orderData.billing_company,
+      billing_address_line1: orderData.billing_address_line1,
+      billing_address_line2: orderData.billing_address_line2,
+      billing_postal_code: orderData.billing_postal_code,
+      billing_city: orderData.billing_city,
+      billing_country: orderData.billing_country || 'France',
+      billing_vat_number: orderData.billing_vat_number,
+      // Promo & Facture
+      promo_code: orderData.promo_code,
+      promo_discount: orderData.promo_discount,
+      invoice_number: orderData.invoice_number,
+      invoice_url: orderData.invoice_url,
       status: 'paid'
     })
     .select('id')
