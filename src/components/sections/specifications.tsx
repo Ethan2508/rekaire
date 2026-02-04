@@ -104,9 +104,9 @@ export function SpecificationsSection() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="relative"
+            className="relative flex items-start"
           >
-            <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+            <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm w-full">
               <div className="space-y-3">
                 {parts.map((part, index) => (
                   <motion.div
@@ -116,7 +116,7 @@ export function SpecificationsSection() {
                     viewport={{ once: true }}
                     transition={{ delay: 0.3 + index * 0.1, duration: 0.5 }}
                     whileHover={{ scale: 1.02, x: 5 }}
-                    className={`flex items-center gap-4 p-4 rounded-xl ${colorClasses[part.color as keyof typeof colorClasses]} border transition-all cursor-default`}
+                    className={`flex items-center gap-4 p-4 rounded-xl ${colorClasses[part.color as keyof typeof colorClasses]} border transition-all cursor-default min-h-[88px]`}
                   >
                     <div className="w-14 h-14 rounded-lg bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
                       <Image
