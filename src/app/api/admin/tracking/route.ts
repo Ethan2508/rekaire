@@ -132,7 +132,11 @@ export async function POST(request: NextRequest) {
 
     if (updateError) {
       console.error("[Tracking] Update error:", updateError);
-      return NextResponse.json({ error: "Erreur mise à jour" }, { status: 500 });
+      return NextResponse.json({ 
+        error: "Erreur mise à jour", 
+        details: updateError.message,
+        code: updateError.code 
+      }, { status: 500 });
     }
 
     // Envoyer l'email de suivi au client

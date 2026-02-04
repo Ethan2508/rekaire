@@ -37,11 +37,25 @@ ALTER TABLE orders ADD COLUMN IF NOT EXISTS invoice_url TEXT;
 ALTER TABLE orders ADD COLUMN IF NOT EXISTS shipped_at TIMESTAMPTZ;
 ALTER TABLE orders ADD COLUMN IF NOT EXISTS delivered_at TIMESTAMPTZ;
 
+-- Colonnes de remboursement
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS refund_id TEXT;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS refund_amount INTEGER;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS refund_reason TEXT;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS refunded_at TIMESTAMPTZ;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS refunded_by TEXT;
+
+-- Colonne updated_at (requise par le trigger Supabase)
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW();
+
 -- Index pour recherches rapides
 CREATE INDEX IF NOT EXISTS idx_orders_customer_email ON orders(customer_email);
 CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status);
 CREATE INDEX IF NOT EXISTS idx_orders_created_at ON orders(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_orders_promo_code ON orders(promo_code);
+CREATE INDEX IF NOT EXISTS idx_orders_refund_id ON orders(refund_id);
+
+-- Contrainte de stock positif
+ALTER TABLE products ADD CONSTRAINT IF NOT EXISTS check_stock_positive CHECK (stock >= 0);
 
 -- ============================================
 -- 2. TABLE AUDIT LOG ADMIN

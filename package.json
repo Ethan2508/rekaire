@@ -12,6 +12,7 @@
     "@react-pdf/renderer": "^4.3.2",
     "@sanity/client": "^7.14.1",
     "@sanity/image-url": "^2.0.3",
+    "@sentry/nextjs": "^10.38.0",
     "@stripe/stripe-js": "^8.6.4",
     "@supabase/supabase-js": "^2.93.3",
     "@types/marked": "^5.0.2",

@@ -109,6 +109,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // 🔒 VÉRIFICATION STOCK AVANT PAIEMENT
+    const { checkStock } = await import("@/lib/supabase-admin");
+    const stockCheck = await checkStock(product.slug, validQuantity);
+    
+    if (!stockCheck.available) {
+      return NextResponse.json(
+        { 
+          error: "Stock insuffisant",
+          available: stockCheck.currentStock,
+          requested: validQuantity
+        },
+        { status: 400 }
+      );
+    }
+
     // Calcul du prix selon quantité (2+ = prix réduit) - avec quantité VALIDÉE
     const { unitPriceHT, totalHT, totalTTC } = calculateTotal(validQuantity);
     

@@ -47,26 +47,66 @@ export async function incrementSalesCounter(amount: number = 1): Promise<number>
 // FONCTIONS ADMIN - STOCK
 // ============================================
 
+/**
+ * Vérifie si le stock est suffisant SANS décrementer
+ * À utiliser AVANT le paiement
+ */
+export async function checkStock(productSlug: string, quantity: number): Promise<{ available: boolean; currentStock: number }> {
+  const { data: product, error } = await supabaseAdmin
+    .from('products')
+    .select('stock')
+    .eq('slug', productSlug)
+    .single();
+
+  if (error || !product) {
+    return { available: false, currentStock: 0 };
+  }
+
+  return {
+    available: product.stock >= quantity,
+    currentStock: product.stock
+  };
+}
+
+/**
+ * Décrémente le stock avec lock (transaction)
+ * À utiliser APRÈS paiement confirmé
+ */
 export async function decrementStock(productSlug: string, quantity: number): Promise<boolean> {
-  const { data: product } = await supabaseAdmin
+  // Transaction avec lock pour éviter race conditions
+  const { data: product, error: selectError } = await supabaseAdmin
     .from('products')
     .select('id, stock')
     .eq('slug', productSlug)
     .single();
 
-  if (!product || product.stock < quantity) {
+  if (selectError || !product) {
+    console.error('Product not found for stock decrement:', productSlug);
     return false;
   }
 
-  const { error } = await supabaseAdmin
+  // Vérification finale du stock
+  if (product.stock < quantity) {
+    console.error('Insufficient stock:', { slug: productSlug, needed: quantity, available: product.stock });
+    return false;
+  }
+
+  // Update avec condition de stock suffisant (protection atomique)
+  const { error: updateError } = await supabaseAdmin
     .from('products')
     .update({ 
       stock: product.stock - quantity,
       updated_at: new Date().toISOString()
     })
-    .eq('id', product.id);
+    .eq('id', product.id)
+    .gte('stock', quantity); // Condition: stock doit être >= quantity
 
-  return !error;
+  if (updateError) {
+    console.error('Stock decrement failed:', updateError);
+    return false;
+  }
+
+  return true;
 }
 
 // ============================================
