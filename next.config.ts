@@ -20,13 +20,17 @@ const nextConfig: NextConfig = {
   },
 };
 
-// Configuration Sentry
-const sentryConfig = {
-  silent: true, // Supprime les logs Sentry pendant le build
-  hideSourceMaps: true, // Cache les source maps en prod
-  disableLogger: true, // Désactive les logs Sentry
-};
-
-export default process.env.NEXT_PUBLIC_SENTRY_DSN 
-  ? withSentryConfig(nextConfig, sentryConfig)
-  : nextConfig;
+// Configuration Sentry (générée par le wizard)
+export default withSentryConfig(nextConfig, {
+  org: "rekaire",
+  project: "javascript-nextjs",
+  silent: !process.env.CI,
+  widenClientFileUpload: true,
+  tunnelRoute: "/monitoring",
+  webpack: {
+    automaticVercelMonitors: true,
+    treeshake: {
+      removeDebugLogging: true,
+    },
+  },
+});

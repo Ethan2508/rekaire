@@ -1,46 +1,19 @@
-// ============================================
-// REKAIRE - Sentry Server Configuration
-// Monitoring des erreurs côté serveur
-// ============================================
+// This file configures the initialization of Sentry on the server.
+// The config you add here will be used whenever the server handles a request.
+// https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
 import * as Sentry from "@sentry/nextjs";
 
 Sentry.init({
-  dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
-  
-  // Environnement
-  environment: process.env.VERCEL_ENV || process.env.NODE_ENV,
-  
-  // Taux d'échantillonnage des transactions
-  tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0,
-  
-  // Ignorer certaines erreurs
-  ignoreErrors: [
-    'ECONNRESET',
-    'ETIMEDOUT',
-    'ENOTFOUND',
-  ],
-  
-  // Filtrer les données sensibles
-  beforeSend(event, hint) {
-    // Ne jamais logger les secrets
-    if (event.request?.data) {
-      const data = event.request.data as any;
-      if (typeof data === 'object') {
-        delete data.apiKey;
-        delete data.secret;
-        delete data.password;
-        delete data.token;
-      }
-    }
-    
-    // Filtrer les headers sensibles
-    if (event.request?.headers) {
-      const headers = event.request.headers as any;
-      delete headers['authorization'];
-      delete headers['cookie'];
-    }
-    
-    return event;
-  },
+  dsn: "https://c53acaf83829d958daa835e45cda10e3@o4510830181548032.ingest.de.sentry.io/4510830183252048",
+
+  // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
+  tracesSampleRate: 1,
+
+  // Enable logs to be sent to Sentry
+  enableLogs: true,
+
+  // Enable sending user PII (Personally Identifiable Information)
+  // https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/options/#sendDefaultPii
+  sendDefaultPii: true,
 });
