@@ -13,14 +13,18 @@ const FROM_NAME = "Rekaire";
 const COMPANY_INFO = {
   name: "NELIOR SAS",
   brand: "Rekaire",
-  address: "4 Rue de Longvic",
-  city: "21000 DIJON",
+  address: "5 Rue Mazenod",
+  city: "69003 LYON",
   country: "France",
+  siren: "989 603 907",
   siret: "989 603 907 00019",
   tva: "FR51989603907",
+  rcs: "989 603 907 R.C.S. Lyon",
+  capital: "1 260,00 €",
   email: "contact@rekaire.fr",
   phone: "+33 4 82 53 06 19",
   website: "www.rekaire.fr",
+  logo: "https://www.rekaire.fr/images/logo.png",
 };
 
 const TVA_RATE = 0.20;
@@ -81,7 +85,7 @@ export async function sendOrderConfirmationEmail(data: OrderEmailData) {
     const result = await resend.emails.send({
       from: `${FROM_NAME} <${FROM_EMAIL}>`,
       to: data.customerEmail,
-      subject: `✅ Confirmation de commande ${data.orderId} - Rekaire`,
+      subject: `Confirmation de commande ${data.orderId} - Rekaire`,
       html: `
 <!DOCTYPE html>
 <html lang="fr">
@@ -101,8 +105,7 @@ export async function sendOrderConfirmationEmail(data: OrderEmailData) {
           <!-- Header avec logo -->
           <tr>
             <td style="background: linear-gradient(135deg, #0a0a0a 0%, #1f1f1f 100%); padding: 30px 40px; text-align: center;">
-              <h1 style="margin: 0; font-size: 28px; font-weight: 700; color: #ffffff; letter-spacing: 2px;">REKAIRE</h1>
-              <p style="margin: 8px 0 0; font-size: 13px; color: #a1a1aa; letter-spacing: 0.5px;">Protection incendie intelligente</p>
+              <img src="${COMPANY_INFO.logo}" alt="Rekaire" style="max-width: 180px; height: auto; margin-bottom: 10px;" />
             </td>
           </tr>
           
@@ -267,7 +270,9 @@ export async function sendOrderConfirmationEmail(data: OrderEmailData) {
                 <tr>
                   <td style="font-size: 11px; color: #71717a; line-height: 1.6;">
                     <p style="margin: 0 0 10px;"><strong>Vendeur :</strong> ${COMPANY_INFO.name}</p>
-                    <p style="margin: 0 0 5px;">SIRET : ${COMPANY_INFO.siret} | TVA : ${COMPANY_INFO.tva}</p>
+                    <p style="margin: 0 0 5px;">SIREN : ${COMPANY_INFO.siren} | SIRET : ${COMPANY_INFO.siret}</p>
+                    <p style="margin: 0 0 5px;">TVA : ${COMPANY_INFO.tva} | RCS : ${COMPANY_INFO.rcs}</p>
+                    <p style="margin: 0 0 5px;">Capital social : ${COMPANY_INFO.capital}</p>
                     <p style="margin: 0 0 5px;">${COMPANY_INFO.address}, ${COMPANY_INFO.city}</p>
                     <p style="margin: 0;">${data.invoiceUrl ? 'Votre facture officielle est disponible via le bouton ci-dessus.' : 'Ce document tient lieu de facture. Conservez-le pour vos archives.'}</p>
                   </td>
@@ -654,7 +659,7 @@ export async function sendShippingEmail(data: ShippingEmailData) {
     const result = await resend.emails.send({
       from: `${FROM_NAME} <${FROM_EMAIL}>`,
       to: data.customerEmail,
-      subject: `📦 Votre commande ${data.orderNumber} a été expédiée !`,
+      subject: `Votre commande ${data.orderNumber} a été expédiée !`,
       html: `
 <!DOCTYPE html>
 <html>
@@ -664,9 +669,8 @@ export async function sendShippingEmail(data: ShippingEmailData) {
   <style>
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; }
     .container { max-width: 600px; margin: 0 auto; padding: 40px 20px; }
-    .header { text-align: center; margin-bottom: 40px; }
-    .logo { font-size: 24px; font-weight: bold; color: #0A0A0A; }
-    .content { background: #f9f9f9; border-radius: 8px; padding: 30px; margin-bottom: 30px; }
+    .header { text-align: center; margin-bottom: 40px; background: linear-gradient(135deg, #0a0a0a 0%, #1f1f1f 100%); padding: 30px; border-radius: 12px 12px 0 0; }
+    .content { background: #f9f9f9; border-radius: 0 0 8px 8px; padding: 30px; margin-bottom: 30px; }
     h1 { color: #0A0A0A; margin: 0 0 20px; }
     .tracking-box { background: white; border: 2px solid #eb5122; border-radius: 8px; padding: 20px; text-align: center; margin: 20px 0; }
     .tracking-number { font-size: 20px; font-weight: bold; color: #eb5122; letter-spacing: 1px; margin: 10px 0; }
@@ -686,7 +690,7 @@ export async function sendShippingEmail(data: ShippingEmailData) {
 <body>
   <div class="container">
     <div class="header">
-      <div class="logo">REKAIRE</div>
+      <img src="${COMPANY_INFO.logo}" alt="Rekaire" style="max-width: 180px; height: auto;" />
     </div>
     
     <div class="content">
@@ -732,8 +736,9 @@ export async function sendShippingEmail(data: ShippingEmailData) {
     </p>
     
     <div class="footer">
+      <p>${COMPANY_INFO.name} - ${COMPANY_INFO.address}, ${COMPANY_INFO.city}</p>
+      <p>SIRET : ${COMPANY_INFO.siret} | TVA : ${COMPANY_INFO.tva}</p>
       <p>© ${new Date().getFullYear()} Rekaire. Tous droits réservés.</p>
-      <p>Protection incendie intelligente</p>
     </div>
   </div>
 </body>

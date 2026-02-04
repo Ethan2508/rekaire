@@ -267,8 +267,8 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
   // ENVOI DES EMAILS (avec données complètes)
   // ============================================
   
-  // Extraction des données détaillées
-  const customerPhone = session.customer_details?.phone;
+  // Extraction des données détaillées - PRIORITÉ aux metadata (saisies par le client)
+  const customerPhone = session.metadata?.customer_phone || session.customer_details?.phone;
   const promoCode = session.metadata?.promo_code;
   const discountAmount = session.metadata?.discount_amount ? parseInt(session.metadata.discount_amount) : undefined;
   const unitPrice = session.metadata?.unit_price ? parseInt(session.metadata.unit_price) : undefined;
@@ -276,33 +276,55 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
     ? session.payment_intent 
     : session.payment_intent?.id;
 
+  // Construction de l'adresse de livraison - priorité aux metadata
+  const shippingAddressForEmail = shippingDetails?.address ? {
+    name: shippingDetails.name || session.customer_details?.name || session.metadata?.customer_name || undefined,
+    line1: shippingDetails.address.line1,
+    line2: shippingDetails.address.line2,
+    city: shippingDetails.address.city,
+    postalCode: shippingDetails.address.postal_code,
+    country: shippingDetails.address.country || 'France',
+  } : session.metadata?.shipping_address ? {
+    name: session.metadata?.customer_name || session.customer_details?.name || undefined,
+    line1: session.metadata?.shipping_address,
+    line2: undefined,
+    city: session.metadata?.shipping_city,
+    postalCode: session.metadata?.shipping_postal_code,
+    country: 'France',
+  } : undefined;
+
+  // Construction de l'adresse de facturation - priorité aux metadata
+  const billingAddressForEmail = session.metadata?.billing_same_as_shipping === 'true' 
+    ? shippingAddressForEmail
+    : billingAddress ? {
+        name: session.metadata?.billing_name || session.customer_details?.name || undefined,
+        line1: session.metadata?.billing_address || billingAddress.line1 || undefined,
+        line2: billingAddress.line2 || undefined,
+        city: session.metadata?.billing_city || billingAddress.city || undefined,
+        postalCode: session.metadata?.billing_postal_code || billingAddress.postal_code || undefined,
+        country: billingAddress.country || 'France',
+      } : session.metadata?.billing_address ? {
+        name: session.metadata?.billing_name || undefined,
+        line1: session.metadata?.billing_address,
+        line2: undefined,
+        city: session.metadata?.billing_city,
+        postalCode: session.metadata?.billing_postal_code,
+        country: 'France',
+      } : undefined;
+
   // Prépare l'objet complet pour les emails
   const emailData = {
     orderId,
     customerEmail,
-    customerName: session.customer_details?.name || undefined,
+    customerName: session.metadata?.customer_name || session.customer_details?.name || undefined,
     customerPhone: customerPhone || undefined,
     productName,
     quantity,
     unitPriceCents: unitPrice || Math.round((session.amount_total || 0) / quantity),
     amountCents: session.amount_total || 0,
     currency: (session.currency || "EUR").toUpperCase(),
-    shippingAddress: shippingDetails?.address ? {
-      name: shippingDetails.name || session.customer_details?.name || undefined,
-      line1: shippingDetails.address.line1,
-      line2: shippingDetails.address.line2,
-      city: shippingDetails.address.city,
-      postalCode: shippingDetails.address.postal_code,
-      country: shippingDetails.address.country || 'France',
-    } : undefined,
-    billingAddress: billingAddress ? {
-      name: session.customer_details?.name || undefined,
-      line1: billingAddress.line1 || undefined,
-      line2: billingAddress.line2 || undefined,
-      city: billingAddress.city || undefined,
-      postalCode: billingAddress.postal_code || undefined,
-      country: billingAddress.country || 'France',
-    } : undefined,
+    shippingAddress: shippingAddressForEmail,
+    billingAddress: billingAddressForEmail,
     promoCode: promoCode || undefined,
     discountCents: discountAmount,
     stripePaymentId: paymentIntentId || undefined,
