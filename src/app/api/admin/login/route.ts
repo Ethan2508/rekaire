@@ -96,46 +96,44 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Envoyer le Magic Link via Supabase
+    // Envoyer le Magic Link via Supabase (signInWithOtp envoie l'email automatiquement)
     const { createClient } = await import('@supabase/supabase-js');
-    const supabaseAdmin = createClient(
+    const supabaseClient = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!,
-      { auth: { autoRefreshToken: false, persistSession: false } }
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     );
 
-    const { error: otpError } = await supabaseAdmin.auth.admin.generateLink({
-      type: 'magiclink',
+    const { data, error: signInError } = await supabaseClient.auth.signInWithOtp({
       email: normalizedEmail,
       options: {
-        redirectTo: `${process.env.NEXT_PUBLIC_APP_URL || 'https://rekaire.fr'}/admin/callback`
+        emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL || 'https://www.rekaire.fr'}/admin/callback`,
+        shouldCreateUser: false // Ne pas créer de nouveaux utilisateurs
       }
     });
 
-    // Alternative: utiliser signInWithOtp standard
-    if (otpError) {
-      // Fallback vers la méthode standard
-      const supabaseClient = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    if (signInError) {
+      console.error('Magic link error:', signInError);
+      
+      // Logger l'erreur pour debug
+      await logAdminAction(
+        normalizedEmail,
+        'MAGIC_LINK_ERROR',
+        'auth',
+        undefined,
+        { 
+          error: signInError.message,
+          ip_address: ip 
+        },
+        ip
       );
-
-      const { error: signInError } = await supabaseClient.auth.signInWithOtp({
-        email: normalizedEmail,
-        options: {
-          emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL || 'https://rekaire.fr'}/admin/callback`,
-          shouldCreateUser: true // Supabase doit pouvoir créer l'utilisateur auth
-        }
-      });
-
-      if (signInError) {
-        console.error('Magic link error:', signInError);
-        return NextResponse.json(
-          { error: 'Erreur lors de l\'envoi du lien' },
-          { status: 500 }
-        );
-      }
+      
+      return NextResponse.json(
+        { error: `Erreur lors de l'envoi : ${signInError.message}` },
+        { status: 500 }
+      );
     }
+
+    console.log('[Admin Login] Magic link sent successfully to:', normalizedEmail);
 
     // Logger la tentative réussie
     await logAdminAction(
