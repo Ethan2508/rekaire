@@ -18,6 +18,7 @@ const supabaseAdmin = createClient(
 async function verifyAdmin(request: NextRequest): Promise<string | null> {
   const authHeader = request.headers.get('Authorization');
   if (!authHeader?.startsWith('Bearer ')) {
+    console.log('[Admin Promos] No auth header');
     return null;
   }
 
@@ -25,12 +26,18 @@ async function verifyAdmin(request: NextRequest): Promise<string | null> {
   
   const { data: { user }, error } = await supabaseAdmin.auth.getUser(token);
   if (error || !user) {
+    console.log('[Admin Promos] Invalid token or no user');
     return null;
   }
 
-  // Vérifier que c'est un admin autorisé
-  const adminEmails = process.env.ADMIN_EMAILS?.split(',').map(e => e.trim().toLowerCase()) || [];
+  // Vérifier que c'est un admin autorisé - support ADMIN_EMAILS et ADMIN_EMAIL
+  const adminEmailsEnv = process.env.ADMIN_EMAILS || process.env.ADMIN_EMAIL || '';
+  const adminEmails = adminEmailsEnv.split(',').map(e => e.trim().toLowerCase()).filter(e => e);
+  
+  console.log('[Admin Promos] User email:', user.email, '| Allowed:', adminEmails);
+  
   if (!adminEmails.includes(user.email?.toLowerCase() || '')) {
+    console.log('[Admin Promos] Email not in admin list');
     return null;
   }
 

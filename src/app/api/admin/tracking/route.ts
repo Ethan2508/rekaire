@@ -7,8 +7,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { sendShippingEmail } from "@/lib/email";
 
-// Admin emails autorisés
-const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || "").split(",").map(e => e.trim().toLowerCase());
+// Admin emails autorisés - support ADMIN_EMAILS et ADMIN_EMAIL
+const adminEmailsEnv = process.env.ADMIN_EMAILS || process.env.ADMIN_EMAIL || '';
+const ADMIN_EMAILS = adminEmailsEnv.split(',').map(e => e.trim().toLowerCase()).filter(e => e);
 
 // Supabase admin client
 const supabaseAdmin = createClient(
