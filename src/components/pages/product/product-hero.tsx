@@ -46,10 +46,10 @@ export function ProductHero() {
             transition={{ duration: 0.6 }}
             className="lg:sticky lg:top-28"
           >
-            <div className="relative bg-white rounded-3xl border border-gray-200/80 overflow-hidden shadow-xl shadow-gray-200/50">
+            <div className="relative rounded-3xl overflow-hidden">
               
               {/* Main Image */}
-              <div className="relative aspect-square sm:aspect-[4/3] bg-gradient-to-br from-gray-50 to-white">
+              <div className="relative aspect-square sm:aspect-[4/3]">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={currentImage}
@@ -63,7 +63,7 @@ export function ProductHero() {
                       src={productImages[currentImage].src}
                       alt={productImages[currentImage].alt}
                       fill
-                      className="object-contain p-6"
+                      className="object-contain p-2"
                       priority
                     />
                   </motion.div>
@@ -89,7 +89,7 @@ export function ProductHero() {
               </div>
 
               {/* Premium Dots indicator */}
-              <div className="flex justify-center gap-2 py-5 bg-gradient-to-t from-gray-50 to-white border-t border-gray-100">
+              <div className="flex justify-center gap-2 py-5">
                 {productImages.map((_, index) => (
                   <button
                     key={index}
@@ -182,7 +182,7 @@ export function ProductHero() {
             </div>
 
             {/* Premium Order Box */}
-            <div className="relative bg-gradient-to-br from-gray-50 to-white rounded-2xl border border-gray-200 p-6 mb-6 shadow-sm overflow-hidden">
+            <div className="relative bg-gradient-to-br from-gray-50 to-white rounded-2xl border border-gray-200 p-6 mb-10 shadow-sm overflow-hidden">
               <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-orange-100/50 to-transparent rounded-full blur-2xl" />
               <div className="relative">
                 <ProductOrder location="product-page" />

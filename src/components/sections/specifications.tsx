@@ -24,7 +24,7 @@ export function SpecificationsSection() {
       src: "/images/product/rk01-part2.png",
       alt: "RK01 - Mécanisme",
       title: "Mécanisme de déclenchement",
-      desc: "Activation à 175°C",
+      desc: "Activation à 170°C",
       color: "blue"
     },
     {

@@ -12,7 +12,7 @@ const features = [
   {
     icon: Flame,
     title: "Détection thermique automatique",
-    description: "Le RK01 se déclenche automatiquement lorsque la température atteint 175°C. Aucune intervention humaine nécessaire, aucune source d'énergie requise.",
+    description: "Le RK01 se déclenche automatiquement lorsque la température atteint 170°C. Aucune intervention humaine nécessaire, aucune source d'énergie requise.",
   },
   {
     icon: Droplets,
@@ -105,7 +105,7 @@ export function ProductDetails() {
                   <span className="flex-shrink-0 w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center font-bold">2</span>
                   <div>
                     <h4 className="font-semibold text-gray-900">Mécanisme de déclenchement</h4>
-                    <p className="text-sm text-gray-600">Activation automatique à 175°C</p>
+                    <p className="text-sm text-gray-600">Activation automatique à 170°C</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4 p-4 bg-white rounded-lg">

@@ -36,7 +36,7 @@ export const adminConfig = {
 
       // Spécifications techniques
       specifications: [
-        { label: "Température d'activation", value: "175°C ± 10°C" },
+        { label: "Température d'activation", value: "170°C ± 10°C" },
         { label: "Durée de vie", value: "5 ans" },
         { label: "Temps de décharge", value: "< 10 secondes" },
         { label: "Volume protégé", value: "0.5 m³" },

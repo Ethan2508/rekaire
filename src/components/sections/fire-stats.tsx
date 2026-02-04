@@ -68,7 +68,7 @@ export function FireStatsSection() {
           </h2>
           
           <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-            <strong className="text-white">1 incendie toutes les 2 minutes</strong> en France. 
+            En France, <strong className="text-white">1 incendie toutes les 2 minutes</strong>. 
             La majorité pourrait être évitée avec une protection adaptée.
           </p>
         </motion.div>

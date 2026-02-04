@@ -51,7 +51,7 @@ export function HeroSection() {
             {/* Innovation badge */}
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-gray-200 shadow-sm">
               <span className="text-base">🇫🇷</span>
-              <span className="text-sm font-medium text-gray-700">Innovation française</span>
+              <span className="text-sm font-medium text-gray-700">Marque française</span>
             </div>
           </motion.div>
 
@@ -96,7 +96,7 @@ export function HeroSection() {
 
               {/* Subheadline */}
               <p className="text-lg text-gray-600 mb-8 max-w-xl mx-auto lg:mx-0 leading-relaxed">
-                Découvrez le <span className="text-orange-500 font-semibold">RK01</span>, l&apos;extincteur autonome et innovant 
+                Découvrez le <span style={{ color: '#eb5122' }} className="font-semibold">RK01</span>, l&apos;extincteur autonome et innovant 
                 qui protège vos espaces 24h/24. Installation en 30 secondes.
               </p>
 
@@ -183,9 +183,9 @@ export function HeroSection() {
                   </div>
 
                   {/* Stats */}
-                  <div className="grid grid-cols-3 gap-4 mt-6 pt-6 border-t border-gray-200">
+                  <div className="grid grid-cols-3 gap-4 mt-6 pt-6 border-gray-200">
                     {[
-                      { value: "175°C", label: "Activation" },
+                      { value: "< 5 sec", label: "Activation" },
                       { value: "30s", label: "Installation" },
                       { value: "5 ans", label: "Durée de vie" },
                     ].map((stat) => (

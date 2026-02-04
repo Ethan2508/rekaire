@@ -17,7 +17,7 @@ export const content = {
       secondary: "Voir les spécifications",
     },
     stats: [
-      { value: "175°C", label: "Activation auto" },
+      { value: "170°C", label: "Activation auto" },
       { value: "5 ans", label: "Durée de vie" },
       { value: "< 30s", label: "Installation" },
       { value: "0", label: "Maintenance" },
@@ -26,14 +26,14 @@ export const content = {
 
   // Features Section
   features: {
-    title: "Pourquoi le RK01 ?",
-    subtitle: "Une protection passive, fiable, immédiate",
+    title: "Pourquoi le RK01",
+    subtitle: "",
     items: [
       {
         icon: "flame",
         title: "Activation automatique",
         description:
-          "Déclenche automatiquement à 175°C. Aucune intervention humaine nécessaire.",
+          "Se déclenche automatiquement à 170°C. Aucune intervention humaine nécessaire.",
       },
       {
         icon: "plug",
@@ -49,9 +49,9 @@ export const content = {
       },
       {
         icon: "shield",
-        title: "Sans maintenance",
+        title: "Garantie 5 ans",
         description:
-          "Aucune vérification périodique. Fonctionnel pendant 5 ans.",
+          "Fonctionnel pendant 5 ans.",
       },
       {
         icon: "zap",
@@ -81,21 +81,21 @@ export const content = {
       },
       {
         number: "02",
-        title: "Le RK01 veille",
+        title: "Protection continue",
         description:
-          "Le capteur thermique surveille en permanence la température ambiante.",
+          "Le mécanisme de déclenchement surveille en permanence la température ambiante.",
       },
       {
         number: "03",
-        title: "Activation automatique",
+        title: "Activation en < 5 secondes",
         description:
-          "En cas de surchauffe (175°C), l'aérosol extincteur se libère instantanément.",
+          "En cas de surchauffe (170°C), l'aérosol extincteur se libère instantanément.",
       },
       {
         number: "04",
         title: "Incendie maîtrisé",
         description:
-          "L'aérosol étouffe les flammes avant qu'elles ne se propagent.",
+          "L'agent extincteur étouffe les flammes avant qu'elles ne se propagent.",
       },
     ],
   },

@@ -37,11 +37,11 @@ export function PartnersSection() {
   const itemsPerView = 4; // 4 logos visibles à la fois sur desktop
   const totalSlides = Math.ceil(protectedClients.length / itemsPerView);
 
-  // Auto-rotation du carrousel toutes les 4 secondes
+  // Auto-rotation du carrousel toutes les 6 secondes
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % totalSlides);
-    }, 4000);
+    }, 6000);
     return () => clearInterval(interval);
   }, [totalSlides]);
 
@@ -54,26 +54,13 @@ export function PartnersSection() {
           viewport={{ once: true }}
           className="text-center mb-12"
         >
-          <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-orange-100 border border-orange-200 text-orange-700 text-sm font-semibold mb-6">
-            <Handshake className="w-5 h-5" />
-            Nos partenaires de confiance
-          </div>
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
-            Ils nous font confiance
+            Nos partenaires de confiance
           </h2>
         </motion.div>
         
         {/* Nos partenaires distributeurs */}
         <div className="mb-16">
-          <motion.h3 
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-xl font-semibold text-gray-700 mb-6 flex items-center justify-center gap-2"
-          >
-            <Handshake className="w-5 h-5 text-orange-500" />
-            Nos partenaires
-          </motion.h3>
           
           <div className="grid grid-cols-2 md:grid-cols-2 gap-6 md:gap-8 max-w-3xl mx-auto">
             {distributors.map((partner, index) => (
@@ -101,15 +88,14 @@ export function PartnersSection() {
 
         {/* Clients protégés - Carrousel */}
         <div>
-          <motion.h3 
+          <motion.h2 
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-xl font-semibold text-gray-700 mb-6 flex items-center justify-center gap-2"
+            className="text-3xl md:text-4xl font-bold text-gray-900 mb-8 text-center"
           >
-            <Users className="w-5 h-5 text-orange-500" />
             Ils sont protégés par le RK01
-          </motion.h3>
+          </motion.h2>
 
           {/* Carrousel */}
           <div className="relative overflow-hidden">
@@ -133,7 +119,11 @@ export function PartnersSection() {
                             alt={client.name}
                             width={150}
                             height={80}
-                            className="max-h-12 md:max-h-16 w-auto object-contain opacity-80 group-hover:opacity-100 transition-opacity"
+                            className={`w-auto object-contain opacity-80 group-hover:opacity-100 transition-opacity ${
+                              client.name === 'Viva Energie' ? 'max-h-20 md:max-h-24' : 
+                              client.name === 'Uber' ? 'max-h-8 md:max-h-10' : 
+                              'max-h-12 md:max-h-16'
+                            }`}
                           />
                         </div>
                       </motion.div>

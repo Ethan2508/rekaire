@@ -146,13 +146,13 @@ export function AboutMission() {
             viewport={{ once: true }}
             className="grid grid-cols-1 gap-6"
           >
-            <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-2xl p-8 border border-orange-200">
-              <div className="flex items-start gap-5">
-                <div className="w-14 h-14 rounded-xl bg-orange-500 flex items-center justify-center flex-shrink-0">
-                  <Shield className="w-7 h-7 text-white" />
+            <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-2xl p-6 border border-orange-200">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-xl bg-orange-500 flex items-center justify-center flex-shrink-0">
+                  <Shield className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <p className="text-4xl font-bold text-gray-900 mb-2">5 ans</p>
+                  <p className="text-3xl font-bold text-gray-900 mb-2">5 ans</p>
                   <p className="text-gray-700">De protection continue sans aucune maintenance</p>
                 </div>
               </div>
@@ -176,7 +176,7 @@ export function AboutMission() {
                   <Flame className="w-7 h-7 text-blue-500" />
                 </div>
                 <div>
-                  <p className="text-4xl font-bold text-gray-900 mb-2">175°C</p>
+                  <p className="text-4xl font-bold text-gray-900 mb-2">170°C</p>
                   <p className="text-gray-600">Activation automatique - aucune intervention requise</p>
                 </div>
               </div>

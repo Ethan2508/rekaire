@@ -91,11 +91,10 @@ export function AboutHero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6, duration: 0.6 }}
-            className="grid grid-cols-3 gap-6 mt-16 max-w-2xl mx-auto"
+            className="grid grid-cols-2 gap-6 mt-16 max-w-2xl mx-auto"
           >
             {[
               { value: "5 ans", label: "de R&D" },
-              { value: "100%", label: "Made in France" },
               { value: "24/7", label: "Protection" },
             ].map((stat, index) => (
               <div key={index} className="text-center p-4 rounded-2xl bg-white/80 backdrop-blur-sm border border-gray-100 shadow-sm">
