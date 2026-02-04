@@ -56,9 +56,9 @@ export function AboutValues() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
-              className="bg-white rounded-xl p-6 border border-gray-200 hover:shadow-lg transition-shadow"
+              className="bg-white rounded-xl p-6 border border-gray-200 hover:shadow-lg transition-shadow text-center"
             >
-              <div className="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center mb-4">
+              <div className="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center mb-4 mx-auto">
                 <value.icon className="w-6 h-6 text-orange-500" />
               </div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">

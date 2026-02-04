@@ -54,9 +54,10 @@ export function PartnersSection() {
           viewport={{ once: true }}
           className="text-center mb-12"
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
+          <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-orange-100 border border-orange-200 text-orange-700 text-sm font-semibold mb-2">
+            <Handshake className="w-5 h-5" />
             Nos partenaires de confiance
-          </h2>
+          </div>
         </motion.div>
         
         {/* Nos partenaires distributeurs */}
@@ -88,14 +89,12 @@ export function PartnersSection() {
 
         {/* Clients protégés - Carrousel */}
         <div>
-          <motion.h2 
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-3xl md:text-4xl font-bold text-gray-900 mb-8 text-center"
-          >
-            Ils sont protégés par le RK01
-          </motion.h2>
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-orange-100 border border-orange-200 text-orange-700 text-sm font-semibold mb-2">
+              <Users className="w-5 h-5" />
+              Ils sont protégés par le RK01
+            </div>
+          </div>
 
           {/* Carrousel */}
           <div className="relative overflow-hidden">

@@ -60,7 +60,6 @@ Le RK01 offre une protection ciblée et fiable pour vos installations électriqu
       "Aérosol non conducteur",
     ],
     specifications: {
-      "Type d'agent": "Aérosol extincteur",
       "Température d'activation": "170°C ± 10°C",
       "Volume protégé": "0,1 m³",
       "Dimensions": "12,1 cm × 1,8 cm × 1,0 cm",

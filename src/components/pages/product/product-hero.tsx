@@ -190,7 +190,7 @@ export function ProductHero() {
             </div>
 
             {/* Vidéo */}
-            <div className="flex justify-center mb-8">
+            <div className="flex justify-center mb-12">
               <VideoModal videoSrc="/videos/video-rk01.mp4" buttonText="Voir en action" />
             </div>
 

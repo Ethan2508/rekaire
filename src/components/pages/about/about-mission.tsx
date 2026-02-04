@@ -146,38 +146,38 @@ export function AboutMission() {
             viewport={{ once: true }}
             className="grid grid-cols-1 gap-6"
           >
-            <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-2xl p-6 border border-orange-200">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-orange-500 flex items-center justify-center flex-shrink-0">
-                  <Shield className="w-6 h-6 text-white" />
+            <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-2xl p-5 border border-orange-200">
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 rounded-xl bg-orange-500 flex items-center justify-center flex-shrink-0">
+                  <Shield className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <p className="text-3xl font-bold text-gray-900 mb-2">5 ans</p>
-                  <p className="text-gray-700">De protection continue sans aucune maintenance</p>
+                  <p className="text-2xl font-bold text-gray-900 mb-1">5 ans</p>
+                  <p className="text-sm text-gray-700">De protection continue sans aucune maintenance</p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-gray-50 rounded-2xl p-8 border border-gray-100">
-              <div className="flex items-start gap-5">
-                <div className="w-14 h-14 rounded-xl bg-green-100 flex items-center justify-center flex-shrink-0">
-                  <Users className="w-7 h-7 text-green-500" />
+            <div className="bg-gray-50 rounded-2xl p-5 border border-gray-100">
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center flex-shrink-0">
+                  <Users className="w-5 h-5 text-green-500" />
                 </div>
                 <div>
-                  <p className="text-4xl font-bold text-gray-900 mb-2">10 000+</p>
-                  <p className="text-gray-600">Foyers et entreprises protégés par Rekaire</p>
+                  <p className="text-2xl font-bold text-gray-900 mb-1">10 000+</p>
+                  <p className="text-sm text-gray-600">Foyers et entreprises protégés par Rekaire</p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-gray-50 rounded-2xl p-8 border border-gray-100">
-              <div className="flex items-start gap-5">
-                <div className="w-14 h-14 rounded-xl bg-blue-100 flex items-center justify-center flex-shrink-0">
-                  <Flame className="w-7 h-7 text-blue-500" />
+            <div className="bg-gray-50 rounded-2xl p-5 border border-gray-100">
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center flex-shrink-0">
+                  <Flame className="w-5 h-5 text-blue-500" />
                 </div>
                 <div>
-                  <p className="text-4xl font-bold text-gray-900 mb-2">170°C</p>
-                  <p className="text-gray-600">Activation automatique - aucune intervention requise</p>
+                  <p className="text-2xl font-bold text-gray-900 mb-1">170°C</p>
+                  <p className="text-sm text-gray-600">Activation automatique - aucune intervention requise</p>
                 </div>
               </div>
             </div>
