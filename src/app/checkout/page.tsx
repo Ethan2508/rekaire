@@ -93,9 +93,9 @@ function CheckoutContent() {
   const isQuoteMode = quantity >= QUOTE_THRESHOLD;
   const { totalHT, totalTTC, unitPriceHT } = calculateTotal(quantity);
 
-  // Calculs avec code promo
+  // Calculs avec code promo (tout est déjà en centimes)
   const totalHTAfterPromo = Math.max(0, totalHT - promoDiscount);
-  const totalTTCAfterPromo = Math.round(totalHTAfterPromo * 1.2 * 100) / 100;
+  const totalTTCAfterPromo = Math.round(totalHTAfterPromo * 1.2);
 
   // Fonction de validation du code promo
   const handleApplyPromo = async () => {

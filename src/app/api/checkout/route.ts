@@ -103,6 +103,10 @@ export async function POST(request: NextRequest) {
     // Calcul du prix selon quantité (2+ = prix réduit) - avec quantité VALIDÉE
     const { unitPriceHT, totalHT, totalTTC } = calculateTotal(validQuantity);
     
+    // 🔒 SÉCURITÉ CRITIQUE: Tous les calculs de prix se font ICI côté serveur
+    // Le client NE PEUT PAS manipuler les prix car ils sont recalculés
+    // Les montants sont passés à Stripe dans les metadata pour validation webhook
+    
     // 🔒 VALIDATION CÔTÉ SERVEUR du code promo
     let promoDiscount = 0;
     let validatedPromoCode = null;

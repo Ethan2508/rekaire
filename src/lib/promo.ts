@@ -27,9 +27,8 @@ export interface PromoValidation {
 }
 
 /**
- * Valider un code promo
- * ⚠️ ATTENTION : Validation côté CLIENT uniquement pour UX
- * La validation RÉELLE se fait côté serveur dans /api/checkout
+ * Valider un code promo via l'API serveur
+ * 🔒 SÉCURISÉ : Utilise l'API serveur au lieu de Supabase direct
  */
 export async function validatePromoCode(
   code: string,
@@ -54,81 +53,40 @@ export async function validatePromoCode(
         error: "Montant invalide",
       };
     }
-    // Récupérer le code promo
-    const { data: promoCode, error } = await supabase
-      .from("promo_codes")
-      .select("*")
-      .eq("code", sanitizedCode)
-      .eq("active", true) // 🔒 Ne récupérer QUE les codes actifs
-      .single();
 
-    if (error || !promoCode) {
+    // 🔒 Appeler l'API serveur au lieu de Supabase directement
+    const response = await fetch("/api/promo/validate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        code: sanitizedCode,
+        orderAmount,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.valid) {
       return {
         valid: false,
-        error: "Code promo invalide",
+        error: data.error || "Code promo invalide",
       };
     }
-
-    // Vérifier si actif
-    if (!promoCode.active) {
-      return {
-        valid: false,
-        error: "Ce code promo n'est plus valide",
-      };
-    }
-
-    // Vérifier les dates de validité
-    const now = new Date();
-    if (promoCode.valid_from && new Date(promoCode.valid_from) > now) {
-      return {
-        valid: false,
-        error: "Ce code promo n'est pas encore valide",
-      };
-    }
-
-    if (promoCode.valid_until && new Date(promoCode.valid_until) < now) {
-      return {
-        valid: false,
-        error: "Ce code promo a expiré",
-      };
-    }
-
-    // Vérifier le nombre d'utilisations
-    if (
-      promoCode.max_uses &&
-      promoCode.current_uses >= promoCode.max_uses
-    ) {
-      return {
-        valid: false,
-        error: "Ce code promo a atteint sa limite d'utilisation",
-      };
-    }
-
-    // Vérifier le montant minimum
-    if (promoCode.min_order && orderAmount < promoCode.min_order) {
-      return {
-        valid: false,
-        error: `Commande minimum de ${promoCode.min_order}€ requise`,
-      };
-    }
-
-    // Calculer la réduction
-    let discount = 0;
-    if (promoCode.discount_type === "percentage") {
-      // 🔒 Limiter à 100% maximum
-      const safePercentage = Math.min(Math.max(0, promoCode.discount_value), 100);
-      discount = (orderAmount * safePercentage) / 100;
-    } else {
-      discount = promoCode.discount_value;
-    }
-
-    // 🔒 S'assurer que la réduction ne dépasse JAMAIS le montant total
-    discount = Math.max(0, Math.min(discount, orderAmount));
 
     return {
       valid: true,
-      discount: Math.round(discount * 100) / 100, // Arrondir à 2 décimales
-      code: promoCode as PromoCode,
+      discount: data.discount,
+      code: {
+        id: "",
+        code: data.code,
+        discount_type: data.discountType,
+        discount_value: data.discountValue,
+        active: true,
+        current_uses: 0,
+        created_at: new Date().toISOString(),
+      } as PromoCode,
     };
   } catch (error) {
     console.error("Erreur validation code promo:", error);

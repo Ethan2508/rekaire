@@ -145,6 +145,26 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
   const quantity = lineItem?.quantity || 1;
 
   // ============================================
+  // VALIDATION CRITIQUE : Vérifier le montant payé
+  // ============================================
+  const expectedQuantity = parseInt(session.metadata?.quantity || '1');
+  const expectedTotalHT = parseInt(session.metadata?.total_ht || '0');
+  const expectedTotalTTC = parseInt(session.metadata?.total_ttc || '0');
+  const amountPaid = session.amount_total || 0;
+
+  // 🔒 SÉCURITÉ : Vérifier que le montant payé correspond au montant attendu
+  if (Math.abs(amountPaid - expectedTotalTTC) > 100) { // Tolérance de 1€ pour les arrondis
+    console.error('[Webhook] ⚠️ FRAUDE DÉTECTÉE: Montant incorrect', {
+      orderId,
+      expectedTotalTTC,
+      amountPaid,
+      difference: amountPaid - expectedTotalTTC
+    });
+    // Logger l'incident mais traiter quand même la commande (Stripe a déjà encaissé)
+    // TODO: Envoyer une alerte admin
+  }
+
+  // ============================================
   // MISE À JOUR SUPABASE (Stock + Compteur + Commande)
   // ============================================
   try {
@@ -155,7 +175,7 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
     const amountTotal = session.amount_total || 0;
     const totalTTC = amountTotal;
     const totalHT = Math.round(totalTTC / 1.2);
-    const unitPriceHT = Math.round(totalHT / quantity);
+    const unitPriceHT = Math.round(totalHT / expectedQuantity);
 
     // Créer la commande dans Supabase
     await createSupabaseOrder({
@@ -164,7 +184,7 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
         ? session.payment_intent 
         : session.payment_intent?.id,
       product_slug: 'rk01',
-      quantity,
+      quantity: expectedQuantity, // 🔒 Utiliser la quantité validée
       unit_price_ht: unitPriceHT,
       total_ht: totalHT,
       total_ttc: totalTTC,
@@ -175,11 +195,11 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
     console.log("[Webhook] Order created in Supabase");
 
     // Décrémenter le stock
-    await decrementStock('rk01', quantity);
+    await decrementStock('rk01', expectedQuantity); // 🔒 Utiliser la quantité validée
     console.log("[Webhook] Stock decremented by", quantity);
 
     // Incrémenter le compteur de ventes
-    const newCount = await incrementSalesCounter(quantity);
+    const newCount = await incrementSalesCounter(expectedQuantity); // 🔒 Utiliser la quantité validée
     console.log("[Webhook] Sales counter updated to", newCount);
 
   } catch (supabaseError) {
