@@ -836,26 +836,6 @@ export default function AdminDashboard() {
             <p className="text-gray-500 mt-2">Connexion sécurisée</p>
           </div>
 
-          {/* Toggle login method */}
-          <div className="flex bg-gray-100 rounded-lg p-1 mb-6">
-            <button
-              onClick={() => setLoginMethod('magic')}
-              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all ${
-                loginMethod === 'magic' ? 'bg-white shadow text-gray-900' : 'text-gray-500'
-              }`}
-            >
-              Magic Link
-            </button>
-            <button
-              onClick={() => setLoginMethod('password')}
-              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all ${
-                loginMethod === 'password' ? 'bg-white shadow text-gray-900' : 'text-gray-500'
-              }`}
-            >
-              Mot de passe
-            </button>
-          </div>
-
           {loginStatus === 'sent' ? (
             <div className="text-center py-8">
               <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -880,7 +860,7 @@ export default function AdminDashboard() {
               </button>
             </div>
           ) : (
-            <form onSubmit={loginMethod === 'magic' ? handleMagicLinkLogin : handlePasswordLogin} className="space-y-4">
+            <form onSubmit={handleMagicLinkLogin} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
                 <input
@@ -892,20 +872,6 @@ export default function AdminDashboard() {
                   required
                 />
               </div>
-
-              {loginMethod === 'password' && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Mot de passe</label>
-                  <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900"
-                    placeholder="••••••••"
-                    required
-                  />
-                </div>
-              )}
 
               {loginError && (
                 <div className="flex items-center gap-2 p-3 bg-red-50 text-red-600 rounded-lg text-sm">
@@ -922,12 +888,10 @@ export default function AdminDashboard() {
                 {loginStatus === 'sending' ? (
                   <>
                     <div className="animate-spin"><Icons.Refresh /></div>
-                    Connexion...
+                    Envoi en cours...
                   </>
-                ) : loginMethod === 'magic' ? (
-                  'Recevoir le lien magique'
                 ) : (
-                  'Se connecter'
+                  'Recevoir le lien magique'
                 )}
               </button>
             </form>
