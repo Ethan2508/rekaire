@@ -13,7 +13,7 @@ import { CTAButton } from "./cta-button";
 import { Menu, X } from "lucide-react";
 
 const navLinks = [
-  { href: "/produit", label: "Notre produit" },
+  { href: "/produit", label: "Notre produit", scrollToTop: true },
   { href: "/a-propos", label: "À propos" },
   { href: "/faq", label: "FAQ" },
   { href: "/blog", label: "Blog" },
@@ -67,6 +67,12 @@ export function Header() {
                   <Link
                     key={link.href}
                     href={link.href}
+                    onClick={(e) => {
+                      if (link.scrollToTop) {
+                        e.preventDefault();
+                        window.location.href = link.href;
+                      }
+                    }}
                     className={`relative px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
                       isActive
                         ? "text-orange-500"
@@ -158,7 +164,13 @@ export function Header() {
                     >
                       <Link
                         href={link.href}
-                        onClick={() => setMobileMenuOpen(false)}
+                        onClick={(e) => {
+                          setMobileMenuOpen(false);
+                          if (link.scrollToTop) {
+                            e.preventDefault();
+                            window.location.href = link.href;
+                          }
+                        }}
                         className={`block px-4 py-3 rounded-xl text-base font-medium transition-all ${
                           isActive
                             ? "bg-orange-100 text-orange-600"
