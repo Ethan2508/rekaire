@@ -238,10 +238,20 @@ export default function AdminPage() {
                 </svg>
               </div>
               <h2 className="text-xl font-semibold text-gray-900 mb-2">Lien envoyé !</h2>
-              <p className="text-gray-600">
-                Un lien de connexion a été envoyé à <strong>{email}</strong>.<br />
-                Cliquez sur le lien dans l&apos;email pour vous connecter.
+              <p className="text-gray-600 mb-4">
+                Un lien de connexion a été envoyé à <strong className="text-gray-900">{email}</strong>.
               </p>
+              <div className="text-left bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-gray-700">
+                <p className="font-semibold mb-2">📧 Vérifiez :</p>
+                <ul className="space-y-1 list-disc list-inside">
+                  <li>Votre boîte de réception</li>
+                  <li>Le dossier <strong>Spam/Courrier indésirable</strong></li>
+                  <li>Délai : jusqu&apos;à 2-3 minutes</li>
+                </ul>
+                <p className="mt-3 text-xs text-gray-500">
+                  Pas d&apos;email ? L&apos;utilisateur n&apos;existe peut-être pas dans Supabase Auth.
+                </p>
+              </div>
             </div>
           ) : (
             <form onSubmit={handleLogin} className="space-y-4">
@@ -254,7 +264,7 @@ export default function AdminPage() {
                   id="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900 placeholder:text-gray-400"
                   placeholder="contact@rekaire.fr"
                   required
                 />

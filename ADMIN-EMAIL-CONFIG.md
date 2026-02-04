@@ -25,10 +25,12 @@ Utiliser ces paramètres pour Resend :
 SMTP Host: smtp.resend.com
 SMTP Port: 465 (SSL) ou 587 (TLS)
 SMTP Username: resend
-SMTP Password: re_aQtJKLou_3XsTjb6CcBHyKtM2z2zPYd8a (votre clé API Resend)
+SMTP Password: [VOTRE_CLE_API_RESEND] (à récupérer sur resend.com/api-keys)
 Sender Email: noreply@rekaire.fr
 Sender Name: Rekaire
 ```
+
+⚠️ **IMPORTANT** : Ne JAMAIS mettre votre clé API Resend dans le code ou Git !
 
 ### Étape 3: Templates d'emails
 
