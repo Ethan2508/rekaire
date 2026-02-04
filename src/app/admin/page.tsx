@@ -980,7 +980,7 @@ export default function AdminDashboard() {
               <button
                 onClick={loadDashboardData}
                 disabled={loadingStats}
-                className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-all"
+                className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-all text-gray-700"
               >
                 <div className={loadingStats ? 'animate-spin' : ''}><Icons.Refresh /></div>
                 Actualiser
@@ -1111,7 +1111,7 @@ export default function AdminDashboard() {
               <div className="flex items-center gap-3">
                 <button
                   onClick={handleExportCSV}
-                  className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-all"
+                  className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-all text-gray-700"
                 >
                   <Icons.Download />
                   Export CSV
@@ -1129,7 +1129,7 @@ export default function AdminDashboard() {
 
             {/* Filters */}
             <div className="bg-white rounded-xl p-4 border border-gray-200 flex flex-wrap items-center gap-4">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 text-gray-400">
                 <Icons.Search />
                 <input
                   type="text"
@@ -1157,7 +1157,7 @@ export default function AdminDashboard() {
 
               <div className="h-8 w-px bg-gray-200" />
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 text-gray-400">
                 <Icons.Calendar />
                 <input
                   type="date"
@@ -1176,7 +1176,7 @@ export default function AdminDashboard() {
 
               <button
                 onClick={() => fetchOrders()}
-                className="ml-auto flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 text-sm font-medium"
+                className="ml-auto flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 text-sm font-medium text-gray-700"
               >
                 <Icons.Filter />
                 Appliquer
@@ -1243,7 +1243,7 @@ export default function AdminDashboard() {
                           <div className="flex items-center gap-2">
                             <button
                               onClick={() => setSelectedOrder(order)}
-                              className="p-2 hover:bg-gray-100 rounded-lg transition-all"
+                              className="p-2 hover:bg-gray-100 rounded-lg transition-all text-gray-600"
                               title="Voir détails"
                             >
                               <Icons.Eye />
@@ -1383,7 +1383,7 @@ export default function AdminDashboard() {
               <button
                 onClick={fetchAuditLogs}
                 disabled={loadingLogs}
-                className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-all"
+                className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-all text-gray-700"
               >
                 <div className={loadingLogs ? 'animate-spin' : ''}><Icons.Refresh /></div>
                 Actualiser
@@ -1404,7 +1404,7 @@ export default function AdminDashboard() {
                 <tbody className="divide-y divide-gray-200">
                   {loadingLogs ? (
                     <tr>
-                      <td colSpan={5} className="px-6 py-12 text-center">
+                      <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
                         <div className="animate-spin inline-block"><Icons.Refresh /></div>
                       </td>
                     </tr>
@@ -1479,8 +1479,14 @@ export default function AdminDashboard() {
 
       {/* ==================== ORDER DETAIL MODAL ==================== */}
       {selectedOrder && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
+          onClick={() => setSelectedOrder(null)}
+        >
+          <div 
+            className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="p-6 border-b border-gray-200 flex items-center justify-between">
               <div>
                 <h3 className="text-xl font-bold text-gray-900">
@@ -1490,7 +1496,7 @@ export default function AdminDashboard() {
               </div>
               <button
                 onClick={() => setSelectedOrder(null)}
-                className="p-2 hover:bg-gray-100 rounded-lg"
+                className="p-2 hover:bg-gray-100 rounded-lg text-gray-500 hover:text-gray-700"
               >
                 <Icons.X />
               </button>
