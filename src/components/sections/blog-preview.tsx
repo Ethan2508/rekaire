@@ -7,8 +7,6 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Calendar, Clock, ArrowRight, BookOpen } from "lucide-react";
-import { useEffect, useState } from "react";
-import { getArticles } from "@/lib/sanity";
 
 interface Article {
   _id: string;
@@ -52,21 +50,7 @@ const fallbackArticles = [
 ];
 
 export function BlogPreviewSection() {
-  const [articles, setArticles] = useState<Article[]>(fallbackArticles);
-
-  useEffect(() => {
-    async function fetchArticles() {
-      try {
-        const sanityArticles = await getArticles();
-        if (sanityArticles && sanityArticles.length > 0) {
-          setArticles(sanityArticles.slice(0, 3));
-        }
-      } catch (error) {
-        console.log("Using fallback articles");
-      }
-    }
-    fetchArticles();
-  }, []);
+  const articles = fallbackArticles;
 
   const formatDate = (date: string) => {
     return new Date(date).toLocaleDateString('fr-FR', { 
