@@ -91,7 +91,7 @@ function CheckoutContent() {
 
   const product = getMainProduct();
   const isQuoteMode = quantity >= QUOTE_THRESHOLD;
-  const { totalHT, totalTTC, unitPriceHT } = calculateTotal(Math.min(quantity, 2));
+  const { totalHT, totalTTC, unitPriceHT } = calculateTotal(quantity);
 
   // Calculs avec code promo
   const totalHTAfterPromo = Math.max(0, totalHT - promoDiscount);

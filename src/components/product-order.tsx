@@ -12,8 +12,8 @@ import { trackCTAClick } from "@/lib/tracking";
 import { getMainProduct, formatPrice, calculateTotal } from "@/config/product";
 import Link from "next/link";
 
-// Seuil pour demande de devis
-const QUOTE_THRESHOLD = 3;
+// Seuil pour demande de devis (10+ = devis obligatoire)
+const QUOTE_THRESHOLD = 10;
 
 interface ProductOrderProps {
   location: string;
@@ -26,8 +26,8 @@ export function ProductOrder({ location, className = "" }: ProductOrderProps) {
 
   const isQuoteMode = quantity >= QUOTE_THRESHOLD;
 
-  // Prix calculés (seulement pour 1-2 unités)
-  const { totalHT, totalTTC, unitPriceHT } = calculateTotal(Math.min(quantity, 2));
+  // Prix calculés
+  const { totalHT, totalTTC, unitPriceHT } = calculateTotal(quantity);
 
   const decreaseQty = () => {
     if (quantity > 1) setQuantity(quantity - 1);

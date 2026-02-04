@@ -55,11 +55,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 🔒 VALIDATION STRICTE quantité
+    // 🔒 VALIDATION STRICTE quantité (1-9 = paiement, 10+ = devis)
     const validQuantity = Math.floor(Math.abs(quantity));
-    if (validQuantity < 1 || validQuantity > 2) {
+    if (validQuantity < 1 || validQuantity > 9) {
       return NextResponse.json(
-        { error: "Invalid quantity. Must be 1 or 2 units." },
+        { error: "Invalid quantity. Must be between 1 and 9 units. For 10+ units, please request a quote." },
         { status: 400 }
       );
     }
