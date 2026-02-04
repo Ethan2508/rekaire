@@ -81,11 +81,22 @@ function CheckoutContent() {
     email: "",
     phone: "",
     companyName: "",
+    // Adresse de livraison
     address: "",
     postalCode: "",
     city: "",
+    // Adresse de facturation
+    billingName: "",
+    billingCompany: "",
+    billingAddress: "",
+    billingPostalCode: "",
+    billingCity: "",
+    billingVatNumber: "", // Numéro TVA intracommunautaire
     message: "", // Pour devis
   });
+
+  // Facturation = Livraison par défaut
+  const [billingSameAsShipping, setBillingSameAsShipping] = useState(true);
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -289,9 +300,19 @@ function CheckoutContent() {
 
   const validateStep2 = () => {
     const newErrors: Record<string, string> = {};
+    // Validation adresse de livraison
     if (!formData.address.trim()) newErrors.address = "Adresse requise";
     if (!formData.postalCode.trim()) newErrors.postalCode = "Code postal requis";
     if (!formData.city.trim()) newErrors.city = "Ville requise";
+    
+    // Validation adresse de facturation si différente
+    if (!billingSameAsShipping) {
+      if (!formData.billingName.trim()) newErrors.billingName = "Nom de facturation requis";
+      if (!formData.billingAddress.trim()) newErrors.billingAddress = "Adresse de facturation requise";
+      if (!formData.billingPostalCode.trim()) newErrors.billingPostalCode = "Code postal requis";
+      if (!formData.billingCity.trim()) newErrors.billingCity = "Ville requise";
+    }
+    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -370,9 +391,18 @@ function CheckoutContent() {
               phone: formData.phone,
               isCompany,
               companyName: isCompany ? formData.companyName : null,
+              // Adresse de livraison
               address: formData.address,
               postalCode: formData.postalCode,
               city: formData.city,
+              // Adresse de facturation
+              billingSameAsShipping,
+              billingName: billingSameAsShipping ? `${formData.firstName} ${formData.lastName}` : formData.billingName,
+              billingCompany: billingSameAsShipping ? (isCompany ? formData.companyName : null) : formData.billingCompany,
+              billingAddress: billingSameAsShipping ? formData.address : formData.billingAddress,
+              billingPostalCode: billingSameAsShipping ? formData.postalCode : formData.billingPostalCode,
+              billingCity: billingSameAsShipping ? formData.city : formData.billingCity,
+              billingVatNumber: formData.billingVatNumber || null,
             },
           }),
         });
@@ -746,6 +776,154 @@ function CheckoutContent() {
                           </div>
                         </div>
 
+                        {/* Séparateur Adresse de facturation */}
+                        <div className="pt-4 border-t border-gray-200">
+                          <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                            Adresse de facturation
+                          </h3>
+                          
+                          {/* Checkbox "Même adresse" */}
+                          <label className="flex items-center gap-3 cursor-pointer mb-4">
+                            <input
+                              type="checkbox"
+                              checked={billingSameAsShipping}
+                              onChange={(e) => setBillingSameAsShipping(e.target.checked)}
+                              className="w-5 h-5 rounded border-gray-300 text-orange-500 focus:ring-orange-500"
+                            />
+                            <span className="text-sm text-gray-700">
+                              Adresse de facturation identique à l&apos;adresse de livraison
+                            </span>
+                          </label>
+
+                          {/* Champs adresse de facturation (si différente) */}
+                          <AnimatePresence>
+                            {!billingSameAsShipping && (
+                              <motion.div
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: "auto" }}
+                                exit={{ opacity: 0, height: 0 }}
+                                className="space-y-4"
+                              >
+                                {/* Nom de facturation */}
+                                <div>
+                                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Nom / Raison sociale *
+                                  </label>
+                                  <div className="relative">
+                                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                                    <input
+                                      type="text"
+                                      name="billingName"
+                                      value={formData.billingName}
+                                      onChange={handleChange}
+                                      placeholder="Jean Dupont ou ACME SAS"
+                                      className={`${inputClasses(errors.billingName)} pl-10`}
+                                    />
+                                  </div>
+                                  {errors.billingName && (
+                                    <p className="text-red-500 text-xs mt-1">{errors.billingName}</p>
+                                  )}
+                                </div>
+
+                                {/* Nom entreprise facturation (optionnel) */}
+                                <div>
+                                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Nom de l&apos;entreprise (optionnel)
+                                  </label>
+                                  <div className="relative">
+                                    <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                                    <input
+                                      type="text"
+                                      name="billingCompany"
+                                      value={formData.billingCompany}
+                                      onChange={handleChange}
+                                      placeholder="Nom de l'entreprise"
+                                      className={`${inputClasses()} pl-10`}
+                                    />
+                                  </div>
+                                </div>
+
+                                {/* Adresse de facturation */}
+                                <div>
+                                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Adresse *
+                                  </label>
+                                  <div className="relative">
+                                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                                    <input
+                                      type="text"
+                                      name="billingAddress"
+                                      value={formData.billingAddress}
+                                      onChange={handleChange}
+                                      placeholder="123 rue de la Facturation"
+                                      className={`${inputClasses(errors.billingAddress)} pl-10`}
+                                    />
+                                  </div>
+                                  {errors.billingAddress && (
+                                    <p className="text-red-500 text-xs mt-1">{errors.billingAddress}</p>
+                                  )}
+                                </div>
+
+                                {/* Code postal + Ville facturation */}
+                                <div className="grid grid-cols-3 gap-3">
+                                  <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                      Code postal *
+                                    </label>
+                                    <input
+                                      type="text"
+                                      name="billingPostalCode"
+                                      value={formData.billingPostalCode}
+                                      onChange={handleChange}
+                                      placeholder="75001"
+                                      maxLength={5}
+                                      className={inputClasses(errors.billingPostalCode)}
+                                    />
+                                    {errors.billingPostalCode && (
+                                      <p className="text-red-500 text-xs mt-1">
+                                        {errors.billingPostalCode}
+                                      </p>
+                                    )}
+                                  </div>
+                                  <div className="col-span-2">
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                      Ville *
+                                    </label>
+                                    <input
+                                      type="text"
+                                      name="billingCity"
+                                      value={formData.billingCity}
+                                      onChange={handleChange}
+                                      placeholder="Paris"
+                                      className={inputClasses(errors.billingCity)}
+                                    />
+                                    {errors.billingCity && (
+                                      <p className="text-red-500 text-xs mt-1">{errors.billingCity}</p>
+                                    )}
+                                  </div>
+                                </div>
+
+                                {/* Numéro TVA (optionnel) */}
+                                {isCompany && (
+                                  <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                      N° TVA intracommunautaire (optionnel)
+                                    </label>
+                                    <input
+                                      type="text"
+                                      name="billingVatNumber"
+                                      value={formData.billingVatNumber}
+                                      onChange={handleChange}
+                                      placeholder="FR12345678901"
+                                      className={inputClasses()}
+                                    />
+                                  </div>
+                                )}
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </div>
+
                         {/* Message pour devis */}
                         {isQuoteMode && (
                           <div>
@@ -826,6 +1004,26 @@ function CheckoutContent() {
                                 {formData.address}
                                 <br />
                                 {formData.postalCode} {formData.city}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="pt-2 border-t border-gray-200">
+                            <div className="flex justify-between text-sm">
+                              <span className="text-gray-500">Facturation</span>
+                              <span className="text-gray-900 text-right">
+                                {billingSameAsShipping ? (
+                                  <span className="text-gray-500 italic">Identique à la livraison</span>
+                                ) : (
+                                  <>
+                                    {formData.billingName}
+                                    {formData.billingCompany && <><br />{formData.billingCompany}</>}
+                                    <br />
+                                    {formData.billingAddress}
+                                    <br />
+                                    {formData.billingPostalCode} {formData.billingCity}
+                                    {formData.billingVatNumber && <><br />TVA: {formData.billingVatNumber}</>}
+                                  </>
+                                )}
                               </span>
                             </div>
                           </div>

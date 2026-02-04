@@ -200,12 +200,17 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
     const promoCode = session.metadata?.promo_code || undefined;
     const promoDiscount = session.metadata?.promo_discount ? parseInt(session.metadata.promo_discount) : undefined;
 
+    // Récupérer adresse de facturation depuis metadata (saisie par le client)
+    const billingSameFromMetadata = session.metadata?.billing_same_as_shipping === 'true';
+    const billingNameFromMetadata = session.metadata?.billing_name;
+    const billingCompanyFromMetadata = session.metadata?.billing_company;
+    const billingAddressFromMetadata = session.metadata?.billing_address;
+    const billingPostalCodeFromMetadata = session.metadata?.billing_postal_code;
+    const billingCityFromMetadata = session.metadata?.billing_city;
+    const billingVatNumberFromMetadata = session.metadata?.billing_vat_number;
+
     // Déterminer si adresse facturation = adresse livraison
-    const billingSameAsShipping = !billingAddress || (
-      billingAddress.line1 === shippingDetails?.address?.line1 &&
-      billingAddress.city === shippingDetails?.address?.city &&
-      billingAddress.postal_code === shippingDetails?.address?.postal_code
-    );
+    const billingSameAsShipping = billingSameFromMetadata;
 
     // Créer la commande dans Supabase avec TOUTES les données
     await createSupabaseOrder({
@@ -227,14 +232,16 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
       shipping_postal_code: shippingDetails?.address?.postal_code || session.metadata?.shipping_postal_code || undefined,
       shipping_city: shippingDetails?.address?.city || session.metadata?.shipping_city || undefined,
       shipping_country: shippingDetails?.address?.country || 'France',
-      // Adresse de FACTURATION
+      // Adresse de FACTURATION (depuis metadata saisies par le client)
       billing_same_as_shipping: billingSameAsShipping,
-      billing_name: session.customer_details?.name || undefined,
-      billing_address_line1: billingAddress?.line1 || undefined,
+      billing_name: billingNameFromMetadata || session.customer_details?.name || undefined,
+      billing_company: billingCompanyFromMetadata || undefined,
+      billing_address_line1: billingAddressFromMetadata || billingAddress?.line1 || undefined,
       billing_address_line2: billingAddress?.line2 || undefined,
-      billing_postal_code: billingAddress?.postal_code || undefined,
-      billing_city: billingAddress?.city || undefined,
+      billing_postal_code: billingPostalCodeFromMetadata || billingAddress?.postal_code || undefined,
+      billing_city: billingCityFromMetadata || billingAddress?.city || undefined,
       billing_country: billingAddress?.country || 'France',
+      billing_vat_number: billingVatNumberFromMetadata || undefined,
       // Code promo & Facture Stripe
       promo_code: promoCode,
       promo_discount: promoDiscount,

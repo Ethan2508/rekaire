@@ -22,9 +22,18 @@ interface CustomerData {
   phone: string;
   isCompany: boolean;
   companyName?: string;
+  // Adresse de livraison
   address: string;
   postalCode: string;
   city: string;
+  // Adresse de facturation
+  billingSameAsShipping: boolean;
+  billingName?: string;
+  billingCompany?: string;
+  billingAddress?: string;
+  billingPostalCode?: string;
+  billingCity?: string;
+  billingVatNumber?: string;
 }
 
 export async function POST(request: NextRequest) {
@@ -222,9 +231,18 @@ export async function POST(request: NextRequest) {
         customer_name: `${customer.firstName} ${customer.lastName}`,
         customer_phone: customer.phone,
         customer_company: customer.companyName || "",
+        // Adresse de livraison
         shipping_address: customer.address,
         shipping_postal_code: customer.postalCode,
         shipping_city: customer.city,
+        // Adresse de facturation
+        billing_same_as_shipping: String(customer.billingSameAsShipping),
+        billing_name: customer.billingName || `${customer.firstName} ${customer.lastName}`,
+        billing_company: customer.billingCompany || customer.companyName || "",
+        billing_address: customer.billingAddress || customer.address,
+        billing_postal_code: customer.billingPostalCode || customer.postalCode,
+        billing_city: customer.billingCity || customer.city,
+        billing_vat_number: customer.billingVatNumber || "",
       },
     });
 

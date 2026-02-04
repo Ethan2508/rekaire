@@ -66,6 +66,11 @@ CREATE INDEX IF NOT EXISTS idx_admin_audit_log_created_at ON admin_audit_log(cre
 -- RLS: Seuls les admins peuvent voir les logs
 ALTER TABLE admin_audit_log ENABLE ROW LEVEL SECURITY;
 
+-- Supprimer les policies si elles existent déjà (pour éviter les erreurs)
+DROP POLICY IF EXISTS "Authenticated users can read audit logs" ON admin_audit_log;
+DROP POLICY IF EXISTS "Service role can insert audit logs" ON admin_audit_log;
+DROP POLICY IF EXISTS "Authenticated can insert audit logs" ON admin_audit_log;
+
 -- Policy: Lecture pour les utilisateurs authentifiés (filtrée côté app)
 CREATE POLICY "Authenticated users can read audit logs"
     ON admin_audit_log
