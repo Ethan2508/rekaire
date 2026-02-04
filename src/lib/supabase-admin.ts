@@ -204,3 +204,243 @@ export async function updateProductStock(
 
   return !error;
 }
+
+// ============================================
+// FONCTIONS ADMIN - FACTURES
+// ============================================
+
+/**
+ * Génère le prochain numéro de facture au format FW-YYYY-XXXX
+ */
+export async function getNextInvoiceNumber(): Promise<string> {
+  const currentYear = new Date().getFullYear();
+  
+  // Essaie d'utiliser la fonction RPC si disponible
+  const { data: invoiceNum, error: rpcError } = await supabaseAdmin
+    .rpc('get_next_invoice_number');
+  
+  if (!rpcError && invoiceNum) {
+    return invoiceNum;
+  }
+  
+  // Fallback: gérer manuellement
+  const { data: sequence } = await supabaseAdmin
+    .from('invoice_sequence')
+    .select('last_number')
+    .eq('year', currentYear)
+    .single();
+  
+  let nextNum = 1;
+  
+  if (sequence) {
+    nextNum = sequence.last_number + 1;
+    await supabaseAdmin
+      .from('invoice_sequence')
+      .update({ last_number: nextNum })
+      .eq('year', currentYear);
+  } else {
+    // Créer l'entrée pour cette année
+    await supabaseAdmin
+      .from('invoice_sequence')
+      .insert({ year: currentYear, last_number: 1 });
+  }
+  
+  return `FW-${currentYear}-${String(nextNum).padStart(4, '0')}`;
+}
+
+/**
+ * Enregistre l'URL de la facture pour une commande
+ */
+export async function saveInvoiceUrl(
+  orderId: string, 
+  invoiceNumber: string,
+  invoiceUrl: string
+): Promise<boolean> {
+  const { error } = await supabaseAdmin
+    .from('orders')
+    .update({ 
+      invoice_number: invoiceNumber,
+      invoice_url: invoiceUrl,
+      invoice_generated_at: new Date().toISOString()
+    })
+    .eq('id', orderId);
+
+  return !error;
+}
+
+// ============================================
+// FONCTIONS ADMIN - TRACKING & EXPÉDITION
+// ============================================
+
+/**
+ * Met à jour le numéro de tracking d'une commande
+ */
+export async function updateTrackingNumber(
+  orderId: string, 
+  trackingNumber: string,
+  trackingUrl?: string
+): Promise<boolean> {
+  const { error } = await supabaseAdmin
+    .from('orders')
+    .update({ 
+      tracking_number: trackingNumber,
+      tracking_url: trackingUrl || `https://www.laposte.fr/outils/suivre-vos-envois?code=${trackingNumber}`,
+      status: 'shipped',
+      shipped_at: new Date().toISOString()
+    })
+    .eq('id', orderId);
+
+  return !error;
+}
+
+/**
+ * Marque une commande comme livrée
+ */
+export async function markOrderDelivered(orderId: string): Promise<boolean> {
+  const { error } = await supabaseAdmin
+    .from('orders')
+    .update({ 
+      status: 'delivered',
+      delivered_at: new Date().toISOString()
+    })
+    .eq('id', orderId);
+
+  return !error;
+}
+
+// ============================================
+// FONCTIONS ADMIN - RÉCUPÉRATION COMMANDES
+// ============================================
+
+export interface OrderDetails {
+  id: string;
+  order_number: string;
+  status: string;
+  quantity: number;
+  unit_price_ht: number;
+  total_ht: number;
+  total_ttc: number;
+  promo_code?: string;
+  promo_discount?: number;
+  customer_email: string;
+  customer_name?: string;
+  customer_phone?: string;
+  shipping_address_line1?: string;
+  shipping_address_line2?: string;
+  shipping_postal_code?: string;
+  shipping_city?: string;
+  shipping_country?: string;
+  tracking_number?: string;
+  tracking_url?: string;
+  invoice_number?: string;
+  invoice_url?: string;
+  created_at: string;
+  shipped_at?: string;
+  delivered_at?: string;
+}
+
+/**
+ * Récupère toutes les commandes avec filtres optionnels
+ */
+export async function getOrders(options?: {
+  status?: string;
+  limit?: number;
+  offset?: number;
+}): Promise<OrderDetails[]> {
+  let query = supabaseAdmin
+    .from('orders')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (options?.status) {
+    query = query.eq('status', options.status);
+  }
+  
+  if (options?.limit) {
+    query = query.limit(options.limit);
+  }
+  
+  if (options?.offset) {
+    query = query.range(options.offset, options.offset + (options?.limit || 50) - 1);
+  }
+
+  const { data, error } = await query;
+
+  if (error) {
+    console.error('Error fetching orders:', error);
+    return [];
+  }
+
+  return data || [];
+}
+
+/**
+ * Récupère une commande par son ID
+ */
+export async function getOrderById(orderId: string): Promise<OrderDetails | null> {
+  const { data, error } = await supabaseAdmin
+    .from('orders')
+    .select('*')
+    .eq('id', orderId)
+    .single();
+
+  if (error) {
+    console.error('Error fetching order:', error);
+    return null;
+  }
+
+  return data;
+}
+
+/**
+ * Récupère les commandes à expédier (statut = paid)
+ */
+export async function getOrdersToShip(): Promise<OrderDetails[]> {
+  return getOrders({ status: 'paid' });
+}
+
+// ============================================
+// FONCTIONS ADMIN - AUDIT LOG
+// ============================================
+
+export async function logAdminAction(
+  adminEmail: string,
+  action: string,
+  targetType?: string,
+  targetId?: string,
+  details?: Record<string, unknown>,
+  ipAddress?: string
+): Promise<void> {
+  try {
+    await supabaseAdmin
+      .from('admin_audit_log')
+      .insert({
+        admin_email: adminEmail,
+        action,
+        target_type: targetType,
+        target_id: targetId,
+        details,
+        ip_address: ipAddress
+      });
+  } catch (error) {
+    console.error('Error logging admin action:', error);
+  }
+}
+
+// ============================================
+// FONCTIONS ADMIN - WHITELIST
+// ============================================
+
+export async function isAdminWhitelisted(email: string): Promise<boolean> {
+  const { data, error } = await supabaseAdmin
+    .from('admin_whitelist')
+    .select('is_active')
+    .eq('email', email.toLowerCase())
+    .single();
+
+  if (error || !data) {
+    return false;
+  }
+
+  return data.is_active === true;
+}

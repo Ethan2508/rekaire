@@ -45,8 +45,8 @@ interface AddressSuggestion {
   context: string;
 }
 
-// Seuil pour demande de devis
-const QUOTE_THRESHOLD = 3;
+// Seuil pour demande de devis (10+ = devis obligatoire)
+const QUOTE_THRESHOLD = 10;
 
 function CheckoutContent() {
   const searchParams = useSearchParams();

@@ -145,3 +145,236 @@ export async function sendAdminNotificationEmail(data: OrderEmailData) {
     return { success: false, error };
   }
 }
+
+// ============================================
+// Email d'expédition avec numéro de suivi
+// ============================================
+
+export interface ShippingEmailData {
+  customerEmail: string;
+  customerName?: string;
+  orderNumber: string;
+  trackingNumber: string;
+  trackingUrl: string;
+  carrier: string;
+}
+
+export async function sendShippingEmail(data: ShippingEmailData) {
+  try {
+    const result = await resend.emails.send({
+      from: `${FROM_NAME} <${FROM_EMAIL}>`,
+      to: data.customerEmail,
+      subject: `📦 Votre commande ${data.orderNumber} a été expédiée !`,
+      html: `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; padding: 40px 20px; }
+    .header { text-align: center; margin-bottom: 40px; }
+    .logo { font-size: 24px; font-weight: bold; color: #0A0A0A; }
+    .content { background: #f9f9f9; border-radius: 8px; padding: 30px; margin-bottom: 30px; }
+    h1 { color: #0A0A0A; margin: 0 0 20px; }
+    .tracking-box { background: white; border: 2px solid #eb5122; border-radius: 8px; padding: 20px; text-align: center; margin: 20px 0; }
+    .tracking-number { font-size: 20px; font-weight: bold; color: #eb5122; letter-spacing: 1px; margin: 10px 0; }
+    .carrier { color: #666; font-size: 14px; }
+    .footer { text-align: center; font-size: 12px; color: #999; margin-top: 40px; }
+    .btn { display: inline-block; padding: 14px 28px; background: #eb5122; color: white; text-decoration: none; border-radius: 6px; margin-top: 15px; font-weight: bold; }
+    .btn:hover { background: #d4471e; }
+    .timeline { margin: 20px 0; padding: 0; }
+    .timeline-item { display: flex; align-items: center; padding: 10px 0; }
+    .timeline-dot { width: 12px; height: 12px; border-radius: 50%; margin-right: 15px; }
+    .timeline-dot.done { background: #22c55e; }
+    .timeline-dot.current { background: #eb5122; animation: pulse 1.5s infinite; }
+    .timeline-dot.pending { background: #e5e7eb; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">REKAIRE</div>
+    </div>
+    
+    <div class="content">
+      <h1>🎉 Votre commande est en route !</h1>
+      <p>Bonjour${data.customerName ? ` ${data.customerName}` : ''}, bonne nouvelle !</p>
+      <p>Votre commande <strong>${data.orderNumber}</strong> a été expédiée et est maintenant en chemin vers vous.</p>
+      
+      <div class="tracking-box">
+        <div class="carrier">Transporteur : ${data.carrier}</div>
+        <div class="tracking-number">${data.trackingNumber}</div>
+        <a href="${data.trackingUrl}" class="btn" target="_blank">
+          📍 Suivre mon colis
+        </a>
+      </div>
+      
+      <div class="timeline">
+        <div class="timeline-item">
+          <span class="timeline-dot done"></span>
+          <span>Commande confirmée ✓</span>
+        </div>
+        <div class="timeline-item">
+          <span class="timeline-dot done"></span>
+          <span>Préparation terminée ✓</span>
+        </div>
+        <div class="timeline-item">
+          <span class="timeline-dot current"></span>
+          <span>En cours de livraison</span>
+        </div>
+        <div class="timeline-item">
+          <span class="timeline-dot pending"></span>
+          <span>Livré</span>
+        </div>
+      </div>
+      
+      <p style="font-size: 14px; color: #666; margin-top: 20px;">
+        La livraison est généralement effectuée sous 2-4 jours ouvrés. 
+        Vous recevrez une notification lors de la livraison.
+      </p>
+    </div>
+    
+    <p style="text-align: center;">
+      Une question ? Contactez-nous à <a href="mailto:${FROM_EMAIL}">${FROM_EMAIL}</a>
+    </p>
+    
+    <div class="footer">
+      <p>© ${new Date().getFullYear()} Rekaire. Tous droits réservés.</p>
+      <p>Protection incendie intelligente</p>
+    </div>
+  </div>
+</body>
+</html>
+      `,
+      text: `
+Votre commande ${data.orderNumber} a été expédiée !
+
+Bonjour${data.customerName ? ` ${data.customerName}` : ''},
+
+Votre commande est maintenant en route !
+
+Transporteur : ${data.carrier}
+Numéro de suivi : ${data.trackingNumber}
+
+Suivez votre colis ici : ${data.trackingUrl}
+
+La livraison est généralement effectuée sous 2-4 jours ouvrés.
+
+Une question ? Contactez-nous à ${FROM_EMAIL}
+
+© ${new Date().getFullYear()} Rekaire
+      `,
+    });
+
+    console.log("[Email] Shipping notification sent to:", data.customerEmail);
+    return { success: true, data: result };
+  } catch (error) {
+    console.error("[Email] Failed to send shipping notification:", error);
+    return { success: false, error };
+  }
+}
+
+// ============================================
+// Email avec lien de facture PDF
+// ============================================
+
+export interface InvoiceEmailData {
+  customerEmail: string;
+  customerName?: string;
+  orderNumber: string;
+  invoiceNumber: string;
+  invoiceUrl: string;
+  totalTTC: number; // en euros
+}
+
+export async function sendInvoiceEmail(data: InvoiceEmailData) {
+  const amount = data.totalTTC.toFixed(2);
+  
+  try {
+    const result = await resend.emails.send({
+      from: `${FROM_NAME} <${FROM_EMAIL}>`,
+      to: data.customerEmail,
+      subject: `📄 Facture ${data.invoiceNumber} - Commande ${data.orderNumber}`,
+      html: `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; padding: 40px 20px; }
+    .header { text-align: center; margin-bottom: 40px; }
+    .logo { font-size: 24px; font-weight: bold; color: #0A0A0A; }
+    .content { background: #f9f9f9; border-radius: 8px; padding: 30px; margin-bottom: 30px; }
+    h1 { color: #0A0A0A; margin: 0 0 20px; }
+    .invoice-box { background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin: 20px 0; }
+    .footer { text-align: center; font-size: 12px; color: #999; margin-top: 40px; }
+    .btn { display: inline-block; padding: 14px 28px; background: #eb5122; color: white; text-decoration: none; border-radius: 6px; margin-top: 15px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">REKAIRE</div>
+    </div>
+    
+    <div class="content">
+      <h1>Votre facture est disponible</h1>
+      <p>Bonjour${data.customerName ? ` ${data.customerName}` : ''},</p>
+      <p>Veuillez trouver ci-dessous votre facture pour la commande <strong>${data.orderNumber}</strong>.</p>
+      
+      <div class="invoice-box">
+        <p><strong>Facture N°:</strong> ${data.invoiceNumber}</p>
+        <p><strong>Commande:</strong> ${data.orderNumber}</p>
+        <p><strong>Montant TTC:</strong> ${amount} €</p>
+        
+        <a href="${data.invoiceUrl}" class="btn" target="_blank">
+          📥 Télécharger la facture PDF
+        </a>
+      </div>
+      
+      <p style="font-size: 14px; color: #666;">
+        Ce lien est valable pendant 7 jours. Pour obtenir une nouvelle copie, contactez-nous.
+      </p>
+    </div>
+    
+    <p style="text-align: center;">
+      Une question ? Contactez-nous à <a href="mailto:${FROM_EMAIL}">${FROM_EMAIL}</a>
+    </p>
+    
+    <div class="footer">
+      <p>© ${new Date().getFullYear()} Rekaire. Tous droits réservés.</p>
+    </div>
+  </div>
+</body>
+</html>
+      `,
+      text: `
+Votre facture ${data.invoiceNumber}
+
+Bonjour${data.customerName ? ` ${data.customerName}` : ''},
+
+Votre facture pour la commande ${data.orderNumber} est disponible.
+
+Facture N°: ${data.invoiceNumber}
+Montant TTC: ${amount} €
+
+Télécharger: ${data.invoiceUrl}
+
+Ce lien est valable pendant 7 jours.
+
+© ${new Date().getFullYear()} Rekaire
+      `,
+    });
+
+    console.log("[Email] Invoice email sent to:", data.customerEmail);
+    return { success: true, data: result };
+  } catch (error) {
+    console.error("[Email] Failed to send invoice email:", error);
+    return { success: false, error };
+  }
+}
