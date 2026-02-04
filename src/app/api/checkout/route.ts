@@ -165,13 +165,12 @@ export async function POST(request: NextRequest) {
       }
     }
     
-    // Appliquer la réduction validée
+    // Appliquer la réduction validée (tout est déjà en centimes)
     const totalHTAfterPromo = Math.max(0, totalHT - promoDiscount);
-    const totalTTCAfterPromo = Math.round(totalHTAfterPromo * 1.2 * 100) / 100;
+    const totalTTCAfterPromo = Math.round(totalHTAfterPromo * 1.2);
     
-    // Convertir en TTC pour Stripe (en centimes)
-    const unitPriceTTC = Math.round(unitPriceHT * 1.2);
-    const totalPriceInCents = Math.round(totalTTCAfterPromo * 100);
+    // Les prix sont déjà en centimes, pas besoin de multiplier par 100
+    const totalPriceInCents = Math.round(totalTTCAfterPromo);
 
     // Stocker le lead dans Supabase (même si la commande n'aboutit pas)
     try {
