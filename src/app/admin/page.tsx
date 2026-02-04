@@ -7,6 +7,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { createClient } from '@supabase/supabase-js';
+import { AnalyticsCharts } from '@/components/admin-analytics';
 
 // ============================================
 // ICONS (inline SVG for no dependencies)
@@ -175,6 +176,10 @@ interface Order {
   tracking_url?: string;
   invoice_number?: string;
   invoice_url?: string;
+  refund_id?: string;
+  refund_amount?: number;
+  refunded_at?: string;
+  refunded_by?: string;
   notes?: string;
   created_at: string;
   updated_at?: string;
@@ -251,6 +256,9 @@ export default function AdminDashboard() {
   // Dashboard stats
   const [stats, setStats] = useState<Stats | null>(null);
   const [loadingStats, setLoadingStats] = useState(false);
+  const [analytics, setAnalytics] = useState<any>(null);
+  const [loadingAnalytics, setLoadingAnalytics] = useState(false);
+  const [analyticsPeriod, setAnalyticsPeriod] = useState(30);
 
   // Orders state
   const [orders, setOrders] = useState<Order[]>([]);
@@ -262,6 +270,7 @@ export default function AdminDashboard() {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [trackingNumber, setTrackingNumber] = useState('');
   const [isUpdating, setIsUpdating] = useState(false);
+  const [showRefundConfirm, setShowRefundConfirm] = useState(false);
 
   // Promo codes state
   const [promoCodes, setPromoCodes] = useState<PromoCode[]>([]);
@@ -481,10 +490,34 @@ export default function AdminDashboard() {
       };
 
       setStats(calculatedStats);
+      
+      // Load advanced analytics
+      loadAnalytics();
     } catch (error) {
       console.error('Load stats error:', error);
     } finally {
       setLoadingStats(false);
+    }
+  }
+
+  async function loadAnalytics() {
+    setLoadingAnalytics(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
+      const response = await fetch(`/api/admin/analytics?days=${analyticsPeriod}`, {
+        headers: { 'Authorization': `Bearer ${session.access_token}` }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setAnalytics(data);
+      }
+    } catch (error) {
+      console.error('Load analytics error:', error);
+    } finally {
+      setLoadingAnalytics(false);
     }
   }
 
@@ -602,6 +635,42 @@ export default function AdminDashboard() {
     } catch (error) {
       console.error('Mark delivered error:', error);
       showToast('Erreur lors de la mise à jour', 'error');
+    } finally {
+      setIsUpdating(false);
+    }
+  }
+
+  async function handleRefund(orderId: string) {
+    setIsUpdating(true);
+    try {
+      const token = (await supabase.auth.getSession()).data.session?.access_token;
+      if (!token) throw new Error('No token');
+
+      const response = await fetch('/api/admin/refund', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          orderId,
+          reason: 'requested_by_customer'
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Erreur remboursement');
+      }
+
+      showToast('Remboursement effectué avec succès', 'success');
+      fetchOrders();
+      setSelectedOrder(null);
+      setShowRefundConfirm(false);
+    } catch (error: any) {
+      console.error('Refund error:', error);
+      showToast(error.message || 'Erreur lors du remboursement', 'error');
     } finally {
       setIsUpdating(false);
     }
@@ -1074,6 +1143,9 @@ export default function AdminDashboard() {
                 </div>
               </div>
             </div>
+
+            {/* Analytics Charts */}
+            <AnalyticsCharts analytics={analytics} loading={loadingAnalytics} />
 
             {/* Order Status Overview */}
             <div className="bg-white rounded-2xl p-6 border border-gray-200">
@@ -1609,6 +1681,62 @@ export default function AdminDashboard() {
                   {isUpdating ? <div className="animate-spin"><Icons.Refresh /></div> : <Icons.CheckCircle />}
                   Marquer comme livrée
                 </button>
+              )}
+
+              {/* Refund Button */}
+              {(selectedOrder.status === 'paid' || selectedOrder.status === 'shipped' || selectedOrder.status === 'delivered') && !selectedOrder.refund_id && (
+                <div className="pt-4 border-t border-gray-200">
+                  {!showRefundConfirm ? (
+                    <button
+                      onClick={() => setShowRefundConfirm(true)}
+                      className="w-full px-4 py-3 bg-red-50 text-red-600 border border-red-200 rounded-xl hover:bg-red-100 flex items-center justify-center gap-2"
+                    >
+                      <Icons.X />
+                      Rembourser cette commande
+                    </button>
+                  ) : (
+                    <div className="space-y-3">
+                      <div className="bg-red-50 border border-red-200 rounded-xl p-4">
+                        <p className="text-red-800 font-semibold mb-2">⚠️ Confirmer le remboursement</p>
+                        <p className="text-sm text-red-700">
+                          Cette action va rembourser {formatPrice(selectedOrder.total_ttc)} au client via Stripe.
+                          Cette action est irréversible.
+                        </p>
+                      </div>
+                      <div className="flex gap-3">
+                        <button
+                          onClick={() => setShowRefundConfirm(false)}
+                          disabled={isUpdating}
+                          className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
+                        >
+                          Annuler
+                        </button>
+                        <button
+                          onClick={() => handleRefund(selectedOrder.id)}
+                          disabled={isUpdating}
+                          className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 flex items-center justify-center gap-2"
+                        >
+                          {isUpdating ? <div className="animate-spin"><Icons.Refresh /></div> : <Icons.CheckCircle />}
+                          Confirmer le remboursement
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {selectedOrder.refund_id && (
+                <div className="bg-red-50 border border-red-200 rounded-xl p-4">
+                  <p className="text-red-800 font-semibold">✓ Commande remboursée</p>
+                  <p className="text-sm text-red-700 mt-1">
+                    ID Stripe: {selectedOrder.refund_id}
+                  </p>
+                  {selectedOrder.refunded_at && (
+                    <p className="text-xs text-red-600 mt-1">
+                      Le {formatDate(selectedOrder.refunded_at)}
+                    </p>
+                  )}
+                </div>
               )}
             </div>
           </div>
