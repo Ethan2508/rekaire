@@ -13,7 +13,7 @@ DROP POLICY IF EXISTS "Only active promo codes are viewable" ON promo_codes;
 -- ✅ Politique SELECT : tout le monde peut lire les codes actifs
 CREATE POLICY "Active promo codes are viewable"
   ON promo_codes FOR SELECT
-  USING (active = true);
+  USING (is_active = true);
 
 -- ✅ Politique INSERT : seulement via service role (API admin)
 -- Le service_role bypasse automatiquement RLS, donc pas besoin de politique spécifique

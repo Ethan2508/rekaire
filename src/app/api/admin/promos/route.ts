@@ -118,7 +118,7 @@ export async function POST(request: NextRequest) {
         min_order: min_order || null,
         valid_from: new Date().toISOString(),
         valid_until: valid_until ? new Date(valid_until).toISOString() : null,
-        active: true,
+        is_active: true,
         current_uses: 0
       })
       .select()
@@ -156,7 +156,7 @@ export async function PATCH(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { id, code, discount_type, discount_value, max_uses, min_order, valid_until, active } = body;
+    const { id, code, discount_type, discount_value, max_uses, min_order, valid_until, is_active } = body;
 
     if (!id) {
       return NextResponse.json({ error: 'ID requis' }, { status: 400 });
@@ -175,7 +175,7 @@ export async function PATCH(request: NextRequest) {
     if (valid_until !== undefined) {
       updateData.valid_until = valid_until ? new Date(valid_until).toISOString() : null;
     }
-    if (active !== undefined) updateData.active = active;
+    if (is_active !== undefined) updateData.is_active = is_active;
 
     const { data, error } = await supabaseAdmin
       .from('promo_codes')
@@ -192,7 +192,7 @@ export async function PATCH(request: NextRequest) {
     // Log l'action
     await supabaseAdmin.from('admin_audit_log').insert({
       admin_email: adminEmail,
-      action: active !== undefined ? (active ? 'PROMO_ENABLED' : 'PROMO_DISABLED') : 'PROMO_UPDATED',
+      action: is_active !== undefined ? (is_active ? 'PROMO_ENABLED' : 'PROMO_DISABLED') : 'PROMO_UPDATED',
       target_type: 'promo_code',
       target_id: id,
       details: updateData
