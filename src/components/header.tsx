@@ -13,7 +13,7 @@ import { CTAButton } from "./cta-button";
 import { Menu, X } from "lucide-react";
 
 const navLinks = [
-  { href: "/produit", label: "Notre Solution", scrollToTop: true },
+  { href: "/produit", label: "Notre solution", scrollToTop: true },
   { href: "/a-propos", label: "À propos" },
   { href: "/faq", label: "FAQ" },
   { href: "/blog", label: "Blog" },

@@ -45,15 +45,15 @@ interface AddressSuggestion {
   context: string;
 }
 
-// Seuil pour demande de devis (10+ = devis obligatoire)
-const QUOTE_THRESHOLD = 10;
+// Seuil pour demande de devis (100+ = devis obligatoire)
+const QUOTE_THRESHOLD = 100;
 
 function CheckoutContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const initialQty = parseInt(searchParams.get("qty") || "1", 10);
 
-  const [quantity, setQuantity] = useState(Math.max(1, Math.min(10, initialQty)));
+  const [quantity, setQuantity] = useState(Math.max(1, Math.min(100, initialQty)));
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [isCompany, setIsCompany] = useState(false);
@@ -434,7 +434,7 @@ function CheckoutContent() {
   };
 
   const increaseQty = () => {
-    if (quantity < 10) setQuantity(quantity + 1);
+    if (quantity < 100) setQuantity(quantity + 1);
   };
 
   // Étapes
@@ -1164,7 +1164,7 @@ function CheckoutContent() {
                       </span>
                       <button
                         onClick={increaseQty}
-                        disabled={quantity >= 10}
+                        disabled={quantity >= 100}
                         className="w-10 h-10 flex items-center justify-center text-gray-600 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                       >
                         <Plus className="w-4 h-4" />
@@ -1172,7 +1172,7 @@ function CheckoutContent() {
                     </div>
                     {quantity >= 2 && quantity < QUOTE_THRESHOLD && (
                       <span className="px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">
-                        -14%
+                        -15%
                       </span>
                     )}
                   </div>

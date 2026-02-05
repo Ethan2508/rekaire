@@ -31,71 +31,71 @@ export const content = {
     items: [
       {
         icon: "flame",
-        title: "Activation automatique",
+        title: "Déclenchement thermique automatique",
         description:
-          "Se déclenche automatiquement à 170°C. Aucune intervention humaine nécessaire.",
+          "Activation autonome dès 170 °C pour neutraliser un départ de feu sans intervention humaine.",
       },
       {
         icon: "plug",
-        title: "Zéro câblage",
+        title: "Fonctionnement 100 % autonome",
         description:
-          "Aucune alimentation électrique requise. Installation autonome et indépendante.",
+          "Sans alimentation électrique ni raccordement. Le dispositif fonctionne de manière totalement indépendante.",
       },
       {
         icon: "clock",
-        title: "Installation rapide",
+        title: "Pose simple et immédiate",
         description:
-          "Se fixe en quelques secondes. Aucun outil spécial nécessaire.",
+          "Installation en quelques secondes, sans outil spécifique ni modification de l'installation existante.",
       },
       {
         icon: "shield",
-        title: "Garantie 5 ans",
+        title: "Durée de vie de 5 ans",
         description:
-          "Fonctionnel pendant 5 ans.",
+          "Dispositif scellé et opérationnel pendant 5 ans, sans maintenance.",
       },
       {
         icon: "zap",
-        title: "Aérosol non conducteur",
+        title: "Agent extincteur non conducteur",
         description:
-          "Agent extincteur compatible avec les équipements électriques sous tension.",
+          "Conçu pour intervenir sur des équipements électriques, même sous tension.",
       },
       {
         icon: "target",
-        title: "Protection ciblée",
+        title: "Protection à la source du risque",
         description:
-          "Conçu spécifiquement pour les tableaux et armoires électriques.",
+          "Spécialement conçu pour les tableaux et armoires électriques jusqu'à 0,1 m³.",
       },
     ],
   },
 
   // How it works
   howItWorks: {
-    title: "Comment ça fonctionne",
-    subtitle: "Une technologie éprouvée, une mise en œuvre simple",
+    title: "Comment fonctionne le RK01",
+    subtitle: "Une protection incendie autonome, simple à déployer et toujours active.",
     steps: [
       {
         number: "01",
-        title: "Fixez le RK01",
+        title: "Installation du dispositif",
         description:
-          "Installez le dispositif dans votre tableau électrique en quelques secondes.",
+          "Fixez le RK01 dans le tableau ou l'armoire électrique en quelques secondes, sans modification de l'existant.",
       },
       {
         number: "02",
-        title: "Protection continue",
+        title: "Surveillance thermique permanente",
         description:
-          "Le mécanisme de déclenchement surveille en permanence la température ambiante.",
+          "Le dispositif contrôle en continu la température à l'intérieur du tableau électrique.",
       },
       {
         number: "03",
-        title: "Activation en < 5 secondes",
+        title: "Déclenchement automatique",
         description:
-          "En cas de surchauffe (170°C), l'aérosol extincteur se libère instantanément.",
+          "En cas de surchauffe (170 °C), le dispositif s'active automatiquement en moins de 5 secondes.",
       },
       {
         number: "04",
-        title: "Incendie maîtrisé",
+        title: "Départ de feu neutralisé",
         description:
-          "L'agent extincteur étouffe les flammes avant qu'elles ne se propagent.",
+          "L'agent extincteur agit directement à la source pour empêcher la propagation de l'incendie.",
       },
     ],
   },

@@ -63,11 +63,12 @@ export function middleware(request: NextRequest) {
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: https: blob:",
       "font-src 'self'",
-      "connect-src 'self' https://api.stripe.com https://*.sanity.io https://*.supabase.co https://api-adresse.data.gouv.fr https://www.google-analytics.com https://region1.google-analytics.com https://www.google.com https://www.googletagmanager.com https://googleads.g.doubleclick.net https://*.google.com",
+      "connect-src 'self' https://api.stripe.com https://*.sanity.io https://*.supabase.co https://api-adresse.data.gouv.fr https://www.google-analytics.com https://region1.google-analytics.com https://www.google.com https://www.googletagmanager.com https://googleads.g.doubleclick.net https://*.google.com https://*.sentry.io https://*.ingest.de.sentry.io",
       "frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://www.googletagmanager.com https://www.google.com",
       "media-src 'self' blob:",
       "object-src 'none'",
       "base-uri 'self'",
+      "worker-src 'self' blob:",
     ].join('; ')
   );
   
