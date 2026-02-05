@@ -171,7 +171,7 @@ export function HeroSection() {
                   className="relative"
                 >
                   {/* Product image */}
-                  <div className="relative aspect-square max-w-[280px] sm:max-w-[320px] mx-auto">
+                  <div className="relative aspect-square max-w-[392px] sm:max-w-[448px] mx-auto">
                     <Image
                       src="/images/product/rk01-main.png"
                       alt="RK01 - Système autonome d'extinction incendie"

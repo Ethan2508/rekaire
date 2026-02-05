@@ -109,7 +109,7 @@ export function FireStatsSection() {
           className="text-center"
         >
           <p className="text-gray-400 text-lg mb-6">
-            Le <strong className="text-orange-400">RK01</strong> protège automatiquement vos tableaux électriques 24h/24
+            Le <strong style={{ color: '#eb5122' }}>RK01</strong> protège automatiquement vos tableaux électriques 24h/24
           </p>
           <motion.a
             href="#product"

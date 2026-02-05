@@ -122,9 +122,9 @@ export function PartnersSection() {
                         width={150}
                         height={80}
                         className={`w-auto object-contain opacity-80 hover:opacity-100 transition-opacity ${
-                          client.name === 'Viva Energie' ? 'max-h-24 md:max-h-28 scale-130' : 
+                          client.name === 'Viva Energie' ? 'max-h-28 md:max-h-32' : 
                           client.name === 'Yamada' ? 'max-h-10 md:max-h-12 scale-80' : 
-                          client.name === 'Synexium' ? 'max-h-16 md:max-h-20 scale-140' :
+                          client.name === 'Synexium' ? 'max-h-20 md:max-h-24' :
                           client.name === 'Uber' ? 'max-h-8 md:max-h-10' : 
                           'max-h-12 md:max-h-16'
                         }`}
@@ -159,9 +159,9 @@ export function PartnersSection() {
                         width={150}
                         height={80}
                         className={`w-auto object-contain opacity-80 hover:opacity-100 transition-opacity ${
-                          client.name === 'Viva Energie' ? 'max-h-24 md:max-h-28 scale-130' : 
+                          client.name === 'Viva Energie' ? 'max-h-28 md:max-h-32' : 
                           client.name === 'Yamada' ? 'max-h-10 md:max-h-12 scale-80' : 
-                          client.name === 'Synexium' ? 'max-h-16 md:max-h-20 scale-140' :
+                          client.name === 'Synexium' ? 'max-h-20 md:max-h-24' :
                           client.name === 'Uber' ? 'max-h-8 md:max-h-10' : 
                           'max-h-12 md:max-h-16'
                         }`}
