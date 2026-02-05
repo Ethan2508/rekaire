@@ -89,11 +89,15 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { code, discount_type, discount_value, max_uses, min_order, valid_until } = body;
+    const { code, discount_percent, max_uses, min_order, valid_until } = body;
 
     // Validation
-    if (!code || !discount_type || !discount_value) {
-      return NextResponse.json({ error: 'Champs requis manquants' }, { status: 400 });
+    if (!code || !discount_percent) {
+      return NextResponse.json({ error: 'Champs requis manquants (code et discount_percent)' }, { status: 400 });
+    }
+
+    if (discount_percent < 1 || discount_percent > 100) {
+      return NextResponse.json({ error: 'Le pourcentage doit être entre 1 et 100' }, { status: 400 });
     }
 
     // Vérifier si le code existe déjà
@@ -112,11 +116,9 @@ export async function POST(request: NextRequest) {
       .from('promo_codes')
       .insert({
         code: code.toUpperCase(),
-        discount_type,
-        discount_value: discount_type === 'fixed' ? discount_value * 100 : discount_value, // Convertir en centimes si fixe
+        discount_percent: Math.round(discount_percent),
         max_uses: max_uses || null,
         min_order: min_order || null,
-        valid_from: new Date().toISOString(),
         valid_until: valid_until ? new Date(valid_until).toISOString() : null,
         is_active: true,
         current_uses: 0
@@ -136,7 +138,7 @@ export async function POST(request: NextRequest) {
       action: 'PROMO_CREATED',
       target_type: 'promo_code',
       target_id: data.id,
-      details: { code: code.toUpperCase(), discount_type, discount_value }
+      details: { code: code.toUpperCase(), discount_percent }
     });
 
     return NextResponse.json({ promoCode: data, success: true });
@@ -157,7 +159,7 @@ export async function PATCH(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { id, code, discount_type, discount_value, max_uses, min_order, valid_until, is_active } = body;
+    const { id, code, discount_percent, max_uses, min_order, valid_until, is_active } = body;
 
     if (!id) {
       return NextResponse.json({ error: 'ID requis' }, { status: 400 });
@@ -167,10 +169,7 @@ export async function PATCH(request: NextRequest) {
     const updateData: Record<string, unknown> = {};
     
     if (code !== undefined) updateData.code = code.toUpperCase();
-    if (discount_type !== undefined) updateData.discount_type = discount_type;
-    if (discount_value !== undefined) {
-      updateData.discount_value = discount_type === 'fixed' ? discount_value * 100 : discount_value;
-    }
+    if (discount_percent !== undefined) updateData.discount_percent = Math.round(discount_percent);
     if (max_uses !== undefined) updateData.max_uses = max_uses || null;
     if (min_order !== undefined) updateData.min_order = min_order || null;
     if (valid_until !== undefined) {
