@@ -141,7 +141,7 @@ export function ProductDetails() {
                       alt={`RK01 composant ${num}`}
                       width={200}
                       height={200}
-                      className="h-24 w-auto object-contain"
+                      className="h-19 w-auto object-contain"
                     />
                   </motion.div>
                 ))}

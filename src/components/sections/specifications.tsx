@@ -53,7 +53,7 @@ export function SpecificationsSection() {
   return (
     <section id="specifications" className="relative py-20 lg:py-24 bg-gray-50 overflow-hidden">
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="space-y-12">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Content */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}

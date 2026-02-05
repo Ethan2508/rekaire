@@ -18,7 +18,6 @@ const distributors = [
 // Clients protégés par le RK01
 const protectedClients = [
   { name: "Brice Robert", logo: "/images/partners/bricerobert.webp" },
-  { name: "Viva Energie", logo: "/images/partners/viva.png" },
   { name: "Atalian", logo: "/images/partners/atalian.png" },
   { name: "Engie", logo: "/images/partners/engie-logo.png" },
   { name: "Eurodis", logo: "/images/partners/eurodis-logo.jpg" },
@@ -79,7 +78,9 @@ export function PartnersSection() {
                     alt={partner.name}
                     width={200}
                     height={100}
-                    className="max-h-16 md:max-h-20 w-auto object-contain opacity-80 group-hover:opacity-100 transition-opacity"
+                    className={`w-auto object-contain opacity-80 group-hover:opacity-100 transition-opacity ${
+                      partner.name === 'Synexium' ? 'max-h-20 md:max-h-26' : 'max-h-16 md:max-h-20'
+                    }`}
                   />
                 </div>
               </motion.div>
@@ -159,7 +160,6 @@ export function PartnersSection() {
                         width={150}
                         height={80}
                         className={`w-auto object-contain opacity-80 hover:opacity-100 transition-opacity ${
-                          client.name === 'Viva Energie' ? 'max-h-28 md:max-h-32' : 
                           client.name === 'Yamada' ? 'max-h-10 md:max-h-12 scale-80' : 
                           client.name === 'Synexium' ? 'max-h-20 md:max-h-24' :
                           client.name === 'Uber' ? 'max-h-8 md:max-h-10' : 
