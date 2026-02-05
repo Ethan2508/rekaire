@@ -126,7 +126,8 @@ export async function POST(request: NextRequest) {
 
     if (error) {
       console.error('Error creating promo code:', error);
-      return NextResponse.json({ error: 'Erreur lors de la création' }, { status: 500 });
+      console.error('Error details:', JSON.stringify(error, null, 2));
+      return NextResponse.json({ error: `Erreur lors de la création: ${error.message}` }, { status: 500 });
     }
 
     // Log l'action
