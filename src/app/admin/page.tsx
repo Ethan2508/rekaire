@@ -190,9 +190,8 @@ interface Order {
 interface PromoCode {
   id: string;
   code: string;
-  discount_type: 'percentage' | 'fixed';
-  discount_value: number;
-  active: boolean;
+  discount_percent: number;
+  is_active: boolean;
   valid_from?: string;
   valid_until?: string;
   max_uses?: number;
@@ -279,8 +278,7 @@ export default function AdminDashboard() {
   const [editingPromo, setEditingPromo] = useState<PromoCode | null>(null);
   const [promoForm, setPromoForm] = useState({
     code: '',
-    discount_type: 'percentage' as 'percentage' | 'fixed',
-    discount_value: 10,
+    discount_percent: 10,
     max_uses: 100,
     min_order: 0,
     valid_until: ''
@@ -752,7 +750,7 @@ export default function AdminDashboard() {
     }
   }
 
-  async function handleTogglePromo(promoId: string, active: boolean) {
+  async function handleTogglePromo(promoId: string, is_active: boolean) {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
@@ -763,11 +761,11 @@ export default function AdminDashboard() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${session.access_token}`
         },
-        body: JSON.stringify({ id: promoId, active })
+        body: JSON.stringify({ id: promoId, is_active })
       });
 
       if (response.ok) {
-        showToast(active ? 'Code activé' : 'Code désactivé', 'success');
+        showToast(is_active ? 'Code activé' : 'Code désactivé', 'success');
         fetchPromoCodes();
       }
     } catch (error) {
@@ -799,8 +797,7 @@ export default function AdminDashboard() {
   function resetPromoForm() {
     setPromoForm({
       code: '',
-      discount_type: 'percentage',
-      discount_value: 10,
+      discount_percent: 10,
       max_uses: 100,
       min_order: 0,
       valid_until: ''
@@ -811,8 +808,7 @@ export default function AdminDashboard() {
     setEditingPromo(promo);
     setPromoForm({
       code: promo.code,
-      discount_type: promo.discount_type,
-      discount_value: promo.discount_value,
+      discount_percent: promo.discount_percent,
       max_uses: promo.max_uses || 100,
       min_order: promo.min_order || 0,
       valid_until: promo.valid_until?.split('T')[0] || ''
@@ -1393,7 +1389,7 @@ export default function AdminDashboard() {
                       <label className="relative inline-flex items-center cursor-pointer">
                         <input
                           type="checkbox"
-                          checked={promo.active}
+                          checked={promo.is_active}
                           onChange={(e) => handleTogglePromo(promo.id, e.target.checked)}
                           className="sr-only peer"
                         />
@@ -1403,9 +1399,7 @@ export default function AdminDashboard() {
 
                     <div className="space-y-2 mb-4">
                       <p className="text-2xl font-bold text-orange-600">
-                        {promo.discount_type === 'percentage'
-                          ? `-${promo.discount_value}%`
-                          : `-${formatPrice(promo.discount_value * 100)}`}
+                        -{promo.discount_percent}%
                       </p>
                       <div className="flex items-center gap-4 text-sm text-gray-500">
                         <span>{promo.current_uses} / {promo.max_uses || '∞'} utilisations</span>
@@ -1776,30 +1770,16 @@ export default function AdminDashboard() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
-                  <select
-                    value={promoForm.discount_type}
-                    onChange={(e) => setPromoForm({ ...promoForm, discount_type: e.target.value as 'percentage' | 'fixed' })}
-                    className="w-full px-4 py-2 border border-gray-200 rounded-lg text-gray-900"
-                  >
-                    <option value="percentage">Pourcentage</option>
-                    <option value="fixed">Montant fixe</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Valeur {promoForm.discount_type === 'percentage' ? '(%)' : '(€)'}
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Réduction (%)</label>
                   <input
                     type="number"
-                    value={promoForm.discount_value}
-                    onChange={(e) => setPromoForm({ ...promoForm, discount_value: parseInt(e.target.value) || 0 })}
+                    min="1"
+                    max="100"
+                    value={promoForm.discount_percent}
+                    onChange={(e) => setPromoForm({ ...promoForm, discount_percent: parseInt(e.target.value) || 0 })}
                     className="w-full px-4 py-2 border border-gray-200 rounded-lg text-gray-900"
                   />
                 </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Utilisations max</label>
                   <input
@@ -1808,6 +1788,8 @@ export default function AdminDashboard() {
                     onChange={(e) => setPromoForm({ ...promoForm, max_uses: parseInt(e.target.value) || 0 })}
                     className="w-full px-4 py-2 border border-gray-200 rounded-lg text-gray-900"
                   />
+                </div>
+              </div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Min. commande (€)</label>

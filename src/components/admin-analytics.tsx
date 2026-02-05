@@ -158,7 +158,7 @@ export function AnalyticsCharts({ analytics, loading }: AnalyticsChartsProps) {
                     <div>
                       <p className="font-semibold font-mono text-gray-900">{promo.code}</p>
                       <p className="text-sm text-gray-500">
-                        {promo.discount_type === 'percentage' ? `${promo.discount_value}%` : `${promo.discount_value / 100}€`}
+                        -{promo.discount_percent}%
                       </p>
                     </div>
                   </div>
