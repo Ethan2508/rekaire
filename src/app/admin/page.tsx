@@ -1375,7 +1375,7 @@ export default function AdminDashboard() {
                   <div
                     key={promo.id}
                     className={`bg-white rounded-xl border p-6 ${
-                      promo.active ? 'border-gray-200' : 'border-gray-100 opacity-60'
+                      promo.is_active ? 'border-gray-200' : 'border-gray-100 opacity-60'
                     }`}
                   >
                     <div className="flex items-start justify-between mb-4">
