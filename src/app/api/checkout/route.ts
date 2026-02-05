@@ -64,11 +64,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 🔒 VALIDATION STRICTE quantité (1-9 = paiement, 10+ = devis)
+    // 🔒 VALIDATION STRICTE quantité (1-99 = paiement, 100+ = devis)
     const validQuantity = Math.floor(Math.abs(quantity));
-    if (validQuantity < 1 || validQuantity > 9) {
+    if (validQuantity < 1 || validQuantity > 99) {
       return NextResponse.json(
-        { error: "Invalid quantity. Must be between 1 and 9 units. For 10+ units, please request a quote." },
+        { error: "Invalid quantity. Must be between 1 and 99 units. For 100+ units, please request a quote." },
         { status: 400 }
       );
     }
@@ -197,8 +197,8 @@ export async function POST(request: NextRequest) {
     const totalHTAfterPromo = Math.max(0, totalHT - promoDiscount);
     const totalTTCAfterPromo = Math.round(totalHTAfterPromo * 1.2);
     
-    // Les prix sont déjà en centimes, pas besoin de multiplier par 100
-    const totalPriceInCents = Math.round(totalTTCAfterPromo);
+    // ⚠️ IMPORTANT: On envoie le prix HT à Stripe + tax_rate pour qu'il affiche la TVA séparément
+    const totalPriceHT = Math.round(totalHTAfterPromo);
 
     // Stocker le lead dans Supabase (même si la commande n'aboutit pas)
     try {
@@ -228,10 +228,11 @@ export async function POST(request: NextRequest) {
       orderId,
       productName: product.name,
       productDescription: product.shortDescription,
-      priceInCents: Math.round(totalPriceInCents),
+      priceInCents: Math.round(totalPriceHT), // Prix HT pour que Stripe calcule la TVA
       currency: product.currency.toLowerCase(),
       quantity: 1, // On passe quantity = 1 car le prix total inclut déjà tout
       customerEmail: customer.email,
+      taxRate: 20, // TVA 20% pour la France
       metadata: {
         product_id: product.id,
         product_name: product.shortName,

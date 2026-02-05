@@ -30,9 +30,9 @@ export interface Product {
 
 // Prix en centimes HT
 // 1 produit = 70€ HT = 7000 centimes
-// 2+ produits = 60€ HT/unité = 6000 centimes
+// 2+ produits = 59.50€ HT/unité = 5950 centimes (-15%)
 const PRICE_SINGLE_HT = 7000; // 70€ HT
-const PRICE_BULK_HT = 6000; // 60€ HT pour 2+
+const PRICE_BULK_HT = 5950; // 59.50€ HT pour 2+ (-15%)
 const TVA_RATE = 0.20;
 
 // Calcul TTC

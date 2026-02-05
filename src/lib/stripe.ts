@@ -22,6 +22,7 @@ export interface CreateCheckoutParams {
   currency?: string;
   customerEmail?: string;
   quantity?: number;
+  taxRate?: number; // Taux de TVA en pourcentage (ex: 20 pour 20%)
   metadata?: Record<string, string>;
 }
 
@@ -34,6 +35,7 @@ export async function createCheckoutSession({
   currency = "eur",
   customerEmail,
   quantity = 1,
+  taxRate,
   metadata = {},
 }: CreateCheckoutParams): Promise<Stripe.Checkout.Session> {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
@@ -63,6 +65,35 @@ export async function createCheckoutSession({
     }
   }
 
+  // Créer ou récupérer le tax_rate si fourni
+  let taxRateId: string | undefined;
+  if (taxRate && taxRate > 0) {
+    // Chercher un tax_rate existant avec ce pourcentage
+    const existingTaxRates = await stripe.taxRates.list({
+      active: true,
+      limit: 100,
+    });
+    
+    const matchingTaxRate = existingTaxRates.data.find(
+      (rate) => rate.percentage === taxRate && rate.jurisdiction === "FR" && rate.inclusive === false
+    );
+    
+    if (matchingTaxRate) {
+      taxRateId = matchingTaxRate.id;
+    } else {
+      // Créer un nouveau tax_rate
+      const newTaxRate = await stripe.taxRates.create({
+        display_name: `TVA ${taxRate}%`,
+        description: `TVA française ${taxRate}%`,
+        jurisdiction: "FR",
+        percentage: taxRate,
+        inclusive: false, // Prix HT + TVA = Prix TTC
+        active: true,
+      });
+      taxRateId = newTaxRate.id;
+    }
+  }
+
   const session = await stripe.checkout.sessions.create({
     mode: "payment",
     payment_method_types: ["card"],
@@ -77,8 +108,14 @@ export async function createCheckoutSession({
             description: productDescription,
           },
           unit_amount: priceInCents,
+          ...(taxRateId && {
+            tax_behavior: "exclusive", // Prix HT, TVA calculée en plus
+          }),
         },
         quantity,
+        ...(taxRateId && {
+          tax_rates: [taxRateId], // Appliquer le tax_rate à cette ligne
+        }),
       },
     ],
 

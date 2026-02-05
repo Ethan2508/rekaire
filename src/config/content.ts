@@ -26,7 +26,7 @@ export const content = {
 
   // Features Section
   features: {
-    title: "Pourquoi le RK01",
+    title: "Fonctionnalités clés",
     subtitle: "",
     items: [
       {

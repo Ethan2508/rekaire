@@ -146,10 +146,10 @@ export function ProductHero() {
               En stock - Expédition sous 24h
             </div>
 
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 leading-tight">
-              RK01 - Système Autonome{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-orange-600">
-                d&apos;Extinction
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4 leading-tight">
+              <span style={{ color: '#d4471e' }}>RK01</span>{" "}
+              <span className="text-gray-900">
+                - Système Autonome d&apos;Extinction incendie
               </span>
             </h1>
 

@@ -62,7 +62,7 @@ export function ContactHero() {
           </h1>
           
           <p className="text-lg md:text-xl text-gray-600 leading-relaxed max-w-2xl mx-auto">
-            Une question sur le RK01 ? Besoin d&apos;un devis professionnel ? 
+            Une question ? Besoin d&apos;un devis professionnel ? 
             Notre équipe d&apos;experts est à votre disposition pour vous accompagner.
           </p>
 

@@ -8,16 +8,14 @@ import { motion } from "framer-motion";
 import { getMainProduct } from "@/config/product";
 
 export function ProductSpecs() {
-  const product = getMainProduct();
-
-  const additionalSpecs = {
+  const specs = {
     "Certifications": "CE, Norme EN3",
     "Température de déclenchement": "170°C ± 5°C",
     "Temps de réaction": "< 5 secondes",
     "Couverture": "0,1 m³",
-    "Matériaux": "ABS haute résistance",
+    "Dimensions": "12,1 cm × 1,8 cm × 1,0 cm",
     "Conditions de stockage": "-20°C à +50°C",
-    "Humidité relative": "< 95%",
+    "Poids": "22 g",
     "Garantie": "5 ans",
   };
 
@@ -38,42 +36,22 @@ export function ProductSpecs() {
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 gap-8">
-          {/* Main Specs */}
+        <div className="max-w-3xl mx-auto">
+          {/* Tableau unique */}
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="bg-white rounded-xl border border-gray-200 overflow-hidden"
+            className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm"
           >
-            <div className="px-6 py-4 bg-gray-900">
-              <h3 className="text-lg font-semibold text-white">Caractéristiques physiques</h3>
+            <div className="px-6 py-4 bg-gradient-to-r from-orange-500 to-orange-600">
+              <h3 className="text-lg font-semibold text-white">Caractéristiques techniques</h3>
             </div>
             <div className="divide-y divide-gray-100">
-              {Object.entries(product.specifications).map(([key, value]) => (
-                <div key={key} className="flex justify-between items-center px-6 py-4">
-                  <span className="text-gray-600">{key}</span>
-                  <span className="font-medium text-gray-900">{value}</span>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-
-          {/* Additional Specs */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="bg-white rounded-xl border border-gray-200 overflow-hidden"
-          >
-            <div className="px-6 py-4 bg-orange-500">
-              <h3 className="text-lg font-semibold text-white">Performances & Certifications</h3>
-            </div>
-            <div className="divide-y divide-gray-100">
-              {Object.entries(additionalSpecs).map(([key, value]) => (
-                <div key={key} className="flex justify-between items-center px-6 py-4">
-                  <span className="text-gray-600">{key}</span>
-                  <span className="font-medium text-gray-900">{value}</span>
+              {Object.entries(specs).map(([key, value]) => (
+                <div key={key} className="flex justify-between items-center px-6 py-4 hover:bg-gray-50 transition-colors">
+                  <span className="text-gray-600 font-medium">{key}</span>
+                  <span className="font-semibold text-gray-900">{value}</span>
                 </div>
               ))}
             </div>

@@ -12,8 +12,8 @@ import { trackCTAClick } from "@/lib/tracking";
 import { getMainProduct, formatPrice, calculateTotal } from "@/config/product";
 import Link from "next/link";
 
-// Seuil pour demande de devis (10+ = devis obligatoire)
-const QUOTE_THRESHOLD = 10;
+// Seuil pour demande de devis (100+ = devis obligatoire)
+const QUOTE_THRESHOLD = 100;
 
 interface ProductOrderProps {
   location: string;
@@ -34,7 +34,7 @@ export function ProductOrder({ location, className = "" }: ProductOrderProps) {
   };
 
   const increaseQty = () => {
-    if (quantity < 10) setQuantity(quantity + 1);
+    if (quantity < 100) setQuantity(quantity + 1);
   };
 
   const handleCTAClick = () => {
@@ -53,7 +53,7 @@ export function ProductOrder({ location, className = "" }: ProductOrderProps) {
             <span className="text-gray-500">/ unité HT</span>
             {quantity >= 2 && (
               <span className="ml-2 px-2 py-0.5 bg-green-100 text-green-700 text-sm font-medium rounded-full">
-                -14% pack
+                -15% pack
               </span>
             )}
           </div>
@@ -87,7 +87,7 @@ export function ProductOrder({ location, className = "" }: ProductOrderProps) {
             </span>
             <button
               onClick={increaseQty}
-              disabled={quantity >= 10}
+              disabled={quantity >= 100}
               className="w-10 h-10 flex items-center justify-center text-gray-600 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
               <Plus className="w-4 h-4" />

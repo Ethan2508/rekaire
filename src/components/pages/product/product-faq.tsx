@@ -20,7 +20,7 @@ const faqs = [
   },
   {
     question: "L'agent extincteur est-il sans danger ?",
-    answer: "Absolument. L'agent extincteur utilisé est non toxique, écologique et ne laisse aucun résidu. Il est spécialement conçu pour les feux d'origine électrique (classe E) et n'endommagera pas vos équipements électroniques."
+    answer: "L'agent extincteur utilisé est non toxique et écologique. Il est spécialement conçu pour les feux d'origine électrique (classe E) et n'endommagera pas vos équipements électroniques."
   },
   {
     question: "Quelle est la durée de vie du RK01 ?",

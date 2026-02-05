@@ -83,68 +83,73 @@ export function ProductDetails() {
           viewport={{ once: true }}
           className="bg-gray-50 rounded-2xl p-8 md:p-12"
         >
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                Anatomie du RK01
-              </h3>
-              <p className="text-gray-600 mb-6">
-                Chaque composant du RK01 a été conçu pour garantir une fiabilité maximale 
-                et une efficacité optimale en cas de départ de feu.
-              </p>
-              
-              <div className="space-y-4">
-                <div className="flex items-start gap-4 p-4 bg-white rounded-lg">
-                  <span className="flex-shrink-0 w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center font-bold">1</span>
-                  <div>
-                    <h4 className="font-semibold text-gray-900">Capuchon protecteur</h4>
-                    <p className="text-sm text-gray-600">Résistant à la chaleur, protège le mécanisme interne</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4 p-4 bg-white rounded-lg">
-                  <span className="flex-shrink-0 w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center font-bold">2</span>
-                  <div>
-                    <h4 className="font-semibold text-gray-900">Mécanisme de déclenchement</h4>
-                    <p className="text-sm text-gray-600">Activation automatique à 170°C</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4 p-4 bg-white rounded-lg">
-                  <span className="flex-shrink-0 w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center font-bold">3</span>
-                  <div>
-                    <h4 className="font-semibold text-gray-900">Agent extincteur</h4>
-                    <p className="text-sm text-gray-600">Formule écologique efficace sur feux électriques</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4 p-4 bg-white rounded-lg">
-                  <span className="flex-shrink-0 w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center font-bold">4</span>
-                  <div>
-                    <h4 className="font-semibold text-gray-900">Support de fixation</h4>
-                    <p className="text-sm text-gray-600">Adhésif haute résistance fourni</p>
-                  </div>
-                </div>
+          <h3 className="text-2xl font-bold text-gray-900 mb-4">
+            Anatomie du RK01
+          </h3>
+          <p className="text-gray-600 mb-6">
+            Chaque composant du RK01 a été conçu pour garantir une fiabilité maximale 
+            et une efficacité optimale en cas de départ de feu.
+          </p>
+          
+          <div className="space-y-4">
+            <div className="flex items-center gap-4 p-4 bg-white rounded-lg">
+              <div className="flex-shrink-0 w-20 h-20 flex items-center justify-center">
+                <Image
+                  src="/images/product/rk01-part1.png"
+                  alt="RK01 composant 1"
+                  width={80}
+                  height={80}
+                  className="w-full h-full object-contain"
+                />
+              </div>
+              <div>
+                <h4 className="font-semibold text-gray-900">Capuchon protecteur</h4>
+                <p className="text-sm text-gray-600">Résistant à la chaleur, protège le mécanisme interne</p>
               </div>
             </div>
-
-            <div className="relative">
-              <div className="space-y-4">
-                {[1, 2, 3, 4].map((num) => (
-                  <motion.div
-                    key={num}
-                    initial={{ opacity: 0, x: 20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: num * 0.1 }}
-                    className="flex justify-center"
-                  >
-                    <Image
-                      src={`/images/product/rk01-part${num}.png`}
-                      alt={`RK01 composant ${num}`}
-                      width={200}
-                      height={200}
-                      className="h-24 w-auto object-contain"
-                    />
-                  </motion.div>
-                ))}
+            <div className="flex items-center gap-4 p-4 bg-white rounded-lg">
+              <div className="flex-shrink-0 w-20 h-20 flex items-center justify-center">
+                <Image
+                  src="/images/product/rk01-part2.png"
+                  alt="RK01 composant 2"
+                  width={80}
+                  height={80}
+                  className="w-full h-full object-contain"
+                />
+              </div>
+              <div>
+                <h4 className="font-semibold text-gray-900">Mécanisme de déclenchement</h4>
+                <p className="text-sm text-gray-600">Activation automatique à 170°C</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-4 p-4 bg-white rounded-lg">
+              <div className="flex-shrink-0 w-20 h-20 flex items-center justify-center">
+                <Image
+                  src="/images/product/rk01-part3.png"
+                  alt="RK01 composant 3"
+                  width={80}
+                  height={80}
+                  className="w-full h-full object-contain"
+                />
+              </div>
+              <div>
+                <h4 className="font-semibold text-gray-900">Agent extincteur</h4>
+                <p className="text-sm text-gray-600">Formule écologique efficace sur feux électriques</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-4 p-4 bg-white rounded-lg">
+              <div className="flex-shrink-0 w-20 h-20 flex items-center justify-center">
+                <Image
+                  src="/images/product/rk01-part4.png"
+                  alt="RK01 composant 4"
+                  width={80}
+                  height={80}
+                  className="w-full h-full object-contain"
+                />
+              </div>
+              <div>
+                <h4 className="font-semibold text-gray-900">Support de fixation</h4>
+                <p className="text-sm text-gray-600">Adhésif haute résistance fourni</p>
               </div>
             </div>
           </div>

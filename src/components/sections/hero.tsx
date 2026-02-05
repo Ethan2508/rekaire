@@ -96,8 +96,8 @@ export function HeroSection() {
 
               {/* Subheadline */}
               <p className="text-lg text-gray-600 mb-8 max-w-xl mx-auto lg:mx-0 leading-relaxed">
-                Découvrez le <span style={{ color: '#eb5122' }} className="font-semibold">RK01</span>, l&apos;extincteur autonome et innovant 
-                qui protège vos espaces 24h/24. Installation en 30 secondes.
+                Découvrez le <span style={{ color: '#d4471e' }} className="font-semibold">RK01</span>, l&apos;extincteur autonome et innovant 
+                qui protège vos espaces 24h/24. Temps d'installation : 5 minutes.
               </p>
 
               {/* Price block */}
@@ -115,7 +115,7 @@ export function HeroSection() {
                 </div>
                 <p className="text-emerald-600 text-sm font-medium mt-2 flex items-center gap-2 justify-center lg:justify-start">
                   <Check className="w-4 h-4" />
-                  Pack de 2 : {formatPrice(PRICES.bulkHT, "EUR")} HT — Économisez 10%
+                  Pack de 2 : {formatPrice(PRICES.bulkHT, "EUR")} HT — Économisez 15%
                 </p>
               </motion.div>
 
@@ -143,7 +143,6 @@ export function HeroSection() {
                 {[
                   { icon: Shield, text: "Garantie 5 ans", color: "text-emerald-500" },
                   { icon: Truck, text: "Livraison 24-48h", color: "text-blue-500" },
-                  { icon: Award, text: "Made in France", color: "text-orange-500" },
                 ].map((item) => (
                   <div key={item.text} className="flex items-center gap-2 text-gray-600 text-sm">
                     <item.icon className={`w-4 h-4 ${item.color}`} />
@@ -185,8 +184,8 @@ export function HeroSection() {
                   {/* Stats */}
                   <div className="grid grid-cols-3 gap-4 mt-6 pt-6 border-gray-200">
                     {[
-                      { value: "< 5 sec", label: "Activation" },
-                      { value: "30s", label: "Installation" },
+                      { value: "< 5 sec", label: "Temps d'activation" },
+                      { value: "5 min", label: "Temps d'installation" },
                       { value: "5 ans", label: "Durée de vie" },
                     ].map((stat) => (
                       <div key={stat.label} className="text-center">

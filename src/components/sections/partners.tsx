@@ -87,7 +87,7 @@ export function PartnersSection() {
           </div>
         </div>
 
-        {/* Clients protégés - Carrousel */}
+        {/* Clients protégés - Double carrousel défilant */}
         <div>
           <div className="text-center mb-8">
             <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-orange-100 border border-orange-200 text-orange-700 text-sm font-semibold mb-2">
@@ -96,55 +96,80 @@ export function PartnersSection() {
             </div>
           </div>
 
-          {/* Carrousel */}
-          <div className="relative overflow-hidden">
-            <motion.div 
-              className="flex gap-6"
-              animate={{ x: `-${currentIndex * 100}%` }}
-              transition={{ duration: 0.8, ease: "easeInOut" }}
-            >
-              {Array.from({ length: totalSlides }).map((_, slideIndex) => (
-                <div key={slideIndex} className="min-w-full grid grid-cols-2 md:grid-cols-4 gap-6">
-                  {protectedClients
-                    .slice(slideIndex * itemsPerView, (slideIndex + 1) * itemsPerView)
-                    .map((client) => (
-                      <motion.div
-                        key={client.name}
-                        className="relative group"
-                      >
-                        <div className="p-4 md:p-6 rounded-2xl bg-white border border-gray-200 group-hover:border-orange-300 group-hover:shadow-lg transition-all flex items-center justify-center min-h-[100px] md:min-h-[120px]">
-                          <Image
-                            src={client.logo}
-                            alt={client.name}
-                            width={150}
-                            height={80}
-                            className={`w-auto object-contain opacity-80 group-hover:opacity-100 transition-opacity ${
-                              client.name === 'Viva Energie' ? 'max-h-20 md:max-h-24' : 
-                              client.name === 'Uber' ? 'max-h-8 md:max-h-10' : 
-                              'max-h-12 md:max-h-16'
-                            }`}
-                          />
-                        </div>
-                      </motion.div>
-                    ))}
-                </div>
-              ))}
-            </motion.div>
+          {/* Double rangée avec défilement infini en sens opposés */}
+          <div className="relative space-y-6 overflow-hidden">
+            {/* Première rangée - défile vers la gauche */}
+            <div className="relative">
+              <motion.div 
+                className="flex gap-6"
+                animate={{ x: [0, -2000] }}
+                transition={{ 
+                  duration: 40, 
+                  repeat: Infinity, 
+                  ease: "linear"
+                }}
+              >
+                {/* Dupliquer 3 fois pour défilement infini */}
+                {[...protectedClients, ...protectedClients, ...protectedClients].map((client, index) => (
+                  <div
+                    key={`row1-${index}`}
+                    className="flex-shrink-0 w-48"
+                  >
+                    <div className="p-4 md:p-6 rounded-2xl bg-white border border-gray-200 hover:border-orange-300 hover:shadow-lg transition-all flex items-center justify-center min-h-[100px] md:min-h-[120px]">
+                      <Image
+                        src={client.logo}
+                        alt={client.name}
+                        width={150}
+                        height={80}
+                        className={`w-auto object-contain opacity-80 hover:opacity-100 transition-opacity ${
+                          client.name === 'Viva Energie' ? 'max-h-24 md:max-h-28 scale-130' : 
+                          client.name === 'Yamada' ? 'max-h-10 md:max-h-12 scale-80' : 
+                          client.name === 'Synexium' ? 'max-h-16 md:max-h-20 scale-140' :
+                          client.name === 'Uber' ? 'max-h-8 md:max-h-10' : 
+                          'max-h-12 md:max-h-16'
+                        }`}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </motion.div>
+            </div>
 
-            {/* Indicateurs de pagination */}
-            <div className="flex items-center justify-center gap-2 mt-8">
-              {Array.from({ length: totalSlides }).map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentIndex(index)}
-                  className={`h-2 rounded-full transition-all ${
-                    index === currentIndex 
-                      ? "w-8 bg-orange-500" 
-                      : "w-2 bg-gray-300 hover:bg-gray-400"
-                  }`}
-                  aria-label={`Slide ${index + 1}`}
-                />
-              ))}
+            {/* Deuxième rangée - défile vers la droite */}
+            <div className="relative">
+              <motion.div 
+                className="flex gap-6"
+                animate={{ x: [-2000, 0] }}
+                transition={{ 
+                  duration: 40, 
+                  repeat: Infinity, 
+                  ease: "linear"
+                }}
+              >
+                {/* Dupliquer 3 fois pour défilement infini */}
+                {[...protectedClients, ...protectedClients, ...protectedClients].map((client, index) => (
+                  <div
+                    key={`row2-${index}`}
+                    className="flex-shrink-0 w-48"
+                  >
+                    <div className="p-4 md:p-6 rounded-2xl bg-white border border-gray-200 hover:border-orange-300 hover:shadow-lg transition-all flex items-center justify-center min-h-[100px] md:min-h-[120px]">
+                      <Image
+                        src={client.logo}
+                        alt={client.name}
+                        width={150}
+                        height={80}
+                        className={`w-auto object-contain opacity-80 hover:opacity-100 transition-opacity ${
+                          client.name === 'Viva Energie' ? 'max-h-24 md:max-h-28 scale-130' : 
+                          client.name === 'Yamada' ? 'max-h-10 md:max-h-12 scale-80' : 
+                          client.name === 'Synexium' ? 'max-h-16 md:max-h-20 scale-140' :
+                          client.name === 'Uber' ? 'max-h-8 md:max-h-10' : 
+                          'max-h-12 md:max-h-16'
+                        }`}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </motion.div>
             </div>
           </div>
         </div>
