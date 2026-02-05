@@ -1790,16 +1790,15 @@ export default function AdminDashboard() {
                   />
                 </div>
               </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Min. commande (€)</label>
-                  <input
-                    type="number"
-                    value={promoForm.min_order / 100}
-                    onChange={(e) => setPromoForm({ ...promoForm, min_order: (parseFloat(e.target.value) || 0) * 100 })}
-                    className="w-full px-4 py-2 border border-gray-200 rounded-lg text-gray-900"
-                  />
-                </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Min. commande (€)</label>
+                <input
+                  type="number"
+                  value={promoForm.min_order / 100}
+                  onChange={(e) => setPromoForm({ ...promoForm, min_order: (parseFloat(e.target.value) || 0) * 100 })}
+                  className="w-full px-4 py-2 border border-gray-200 rounded-lg text-gray-900"
+                />
               </div>
 
               <div>
