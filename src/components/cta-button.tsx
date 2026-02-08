@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 import { trackCTAClick } from "@/lib/tracking";
 import { getMainProduct, formatPrice } from "@/config/product";
 import { ArrowRight } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 interface CTAButtonProps {
   location: string;
@@ -29,11 +29,29 @@ export function CTAButton({
   children,
 }: CTAButtonProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const product = getMainProduct();
 
   const handleClick = () => {
     trackCTAClick(location);
-    router.push("/produit#commander");
+    
+    if (pathname === "/produit") {
+      // Déjà sur la page produit, scroll direct vers #commander
+      const el = document.getElementById("commander");
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    } else {
+      // Naviguer vers la page produit puis scroll
+      router.push("/produit#commander");
+      // Attendre que la page charge puis scroll
+      setTimeout(() => {
+        const el = document.getElementById("commander");
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }, 500);
+    }
   };
 
   const baseStyles = cn(
