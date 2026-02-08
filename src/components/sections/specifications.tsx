@@ -53,29 +53,38 @@ export function SpecificationsSection() {
   return (
     <section id="specifications" className="relative py-20 lg:py-24 bg-gray-50 overflow-hidden">
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid lg:grid-cols-2 gap-12 items-start">
-          {/* Content */}
+        {/* Titre pleine largeur */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="mb-12"
+        >
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-orange-100 border border-orange-200 mb-6">
+            <Sparkles className="w-4 h-4 text-orange-500" />
+            <span className="text-orange-600 font-medium text-sm">Fiche technique</span>
+          </div>
+          
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            Spécifications{" "}
+            <span className="text-orange-500">techniques</span>
+          </h2>
+          
+          <p className="text-gray-600 text-lg leading-relaxed max-w-2xl">
+            Le RK01 est conçu pour une protection maximale avec une simplicité d&apos;utilisation totale.
+          </p>
+        </motion.div>
+
+        {/* Deux blocs côte à côte */}
+        <div className="grid lg:grid-cols-2 gap-8 items-start">
+          {/* Specs table */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-orange-100 border border-orange-200 mb-6">
-              <Sparkles className="w-4 h-4 text-orange-500" />
-              <span className="text-orange-600 font-medium text-sm">Fiche technique</span>
-            </div>
-            
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Spécifications{" "}
-              <span className="text-orange-500">techniques</span>
-            </h2>
-            
-            <p className="text-gray-600 text-lg mb-8 leading-relaxed">
-              Le RK01 est conçu pour une protection maximale avec une simplicité d&apos;utilisation totale.
-            </p>
-
-            {/* Specs table */}
             <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
               {Object.entries(product.specifications).map(([key, value], index) => (
                 <motion.div
@@ -104,7 +113,6 @@ export function SpecificationsSection() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="relative"
           >
             <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm w-full">
               <div className="space-y-3">
