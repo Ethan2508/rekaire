@@ -271,7 +271,6 @@ export const InvoiceDocument: React.FC<{ data: InvoiceData }> = ({ data }) => (
       <View style={styles.header}>
         <View style={styles.companyInfo}>
           <Image style={styles.logo} src={`${siteConfig.url}/images/logo.png`} />
-          <Text style={styles.companySubname}>by NELIOR SAS</Text>
           <Text style={styles.companyDetails}>
             5 Rue Mazenod{'\n'}
             69003 LYON{'\n'}

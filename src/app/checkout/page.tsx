@@ -1170,7 +1170,7 @@ function CheckoutContent() {
                         <Plus className="w-4 h-4" />
                       </button>
                     </div>
-                    {quantity >= 2 && quantity < QUOTE_THRESHOLD && (
+                    {quantity >= 3 && quantity < QUOTE_THRESHOLD && (
                       <span className="px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">
                         -15%
                       </span>
