@@ -299,8 +299,8 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
     discountCents: discountAmount,
     stripePaymentId: paymentIntentId || undefined,
     // Factures (on n'utilise plus Stripe Invoice, on génère la nôtre)
-    invoiceUrl: undefined, // Désactivé
-    invoiceNumber: undefined, // Sera remplacé par notre numéro
+    invoiceUrl: undefined as string | undefined, // Désactivé
+    invoiceNumber: undefined as string | undefined, // Sera remplacé par notre numéro
     invoicePdf: undefined as { content: string; filename: string } | undefined,
   };
 
