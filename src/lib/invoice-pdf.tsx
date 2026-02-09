@@ -9,10 +9,12 @@ import {
   Page,
   Text,
   View,
+  Image,
   StyleSheet,
   Font,
   renderToBuffer,
 } from '@react-pdf/renderer';
+import { siteConfig } from '@/config/site';
 
 // ============================================
 // TYPES
@@ -80,11 +82,10 @@ const styles = StyleSheet.create({
   companyInfo: {
     width: '50%',
   },
-  companyName: {
-    fontSize: 18,
-    fontFamily: 'Helvetica-Bold',
-    color: '#dc2626', // Rouge Rekaire
-    marginBottom: 4,
+  logo: {
+    width: 120,
+    height: 'auto',
+    marginBottom: 10,
   },
   companySubname: {
     fontSize: 10,
@@ -269,7 +270,7 @@ export const InvoiceDocument: React.FC<{ data: InvoiceData }> = ({ data }) => (
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.companyInfo}>
-          <Text style={styles.companyName}>REKAIRE</Text>
+          <Image style={styles.logo} src={`${siteConfig.url}/images/logo.png`} />
           <Text style={styles.companySubname}>by NELIOR SAS</Text>
           <Text style={styles.companyDetails}>
             5 Rue Mazenod{'\n'}
