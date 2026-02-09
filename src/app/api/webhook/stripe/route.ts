@@ -6,7 +6,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyWebhookSignature, getCheckoutSession } from "@/lib/stripe";
 import { sendOrderConfirmationEmail, sendAdminNotificationEmail } from "@/lib/email";
-import { incrementSalesCounter, decrementStock, createOrder as createSupabaseOrder, orderExistsByStripeSession } from "@/lib/supabase-admin";
+import { incrementSalesCounter, decrementStock, createOrder as createSupabaseOrder, orderExistsByStripeSession, getNextInvoiceNumber } from "@/lib/supabase-admin";
+import { generateInvoicePDFBase64, InvoiceData } from "@/lib/invoice-pdf";
 import Stripe from "stripe";
 
 // Désactive le body parser pour les webhooks Stripe
@@ -148,22 +149,15 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
   const shippingDetails = (session as any).shipping_details;
   const billingAddress = session.customer_details?.address;
   
-  // Récupérer la facture Stripe (générée par invoice_creation)
-  let invoiceUrl: string | undefined;
+  // ============================================
+  // GÉNÉRATION DU NUMÉRO DE FACTURE (notre système, pas Stripe)
+  // ============================================
   let invoiceNumber: string | undefined;
-  
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const invoiceId = (session as any).invoice;
-  if (invoiceId) {
-    try {
-      const { stripe } = await import("@/lib/stripe");
-      const invoice = await stripe.invoices.retrieve(invoiceId);
-      invoiceUrl = invoice.hosted_invoice_url || undefined;
-      invoiceNumber = invoice.number || undefined;
-      console.log("[Webhook] Invoice retrieved:", invoiceNumber, invoiceUrl);
-    } catch (invoiceError) {
-      console.error("[Webhook] Could not retrieve invoice:", invoiceError);
-    }
+  try {
+    invoiceNumber = await getNextInvoiceNumber();
+    console.log("[Webhook] Generated invoice number:", invoiceNumber);
+  } catch (invoiceNumError) {
+    console.error("[Webhook] Failed to generate invoice number:", invoiceNumError);
   }
   
   try {
@@ -218,11 +212,11 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
       billing_city: billingCityFromMetadata || billingAddress?.city || undefined,
       billing_country: billingAddress?.country || 'France',
       billing_vat_number: billingVatNumberFromMetadata || undefined,
-      // Code promo & Facture Stripe
+      // Code promo & Facture maison
       promo_code: promoCode,
       promo_discount: promoDiscount,
       invoice_number: invoiceNumber,
-      invoice_url: invoiceUrl,
+      invoice_url: undefined, // On n'héberge pas le PDF, il est envoyé par email
     });
     console.log("[Webhook] Order created in Supabase with full billing/shipping addresses");
 
@@ -304,12 +298,78 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
     promoCode: promoCode || undefined,
     discountCents: discountAmount,
     stripePaymentId: paymentIntentId || undefined,
-    // Facture Stripe
-    invoiceUrl: invoiceUrl || undefined,
-    invoiceNumber: invoiceNumber || undefined,
+    // Factures (on n'utilise plus Stripe Invoice, on génère la nôtre)
+    invoiceUrl: undefined, // Désactivé
+    invoiceNumber: undefined, // Sera remplacé par notre numéro
+    invoicePdf: undefined as { content: string; filename: string } | undefined,
   };
 
-  // Envoie l'email de confirmation au client
+  // ============================================
+  // GÉNÉRATION DE LA FACTURE PDF MAISON
+  // ============================================
+  if (invoiceNumber) {
+    try {
+      // Préparer les données pour la facture
+      const amountTTC = session.amount_total || 0;
+      const amountHT = Math.round(amountTTC / 1.2);
+      const vatAmount = amountTTC - amountHT;
+      const unitPriceHTCents = Math.round(amountHT / quantity);
+      
+      // Calculer la réduction si présente
+      const discountHTCents = discountAmount ? Math.round(discountAmount / 1.2) : undefined;
+      const subtotalHTCents = discountHTCents ? amountHT + discountHTCents : amountHT;
+
+      const invoiceData: InvoiceData = {
+        invoiceNumber: invoiceNumber,
+        invoiceDate: new Date(),
+        orderId,
+        customer: {
+          name: billingAddressForEmail?.name || shippingAddressForEmail?.name || session.customer_details?.name || 'Client',
+          company: session.metadata?.billing_company || session.metadata?.customer_company || undefined,
+          address: billingAddressForEmail?.line1 || shippingAddressForEmail?.line1 || '',
+          postalCode: billingAddressForEmail?.postalCode || shippingAddressForEmail?.postalCode || '',
+          city: billingAddressForEmail?.city || shippingAddressForEmail?.city || '',
+          country: billingAddressForEmail?.country || 'France',
+          email: customerEmail,
+          phone: customerPhone,
+          vatNumber: session.metadata?.billing_vat_number || undefined,
+        },
+        items: [{
+          description: `${productName} - Extincteur connecté anti-incendie`,
+          quantity,
+          unitPriceHT: unitPriceHTCents,
+          totalHT: unitPriceHTCents * quantity,
+        }],
+        subtotalHT: subtotalHTCents,
+        discountHT: discountHTCents,
+        discountCode: promoCode || undefined,
+        totalHT: amountHT,
+        vatRate: 20,
+        vatAmount,
+        totalTTC: amountTTC,
+        paymentMethod: 'Carte bancaire (Stripe)',
+        paymentDate: new Date(),
+        stripePaymentId: paymentIntentId,
+      };
+
+      // Générer le PDF en base64
+      const pdfBase64 = await generateInvoicePDFBase64(invoiceData);
+      
+      // Ajouter à l'email
+      emailData.invoiceNumber = invoiceNumber;
+      emailData.invoicePdf = {
+        content: pdfBase64,
+        filename: `Facture-${invoiceNumber}.pdf`,
+      };
+
+      console.log("[Webhook] Invoice PDF generated successfully");
+    } catch (invoiceError) {
+      console.error("[Webhook] Failed to generate invoice PDF:", invoiceError);
+      // Continue sans facture PDF (l'email partira quand même)
+    }
+  }
+
+  // Envoie l'email de confirmation au client (avec facture PDF en pièce jointe)
   const emailResult = await sendOrderConfirmationEmail(emailData);
 
   if (emailResult.success) {

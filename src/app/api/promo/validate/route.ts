@@ -5,7 +5,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import { rateLimit } from "@/lib/rate-limit";
+import { rateLimitDB } from "@/lib/rate-limit";
 
 // Supabase admin client
 const supabaseAdmin = createClient(
@@ -15,7 +15,11 @@ const supabaseAdmin = createClient(
 
 export async function POST(request: NextRequest) {
   // 🔒 RATE LIMITING
-  const rateLimitResponse = rateLimit(request);
+  // 🔒 RATE LIMITING (DB-based, serverless-safe)
+  const rateLimitResponse = await rateLimitDB(request, {
+    maxRequests: 10,
+    keyPrefix: "promo",
+  });
   if (rateLimitResponse) {
     return rateLimitResponse;
   }

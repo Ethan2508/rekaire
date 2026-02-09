@@ -7,7 +7,7 @@ import { createCheckoutSession } from "@/lib/stripe";
 import { getMainProduct, calculateTotal } from "@/config/product";
 import { isValidOrderId } from "@/lib/order";
 import { createClient } from "@supabase/supabase-js";
-import { rateLimit } from "@/lib/rate-limit";
+import { rateLimitDB } from "@/lib/rate-limit";
 
 // Supabase admin client pour bypass RLS
 const supabaseAdmin = createClient(
@@ -37,8 +37,11 @@ interface CustomerData {
 }
 
 export async function POST(request: NextRequest) {
-  // 🔒 RATE LIMITING
-  const rateLimitResponse = rateLimit(request);
+  // 🔒 RATE LIMITING (DB-based, serverless-safe)
+  const rateLimitResponse = await rateLimitDB(request, {
+    maxRequests: 10,
+    keyPrefix: "checkout",
+  });
   if (rateLimitResponse) {
     return rateLimitResponse;
   }
@@ -218,7 +221,7 @@ export async function POST(request: NextRequest) {
       // On continue même si le lead n'est pas sauvegardé
     }
 
-    // Crée la session Stripe avec les infos client
+    // Crée la session Stripe avec les infos client + adresse pré-remplie
     const session = await createCheckoutSession({
       orderId,
       productName: product.name,
@@ -227,6 +230,15 @@ export async function POST(request: NextRequest) {
       currency: product.currency.toLowerCase(),
       quantity: 1, // On passe quantity = 1 car le prix total inclut déjà tout
       customerEmail: customer.email,
+      // 🎯 Pré-remplir l'adresse dans Stripe Checkout
+      customerAddress: {
+        name: `${customer.firstName} ${customer.lastName}`,
+        line1: customer.address,
+        city: customer.city,
+        postal_code: customer.postalCode,
+        country: 'FR',
+        phone: customer.phone,
+      },
       taxRate: 20, // TVA 20% pour la France
       metadata: {
         product_id: product.id,

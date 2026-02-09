@@ -99,9 +99,9 @@ export async function getSalesCount(): Promise<number> {
 
   if (error) {
     console.error('Error fetching sales count:', error);
-    return 2847; // Fallback
+    return 0; // Pas de fallback mensonger
   }
-  return data?.count ?? 2847;
+  return data?.count ?? 0;
 }
 
 // ============================================

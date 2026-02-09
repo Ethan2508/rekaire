@@ -30,7 +30,7 @@ export async function incrementSalesCounter(amount: number = 1): Promise<number>
       .eq('id', 1)
       .single();
     
-    const newCount = (current?.count ?? 2847) + amount;
+    const newCount = (current?.count ?? 0) + amount;
     
     await supabaseAdmin
       .from('sales_counter')
@@ -220,16 +220,57 @@ export async function createOrder(orderData: {
   return data.id;
 }
 
+// ============================================
+// FSM - Transitions d'états valides
+// ============================================
+const VALID_TRANSITIONS: Record<string, string[]> = {
+  'pending': ['paid', 'cancelled'],
+  'paid': ['shipped', 'refunded', 'cancelled'],
+  'shipped': ['delivered', 'refunded'],
+  'delivered': ['refunded'],
+  'refunded': [], // État terminal
+  'partially_refunded': ['refunded'],
+  'cancelled': [], // État terminal
+};
+
 export async function updateOrderStatus(
   orderId: string, 
-  status: 'paid' | 'shipped' | 'delivered' | 'cancelled'
-): Promise<boolean> {
+  newStatus: 'pending' | 'paid' | 'shipped' | 'delivered' | 'cancelled' | 'refunded' | 'partially_refunded'
+): Promise<{ success: boolean; error?: string }> {
+  // Récupérer le statut actuel
+  const { data: order, error: fetchError } = await supabaseAdmin
+    .from('orders')
+    .select('status')
+    .eq('id', orderId)
+    .single();
+
+  if (fetchError || !order) {
+    return { success: false, error: 'Commande non trouvée' };
+  }
+
+  const currentStatus = order.status || 'pending';
+  const allowedTransitions = VALID_TRANSITIONS[currentStatus] || [];
+
+  // Vérifier que la transition est valide
+  if (!allowedTransitions.includes(newStatus)) {
+    console.error(`[FSM] Transition invalide: ${currentStatus} → ${newStatus}`);
+    return { 
+      success: false, 
+      error: `Transition invalide: ${currentStatus} → ${newStatus}. Transitions autorisées: ${allowedTransitions.join(', ') || 'aucune'}` 
+    };
+  }
+
   const { error } = await supabaseAdmin
     .from('orders')
-    .update({ status })
+    .update({ status: newStatus })
     .eq('id', orderId);
 
-  return !error;
+  if (error) {
+    return { success: false, error: error.message };
+  }
+
+  console.log(`[FSM] Transition réussie: ${currentStatus} → ${newStatus} (order: ${orderId})`);
+  return { success: true };
 }
 
 // ============================================

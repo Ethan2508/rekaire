@@ -14,6 +14,15 @@ export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
 });
 
 // Types pour les sessions Checkout
+export interface CustomerAddress {
+  name: string;
+  line1: string;
+  city: string;
+  postal_code: string;
+  country?: string; // Par défaut FR
+  phone?: string;
+}
+
 export interface CreateCheckoutParams {
   orderId: string;
   productName: string;
@@ -21,6 +30,7 @@ export interface CreateCheckoutParams {
   priceInCents: number;
   currency?: string;
   customerEmail?: string;
+  customerAddress?: CustomerAddress; // Pour pré-remplir l'adresse dans Checkout
   quantity?: number;
   taxRate?: number; // Taux de TVA en pourcentage (ex: 20 pour 20%)
   metadata?: Record<string, string>;
@@ -34,6 +44,7 @@ export async function createCheckoutSession({
   priceInCents,
   currency = "eur",
   customerEmail,
+  customerAddress,
   quantity = 1,
   taxRate,
   metadata = {},
@@ -50,12 +61,29 @@ export async function createCheckoutSession({
       limit: 1,
     });
     
+    // Préparer l'adresse si fournie
+    const addressData = customerAddress ? {
+      address: {
+        line1: customerAddress.line1,
+        city: customerAddress.city,
+        postal_code: customerAddress.postal_code,
+        country: customerAddress.country || 'FR',
+      },
+      name: customerAddress.name,
+      phone: customerAddress.phone,
+    } : undefined;
+    
     if (existingCustomers.data.length > 0) {
       customerId = existingCustomers.data[0].id;
+      // Mettre à jour le customer avec la nouvelle adresse si fournie
+      if (addressData) {
+        await stripe.customers.update(customerId, addressData);
+      }
     } else {
-      // Créer un nouveau customer
+      // Créer un nouveau customer avec l'adresse
       const customer = await stripe.customers.create({
         email: customerEmail,
+        ...addressData,
         metadata: {
           source: 'rekaire_checkout',
           first_order_id: orderId,
@@ -140,23 +168,13 @@ export async function createCheckoutSession({
     },
     
     // ============================================
-    // STRIPE INVOICING - Génère une facture automatique
+    // FACTURE STRIPE - DÉSACTIVÉ
+    // On génère notre propre facture PDF en français
     // ============================================
-    invoice_creation: {
-      enabled: true,
-      invoice_data: {
-        description: `Commande ${orderId} - ${productName}`,
-        metadata: {
-          order_id: orderId,
-        },
-        // Pied de facture
-        footer: "Rekaire - NELIOR SAS | SIRET: 989 603 907 00019 | TVA: FR51989603907",
-        // Infos de rendu
-        rendering_options: {
-          amount_tax_display: "include_inclusive_tax",
-        },
-      },
-    },
+    // invoice_creation: {
+    //   enabled: true,
+    //   ...
+    // },
 
     // Expiration (30 min)
     expires_at: Math.floor(Date.now() / 1000) + 30 * 60,

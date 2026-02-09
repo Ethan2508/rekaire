@@ -58,8 +58,13 @@ export interface OrderEmailData {
   promoCode?: string;
   discountCents?: number;
   stripePaymentId?: string;
-  invoiceUrl?: string; // URL de la facture Stripe
+  invoiceUrl?: string; // URL de la facture Stripe (obsolète, utiliser invoicePdf)
   invoiceNumber?: string;
+  // Facture PDF maison en pièce jointe
+  invoicePdf?: {
+    content: string; // Base64
+    filename: string;
+  };
 }
 
 // Email de confirmation de commande (CLIENT)
@@ -362,6 +367,13 @@ Une question ? ${COMPANY_INFO.email} | ${COMPANY_INFO.phone}
 
 © ${new Date().getFullYear()} Rekaire - www.rekaire.fr
       `,
+      // Pièce jointe facture PDF si fournie
+      ...(data.invoicePdf && {
+        attachments: [{
+          filename: data.invoicePdf.filename,
+          content: data.invoicePdf.content,
+        }],
+      }),
     });
 
     return { success: true, data: result };

@@ -16,11 +16,11 @@ export async function GET() {
     if (error) throw error;
 
     return NextResponse.json({
-      count: data?.count ?? 2847,
+      count: data?.count ?? 0,
       updatedAt: data?.updated_at
     });
   } catch (error) {
     console.error('Error fetching sales counter:', error);
-    return NextResponse.json({ count: 2847 }, { status: 200 });
+    return NextResponse.json({ count: 0 }, { status: 200 });
   }
 }

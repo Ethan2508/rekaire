@@ -174,8 +174,11 @@ export async function PATCH(request: NextRequest) {
           );
         }
 
-        success = await updateOrderStatus(orderId, data.status);
-        message = `Statut mis à jour: ${data.status}`;
+        const statusResult = await updateOrderStatus(orderId, data.status);
+        success = statusResult.success;
+        message = statusResult.success 
+          ? `Statut mis à jour: ${data.status}`
+          : statusResult.error || 'Erreur mise à jour statut';
 
         if (success) {
           await logAdminAction(
