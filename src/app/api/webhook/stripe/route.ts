@@ -184,6 +184,7 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
 
     // Créer la commande dans Supabase avec TOUTES les données
     await createSupabaseOrder({
+      order_number: orderId!, // RK-XXXXX - Numéro de commande client
       stripe_session_id: session.id,
       stripe_payment_intent: typeof session.payment_intent === 'string' 
         ? session.payment_intent 

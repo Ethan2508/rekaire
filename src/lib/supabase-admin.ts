@@ -129,6 +129,7 @@ export async function orderExistsByStripeSession(stripeSessionId: string): Promi
 }
 
 export async function createOrder(orderData: {
+  order_number: string; // RK-XXXXX - Numéro de commande client
   stripe_session_id: string;
   stripe_payment_intent?: string;
   product_slug: string;
@@ -176,6 +177,7 @@ export async function createOrder(orderData: {
   const { data, error } = await supabaseAdmin
     .from('orders')
     .insert({
+      order_number: orderData.order_number,
       stripe_session_id: orderData.stripe_session_id,
       stripe_payment_intent: orderData.stripe_payment_intent,
       product_id: product.id,
