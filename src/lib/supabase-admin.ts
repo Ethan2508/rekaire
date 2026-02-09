@@ -113,6 +113,21 @@ export async function decrementStock(productSlug: string, quantity: number): Pro
 // FONCTIONS ADMIN - COMMANDES
 // ============================================
 
+/**
+ * Vérifie si une commande existe déjà pour cette session Stripe
+ * 🔒 Protection contre les doublons webhook
+ */
+export async function orderExistsByStripeSession(stripeSessionId: string): Promise<boolean> {
+  const { data, error } = await supabaseAdmin
+    .from('orders')
+    .select('id')
+    .eq('stripe_session_id', stripeSessionId)
+    .single();
+
+  // Si on trouve une commande, elle existe déjà
+  return !error && !!data;
+}
+
 export async function createOrder(orderData: {
   stripe_session_id: string;
   stripe_payment_intent?: string;

@@ -141,7 +141,7 @@ export async function POST(request: NextRequest) {
         .from("promo_codes")
         .select("*")
         .eq("code", promoCode.toUpperCase())
-        .eq("active", true)
+        .eq("is_active", true)
         .single();
 
       if (promo && !error) {
@@ -159,14 +159,9 @@ export async function POST(request: NextRequest) {
         const meetsMinOrder = !promo.min_order || totalHT >= promo.min_order;
         
         if (isValidDate && hasUsesLeft && meetsMinOrder) {
-          // Calculer la réduction
-          if (promo.discount_type === "percentage") {
-            // Limiter à 100% max
-            const percentage = Math.min(Math.max(0, promo.discount_value), 100);
-            promoDiscount = Math.round((totalHT * percentage / 100) * 100) / 100;
-          } else {
-            promoDiscount = Math.min(promo.discount_value, totalHT);
-          }
+          // Calculer la réduction (discount_percent = pourcentage de réduction)
+          const percentage = Math.min(Math.max(0, promo.discount_percent), 100);
+          promoDiscount = Math.round((totalHT * percentage / 100) * 100) / 100;
           
           validatedPromoCode = promo;
           

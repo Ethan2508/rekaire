@@ -1,40 +1,16 @@
 // ============================================
 // REKAIRE - Stripe Webhook Handler (Sécurisé)
-// Protection contre double traitement incluse
+// Protection contre double traitement avec vérification DB
 // ============================================
 
 import { NextRequest, NextResponse } from "next/server";
 import { verifyWebhookSignature, getCheckoutSession } from "@/lib/stripe";
 import { sendOrderConfirmationEmail, sendAdminNotificationEmail } from "@/lib/email";
-import { incrementSalesCounter, decrementStock, createOrder as createSupabaseOrder } from "@/lib/supabase-admin";
+import { incrementSalesCounter, decrementStock, createOrder as createSupabaseOrder, orderExistsByStripeSession } from "@/lib/supabase-admin";
 import Stripe from "stripe";
 
 // Désactive le body parser pour les webhooks Stripe
 export const runtime = "nodejs";
-
-// ============================================
-// Protection contre le double traitement
-// ============================================
-const processedEvents = new Set<string>();
-const MAX_PROCESSED_EVENTS = 1000;
-
-function markEventProcessed(eventId: string): boolean {
-  // Vérifie si déjà traité
-  if (processedEvents.has(eventId)) {
-    return false; // Déjà traité
-  }
-  
-  // Ajoute à la liste
-  processedEvents.add(eventId);
-  
-  // Nettoie si trop d'événements (garde les 1000 derniers)
-  if (processedEvents.size > MAX_PROCESSED_EVENTS) {
-    const firstEvent = processedEvents.values().next().value;
-    if (firstEvent) processedEvents.delete(firstEvent);
-  }
-  
-  return true; // Nouveau, peut être traité
-}
 
 export async function POST(request: NextRequest) {
   const body = await request.text();
@@ -60,14 +36,6 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // ============================================
-  // Protection double traitement
-  // ============================================
-  if (!markEventProcessed(event.id)) {
-    console.log(`[Webhook] ⚠️ Event ${event.id} déjà traité, ignoré`);
-    return NextResponse.json({ received: true, duplicate: true });
-  }
-
   console.log(`[Webhook] 📥 Event reçu: ${event.type} (${event.id})`);
 
   // Handle events
@@ -75,6 +43,14 @@ export async function POST(request: NextRequest) {
     switch (event.type) {
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session;
+        
+        // 🔒 PROTECTION DOUBLON : Vérifier en DB si commande existe déjà
+        const alreadyExists = await orderExistsByStripeSession(session.id);
+        if (alreadyExists) {
+          console.log(`[Webhook] ⚠️ Commande déjà existante pour session ${session.id}, ignoré`);
+          return NextResponse.json({ received: true, duplicate: true });
+        }
+        
         await handleCheckoutComplete(session);
         break;
       }

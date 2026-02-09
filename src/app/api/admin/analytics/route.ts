@@ -68,7 +68,7 @@ export async function GET(request: NextRequest) {
     // 5. Codes promo les plus utilisés
     const { data: topPromos } = await supabaseAdmin
       .from('promo_codes')
-      .select('code, current_uses, discount_value, discount_type')
+      .select('code, current_uses, discount_percent')
       .order('current_uses', { ascending: false })
       .limit(5);
 

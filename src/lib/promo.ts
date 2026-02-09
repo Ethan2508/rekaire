@@ -8,9 +8,8 @@ import { supabase } from "@/lib/supabase";
 export interface PromoCode {
   id: string;
   code: string;
-  discount_type: "percentage" | "fixed"; // pourcentage ou montant fixe
-  discount_value: number; // 10 pour 10% ou 20 pour 20€
-  active: boolean;
+  discount_percent: number; // pourcentage de réduction (ex: 10 pour -10%)
+  is_active: boolean;
   valid_from?: string;
   valid_until?: string;
   max_uses?: number; // nombre max d'utilisations
@@ -81,9 +80,8 @@ export async function validatePromoCode(
       code: {
         id: "",
         code: data.code,
-        discount_type: data.discountType,
-        discount_value: data.discountValue,
-        active: true,
+        discount_percent: data.discountPercent,
+        is_active: true,
         current_uses: 0,
         created_at: new Date().toISOString(),
       } as PromoCode,
@@ -114,14 +112,8 @@ export async function incrementPromoUsage(codeId: string): Promise<boolean> {
 }
 
 /**
- * Formater l'affichage d'une réduction
+ * Formater l'affichage d'une réduction (toujours en pourcentage)
  */
-export function formatDiscount(
-  type: "percentage" | "fixed",
-  value: number
-): string {
-  if (type === "percentage") {
-    return `-${value}%`;
-  }
-  return `-${value}€`;
+export function formatDiscount(percent: number): string {
+  return `-${percent}%`;
 }

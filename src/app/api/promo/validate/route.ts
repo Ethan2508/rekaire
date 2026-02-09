@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
       .from("promo_codes")
       .select("*")
       .eq("code", sanitizedCode)
-      .eq("active", true)
+      .eq("is_active", true)
       .single();
 
     if (error || !promoCode) {
@@ -100,16 +100,10 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Calculer la réduction (en centimes)
-    let discount = 0;
-    if (promoCode.discount_type === "percentage") {
-      // 🔒 Limiter à 100% maximum
-      const safePercentage = Math.min(Math.max(0, promoCode.discount_value), 100);
-      discount = Math.round((orderAmount * safePercentage) / 100);
-    } else {
-      // Montant fixe en centimes
-      discount = promoCode.discount_value;
-    }
+    // Calculer la réduction (discount_percent = pourcentage)
+    // 🔒 Limiter à 100% maximum
+    const safePercentage = Math.min(Math.max(0, promoCode.discount_percent), 100);
+    let discount = Math.round((orderAmount * safePercentage) / 100);
 
     // 🔒 S'assurer que la réduction ne dépasse JAMAIS le montant total
     discount = Math.max(0, Math.min(discount, orderAmount));
@@ -118,8 +112,7 @@ export async function POST(request: NextRequest) {
       valid: true,
       discount,
       code: sanitizedCode,
-      discountType: promoCode.discount_type,
-      discountValue: promoCode.discount_value,
+      discountPercent: promoCode.discount_percent,
     });
   } catch (error) {
     console.error("[Promo API] Error:", error);

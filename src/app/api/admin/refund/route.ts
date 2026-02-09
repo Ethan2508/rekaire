@@ -103,7 +103,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Mettre à jour le statut de la commande
-    const isPartialRefund = refundAmount && refundAmount < (order.total_ttc_cents || 0);
+    // Note: total_ttc est déjà stocké en centimes dans la DB
+    const isPartialRefund = refundAmount && refundAmount < (order.total_ttc || 0);
     const newStatus = isPartialRefund ? "partially_refunded" : "refunded";
     
     const { error: updateError } = await supabaseAdmin
