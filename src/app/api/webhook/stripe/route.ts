@@ -331,7 +331,7 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
           city: billingAddressForEmail?.city || shippingAddressForEmail?.city || '',
           country: billingAddressForEmail?.country || 'France',
           email: customerEmail,
-          phone: customerPhone,
+          phone: customerPhone || undefined,
           vatNumber: session.metadata?.billing_vat_number || undefined,
         },
         items: [{
