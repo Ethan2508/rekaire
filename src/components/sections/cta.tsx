@@ -72,10 +72,6 @@ export function CTASection() {
             </span>
             <span className="text-gray-500 text-lg">HT / unité</span>
           </div>
-          <p className="text-emerald-600 font-medium flex items-center justify-center gap-2">
-            <Check className="w-5 h-5" />
-            Pack de 2 : {formatPrice(PRICES.bulkHT, "EUR")} HT — Économisez 10%
-          </p>
         </motion.div>
 
         {/* CTA Button */}

@@ -100,22 +100,6 @@ export function HeroSection() {
                 qui protège vos espaces 24h/24. Temps d'installation : 5 minutes.
               </p>
 
-              {/* Price block */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 }}
-                className="inline-block bg-white rounded-2xl p-6 border border-gray-200 shadow-lg mb-8"
-              >
-                <div className="flex items-baseline gap-2 justify-center lg:justify-start">
-                  <span className="text-4xl lg:text-5xl font-bold text-gray-900">
-                    {formatPrice(PRICES.singleHT, "EUR")}
-                  </span>
-                  <span className="text-gray-500">HT</span>
-                </div>
-
-              </motion.div>
-
               {/* CTAs */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
