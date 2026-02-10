@@ -6,7 +6,6 @@
 
 import { motion } from "framer-motion";
 import { content } from "@/config/content";
-import { formatPrice, PRICES } from "@/config/product";
 import { CTAButton } from "@/components/cta-button";
 import { Lock, Truck, Shield, Star, Check } from "lucide-react";
 
@@ -57,22 +56,6 @@ export function CTASection() {
         >
           {content.cta.subtitle}
         </motion.p>
-
-        {/* Price Card */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.3 }}
-          className="inline-block bg-white rounded-3xl p-8 shadow-2xl mb-10"
-        >
-          <div className="flex items-baseline justify-center gap-3 mb-4">
-            <span className="text-4xl md:text-6xl font-bold text-gray-900">
-              {formatPrice(PRICES.singleHT, "EUR")}
-            </span>
-            <span className="text-gray-500 text-lg">HT / unité</span>
-          </div>
-        </motion.div>
 
         {/* CTA Button */}
         <motion.div
