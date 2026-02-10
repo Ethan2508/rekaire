@@ -226,28 +226,14 @@ export function BlogGrid() {
 
   return (
     <div className="space-y-12">
-      {/* Featured Articles */}
-      {featuredArticles.length > 0 && (
-        <section>
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            Articles à la une
-          </h2>
-          <div className="grid md:grid-cols-2 gap-6">
-            {featuredArticles.map((article, index) => (
-              <ArticleCard key={article.id} article={article} index={index} featured />
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* All Articles */}
+      {/* Articles récents - tous les articles par date */}
       <section>
         <h2 className="text-2xl font-bold text-gray-900 mb-6">
-          Tous les articles
+          Articles récents
         </h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {regularArticles.map((article, index) => (
-            <ArticleCard key={article.id} article={article} index={index} />
+          {articles.map((article, index) => (
+            <ArticleCard key={article.id} article={article} index={index} featured={article.featured} />
           ))}
         </div>
       </section>
