@@ -149,8 +149,8 @@ export function calculatePrice(
   totalTTC: number;
   savings: number;
 } {
-  // Remise quantité (pack de 3+ = -14%)
-  const quantityDiscount = quantity >= 3 ? 14 : 0;
+  // Pas de remise quantité automatique
+  const quantityDiscount = 0;
   
   // Cumul des remises (plafonné à 50%)
   const totalDiscount = Math.min(discountPercent + promoDiscountPercent + quantityDiscount, 50);

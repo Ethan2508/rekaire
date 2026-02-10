@@ -28,6 +28,7 @@ import {
   FileText,
 } from "lucide-react";
 import { Header, Footer } from "@/components";
+import { Turnstile, useTurnstile } from "@/components/turnstile";
 import { CheckoutProgress } from "@/components/checkout-progress";
 import { trackCTAClick, trackCheckoutStart } from "@/lib/tracking";
 import { generateOrderId } from "@/lib/order";
@@ -52,6 +53,9 @@ function CheckoutContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const initialQty = parseInt(searchParams.get("qty") || "1", 10);
+
+  // Turnstile CAPTCHA
+  const { setToken: setTurnstileToken, getToken: getTurnstileToken } = useTurnstile();
 
   const [quantity, setQuantity] = useState(Math.max(1, Math.min(100, initialQty)));
   const [step, setStep] = useState(1);
@@ -237,6 +241,8 @@ function CheckoutContent() {
               isCompany,
               companyName: formData.companyName || null,
               source: isQuoteMode ? "checkout-devis" : "checkout",
+              // 🔒 Turnstile CAPTCHA token
+              turnstileToken: getTurnstileToken(),
             }),
           });
           setLeadSaved(true);
@@ -248,7 +254,7 @@ function CheckoutContent() {
 
     const debounce = setTimeout(saveLeadAsync, 1000);
     return () => clearTimeout(debounce);
-  }, [formData.email, formData.firstName, formData.lastName, formData.phone, isCompany, formData.companyName, leadSaved, isQuoteMode]);
+  }, [formData.email, formData.firstName, formData.lastName, formData.phone, isCompany, formData.companyName, leadSaved, isQuoteMode, getTurnstileToken]);
 
   const selectAddress = (suggestion: AddressSuggestion) => {
     setFormData({
@@ -447,6 +453,12 @@ function CheckoutContent() {
   return (
     <>
       <Header />
+      {/* 🔒 Turnstile CAPTCHA invisible */}
+      <Turnstile
+        siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "0x4AAAAAACaF8eEKeVuSgb_P"}
+        onVerify={setTurnstileToken}
+        size="invisible"
+      />
       <main className="pt-24 pb-16 min-h-screen bg-gray-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Breadcrumb */}
@@ -1170,11 +1182,6 @@ function CheckoutContent() {
                         <Plus className="w-4 h-4" />
                       </button>
                     </div>
-                    {quantity >= 3 && quantity < QUOTE_THRESHOLD && (
-                      <span className="px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">
-                        -15%
-                      </span>
-                    )}
                   </div>
                 </div>
 

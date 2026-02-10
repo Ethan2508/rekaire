@@ -51,11 +51,6 @@ export function ProductOrder({ location, className = "" }: ProductOrderProps) {
               {formatPrice(unitPriceHT, "EUR")}
             </span>
             <span className="text-gray-500">/ unité HT</span>
-            {quantity >= 2 && (
-              <span className="ml-2 px-2 py-0.5 bg-green-100 text-green-700 text-sm font-medium rounded-full">
-                -15% pack
-              </span>
-            )}
           </div>
         )}
 

@@ -395,11 +395,26 @@ export const InvoiceDocument: React.FC<{ data: InvoiceData }> = ({ data }) => (
 // GÉNÉRATION DU PDF
 // ============================================
 
+// Timeout helper (10 secondes max pour génération PDF)
+const PDF_TIMEOUT_MS = 10000;
+
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) =>
+      setTimeout(() => reject(new Error(`PDF generation timeout after ${ms}ms`)), ms)
+    ),
+  ]);
+}
+
 /**
- * Génère le buffer PDF de la facture
+ * Génère le buffer PDF de la facture (avec timeout)
  */
 export async function generateInvoicePDF(data: InvoiceData): Promise<Buffer> {
-  const buffer = await renderToBuffer(<InvoiceDocument data={data} />);
+  const buffer = await withTimeout(
+    renderToBuffer(<InvoiceDocument data={data} />),
+    PDF_TIMEOUT_MS
+  );
   return Buffer.from(buffer);
 }
 

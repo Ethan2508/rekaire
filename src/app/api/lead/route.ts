@@ -4,13 +4,15 @@ import { rateLimitDB } from "@/lib/rate-limit";
 
 // ============================================
 // REKAIRE - API Lead (Capture contacts sécurisée)
-// Rate limit + Honeypot + Validation
+// Rate limit + Honeypot + Turnstile CAPTCHA + Validation
 // ============================================
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
+
+const TURNSTILE_SECRET = process.env.TURNSTILE_SECRET_KEY;
 
 // Validation email stricte
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -26,6 +28,32 @@ function isValidEmail(email: string): boolean {
   const domain = email.split('@')[1]?.toLowerCase();
   if (!domain) return false;
   return !BLOCKED_DOMAINS.some(blocked => domain.includes(blocked));
+}
+
+// Vérification Cloudflare Turnstile
+async function verifyTurnstile(token: string, ip: string): Promise<boolean> {
+  if (!TURNSTILE_SECRET) {
+    console.warn('[Lead API] ⚠️ TURNSTILE_SECRET_KEY non configuré');
+    return true; // Fail open en dev
+  }
+  
+  try {
+    const response = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        secret: TURNSTILE_SECRET,
+        response: token,
+        remoteip: ip,
+      }),
+    });
+    
+    const data = await response.json();
+    return data.success === true;
+  } catch (error) {
+    console.error('[Lead API] Turnstile verification error:', error);
+    return false;
+  }
 }
 
 export async function POST(request: NextRequest) {
@@ -55,6 +83,8 @@ export async function POST(request: NextRequest) {
       honeypot,
       website,
       fax,
+      // 🔒 TURNSTILE token
+      turnstileToken,
     } = body;
 
     // 🔒 HONEYPOT CHECK (les bots remplissent ces champs)
@@ -62,6 +92,19 @@ export async function POST(request: NextRequest) {
       console.log('[Lead API] 🤖 Bot détecté via honeypot');
       // Retourner success pour ne pas alerter le bot
       return NextResponse.json({ success: true });
+    }
+
+    // Récupérer IP pour vérification
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+               request.headers.get("x-real-ip") || "unknown";
+
+    // 🔒 TURNSTILE VERIFICATION
+    if (TURNSTILE_SECRET && turnstileToken) {
+      const isHuman = await verifyTurnstile(turnstileToken, ip);
+      if (!isHuman) {
+        console.log('[Lead API] 🤖 Turnstile verification failed');
+        return NextResponse.json({ success: true }); // Fail silently
+      }
     }
 
     // Validation email obligatoire
@@ -74,9 +117,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid email format" }, { status: 400 });
     }
 
-    // Récupérer IP et user-agent pour audit
-    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-               request.headers.get("x-real-ip") || "unknown";
+    // Récupérer user-agent pour audit
     const userAgent = request.headers.get("user-agent") || "unknown";
 
     // Upsert: crée ou met à jour le lead

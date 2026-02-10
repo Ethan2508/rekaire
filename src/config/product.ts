@@ -29,10 +29,9 @@ export interface Product {
 }
 
 // Prix en centimes HT
-// 1 produit = 70€ HT = 7000 centimes
-// 2+ produits = 59.50€ HT/unité = 5950 centimes (-15%)
-const PRICE_SINGLE_HT = 7000; // 70€ HT
-const PRICE_BULK_HT = 5950; // 59.50€ HT pour 2+ (-15%)
+// Prix unique = 75€ HT = 7500 centimes = 90€ TTC
+const PRICE_SINGLE_HT = 7500; // 75€ HT
+const PRICE_BULK_HT = 7500; // Même prix (pas de remise quantité)
 const TVA_RATE = 0.20;
 
 // Calcul TTC
@@ -67,8 +66,8 @@ Le RK01 offre une protection ciblée et fiable pour vos installations électriqu
       "Durée de vie": "5 ans",
       "Certification": "CE / EN",
     },
-    priceCents: priceToTTC(PRICE_SINGLE_HT), // 84€ TTC
-    priceCents2Plus: priceToTTC(PRICE_BULK_HT), // 72€ TTC
+    priceCents: priceToTTC(PRICE_SINGLE_HT), // 90€ TTC
+    priceCents2Plus: priceToTTC(PRICE_BULK_HT), // 90€ TTC (pas de remise)
     currency: "EUR",
     images: [
       "/images/product/rk01-main.png",
@@ -110,7 +109,7 @@ export const getTVA = (priceTTCCents: number, tvaRate: number = 0.2): number => 
 
 // Helper pour calculer le prix total selon quantité
 export const calculateTotal = (quantity: number): { totalHT: number; totalTTC: number; unitPriceHT: number } => {
-  const unitPriceHT = quantity >= 2 ? PRICE_BULK_HT : PRICE_SINGLE_HT;
+  const unitPriceHT = PRICE_SINGLE_HT; // Prix unique 75€ HT
   const totalHT = unitPriceHT * quantity;
   const totalTTC = priceToTTC(totalHT);
   return { totalHT, totalTTC, unitPriceHT };
