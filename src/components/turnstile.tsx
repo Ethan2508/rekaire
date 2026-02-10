@@ -2,7 +2,7 @@
 
 // ============================================
 // REKAIRE - Cloudflare Turnstile CAPTCHA
-// Mode invisible pour UX fluide
+// Mode flexible pour UX optimale
 // ============================================
 
 import { useEffect, useRef, useCallback } from "react";

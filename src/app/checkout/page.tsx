@@ -453,11 +453,11 @@ function CheckoutContent() {
   return (
     <>
       <Header />
-      {/* 🔒 Turnstile CAPTCHA invisible */}
+      {/* 🔒 Turnstile CAPTCHA */}
       <Turnstile
         siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "0x4AAAAAACaF8eEKeVuSgb_P"}
         onVerify={setTurnstileToken}
-        size="invisible"
+        size="flexible"
       />
       <main className="pt-24 pb-16 min-h-screen bg-gray-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
