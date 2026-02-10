@@ -131,7 +131,7 @@ export function ProductOrder({ location, className = "" }: ProductOrderProps) {
         )}
 
         {/* Info */}
-        <p className="text-xs text-gray-500 text-center">
+        <p className="text-xs text-gray-500 text-center mt-4">
           {!isQuoteMode 
             ? "✓ Livraison gratuite • Paiement sécurisé Stripe"
             : "Devis gratuit sous 24h • Tarifs dégressifs"}
