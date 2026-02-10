@@ -269,6 +269,7 @@ export default function AdminDashboard() {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [trackingNumber, setTrackingNumber] = useState('');
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isDownloadingInvoice, setIsDownloadingInvoice] = useState(false);
   const [showRefundConfirm, setShowRefundConfirm] = useState(false);
 
   // Promo codes state
@@ -671,6 +672,72 @@ export default function AdminDashboard() {
       showToast(error.message || 'Erreur lors du remboursement', 'error');
     } finally {
       setIsUpdating(false);
+    }
+  }
+
+  // Télécharger une facture existante
+  async function handleDownloadInvoice(orderId: string) {
+    setIsDownloadingInvoice(true);
+    try {
+      const token = (await supabase.auth.getSession()).data.session?.access_token;
+      if (!token) throw new Error('No token');
+
+      const response = await fetch(`/api/admin/invoices?orderId=${orderId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Erreur téléchargement facture');
+      }
+
+      // Ouvrir l'URL de la facture dans un nouvel onglet
+      if (data.invoiceUrl) {
+        window.open(data.invoiceUrl, '_blank');
+        showToast('Facture ouverte', 'success');
+      } else {
+        throw new Error('URL de facture non disponible');
+      }
+    } catch (error: any) {
+      console.error('Download invoice error:', error);
+      showToast(error.message || 'Erreur lors du téléchargement', 'error');
+    } finally {
+      setIsDownloadingInvoice(false);
+    }
+  }
+
+  // Générer une nouvelle facture
+  async function handleGenerateInvoice(orderId: string) {
+    setIsDownloadingInvoice(true);
+    try {
+      const token = (await supabase.auth.getSession()).data.session?.access_token;
+      if (!token) throw new Error('No token');
+
+      const response = await fetch('/api/admin/invoices', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ orderId })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Erreur génération facture');
+      }
+
+      showToast(`Facture ${data.invoiceNumber} générée`, 'success');
+      fetchOrders(); // Rafraîchir pour voir le numéro de facture
+    } catch (error: any) {
+      console.error('Generate invoice error:', error);
+      showToast(error.message || 'Erreur lors de la génération', 'error');
+    } finally {
+      setIsDownloadingInvoice(false);
     }
   }
 
@@ -1640,6 +1707,52 @@ export default function AdminDashboard() {
                     <span className="text-orange-600">{formatPrice(selectedOrder.total_ttc)}</span>
                   </div>
                 </div>
+              </div>
+
+              {/* Facture */}
+              <div className="bg-orange-50 rounded-xl p-4">
+                <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                  <Icons.FileText />
+                  Facture
+                </h4>
+                {selectedOrder.invoice_number ? (
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-gray-900 font-mono">N° {selectedOrder.invoice_number}</p>
+                      <p className="text-sm text-gray-500">Générée automatiquement</p>
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleDownloadInvoice(selectedOrder.id)}
+                        disabled={isDownloadingInvoice}
+                        className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 flex items-center gap-2"
+                      >
+                        {isDownloadingInvoice ? (
+                          <div className="animate-spin"><Icons.Refresh /></div>
+                        ) : (
+                          <Icons.Download />
+                        )}
+                        Télécharger PDF
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-between">
+                    <p className="text-gray-500">Aucune facture générée</p>
+                    <button
+                      onClick={() => handleGenerateInvoice(selectedOrder.id)}
+                      disabled={isDownloadingInvoice}
+                      className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 flex items-center gap-2"
+                    >
+                      {isDownloadingInvoice ? (
+                        <div className="animate-spin"><Icons.Refresh /></div>
+                      ) : (
+                        <Icons.Plus />
+                      )}
+                      Générer la facture
+                    </button>
+                  </div>
+                )}
               </div>
 
               {/* Actions */}
