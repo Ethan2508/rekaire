@@ -78,9 +78,7 @@ export function PartnersSection() {
                     alt={partner.name}
                     width={200}
                     height={100}
-                    className={`w-auto object-contain opacity-80 group-hover:opacity-100 transition-opacity ${
-                      partner.name === 'Synexium' ? 'max-h-20 md:max-h-26' : 'max-h-16 md:max-h-20'
-                    }`}
+                    className="w-auto object-contain opacity-80 group-hover:opacity-100 transition-opacity max-h-16 md:max-h-20"
                   />
                 </div>
               </motion.div>
@@ -125,7 +123,6 @@ export function PartnersSection() {
                         className={`w-auto object-contain opacity-80 hover:opacity-100 transition-opacity ${
                           client.name === 'Viva Energie' ? 'max-h-28 md:max-h-32' : 
                           client.name === 'Yamada' ? 'max-h-10 md:max-h-12 scale-80' : 
-                          client.name === 'Synexium' ? 'max-h-20 md:max-h-24' :
                           client.name === 'Uber' ? 'max-h-8 md:max-h-10' : 
                           'max-h-12 md:max-h-16'
                         }`}
@@ -161,7 +158,6 @@ export function PartnersSection() {
                         height={80}
                         className={`w-auto object-contain opacity-80 hover:opacity-100 transition-opacity ${
                           client.name === 'Yamada' ? 'max-h-10 md:max-h-12 scale-80' : 
-                          client.name === 'Synexium' ? 'max-h-20 md:max-h-24' :
                           client.name === 'Uber' ? 'max-h-8 md:max-h-10' : 
                           'max-h-12 md:max-h-16'
                         }`}

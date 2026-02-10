@@ -16,7 +16,7 @@ export function SpecificationsSection() {
     {
       src: "/images/product/rk01-part1.png",
       alt: "RK01 - Capuchon",
-      title: "Capuchon protecteur",
+      title: "Coiffe thermosensible",
       desc: "Résistant à la chaleur",
       color: "orange"
     },

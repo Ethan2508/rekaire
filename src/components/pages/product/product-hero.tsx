@@ -154,8 +154,8 @@ export function ProductHero() {
             </h1>
 
             <p className="text-lg md:text-xl text-gray-600 mb-8 leading-relaxed">
-              Protection automatique et préventive pour tableaux électriques. 
-              Détection et extinction autonome sans intervention humaine.
+              Le RK01 est un dispositif anti-incendie compact et révolutionnaire, 
+              conçu pour protéger efficacement vos espaces les plus sensibles.
             </p>
 
             {/* Key Features - Premium Grid */}
@@ -164,7 +164,7 @@ export function ProductHero() {
                 { icon: Shield, label: "Protection 24/7", color: "from-orange-500 to-orange-600" },
                 { icon: Clock, label: "Durée de vie 5 ans", color: "from-blue-500 to-blue-600" },
                 { icon: Zap, label: "Sans électricité", color: "from-amber-500 to-amber-600" },
-                { icon: Check, label: "Sans maintenance", color: "from-emerald-500 to-emerald-600" },
+                { icon: Check, label: "Certifié CE", color: "from-emerald-500 to-emerald-600" },
               ].map((feature, index) => (
                 <motion.div
                   key={feature.label}

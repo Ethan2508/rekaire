@@ -113,10 +113,7 @@ export function HeroSection() {
                   </span>
                   <span className="text-gray-500">HT</span>
                 </div>
-                <p className="text-emerald-600 text-sm font-medium mt-2 flex items-center gap-2 justify-center lg:justify-start">
-                  <Check className="w-4 h-4" />
-                  Pack de 2 : {formatPrice(PRICES.bulkHT, "EUR")} HT — Économisez 15%
-                </p>
+
               </motion.div>
 
               {/* CTAs */}
