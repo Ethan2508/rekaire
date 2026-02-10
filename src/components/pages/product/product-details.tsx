@@ -97,8 +97,8 @@ export function ProductDetails() {
                 <div className="flex items-start gap-4 p-4 bg-white rounded-lg">
                   <span className="flex-shrink-0 w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center font-bold">1</span>
                   <div>
-                    <h4 className="font-semibold text-gray-900">Coiffe thermosensible</h4>
-                    <p className="text-sm text-gray-600">Résistant à la chaleur, protège le mécanisme interne</p>
+                    <h4 className="font-semibold text-gray-900">Boîtier</h4>
+                    <p className="text-sm text-gray-600">Fond à 170°C pour déclencher l'agent extincteur</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4 p-4 bg-white rounded-lg">
