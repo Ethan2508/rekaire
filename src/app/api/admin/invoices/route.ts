@@ -193,7 +193,8 @@ export async function POST(request: NextRequest) {
 }
 
 /**
- * GET /api/admin/invoices?orderId=xxx - Récupère l'URL de la facture
+ * GET /api/admin/invoices?orderId=xxx - Télécharge directement le PDF de la facture
+ * Régénère le PDF à la demande (pas de dépendance aux URLs expirées)
  */
 export async function GET(request: NextRequest) {
   const auth = await verifyAdminAuth(request);
@@ -217,14 +218,48 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Aucune facture générée' }, { status: 404 });
   }
 
-  // Régénérer une URL signée si besoin
-  const fileName = getInvoiceFileName(order.invoice_number);
-  const { data: signedUrlData } = await supabaseAdmin.storage
-    .from('invoices')
-    .createSignedUrl(fileName, 60 * 60 * 24); // 24 heures
-
-  return NextResponse.json({
+  // Régénérer le PDF à la demande
+  const invoiceData: InvoiceData = {
     invoiceNumber: order.invoice_number,
-    invoiceUrl: signedUrlData?.signedUrl || order.invoice_url
+    orderNumber: order.order_number,
+    date: new Date(order.created_at),
+    customer: {
+      name: order.customer_name || 'Client',
+      email: order.customer_email,
+      phone: order.customer_phone,
+      address: {
+        line1: order.shipping_address_line1 || 'Adresse non renseignée',
+        line2: order.shipping_address_line2,
+        postalCode: order.shipping_postal_code || '',
+        city: order.shipping_city || '',
+        country: order.shipping_country || 'France'
+      }
+    },
+    items: [{
+      description: 'RK01 - Extincteur automatique intelligent',
+      quantity: order.quantity,
+      unitPriceHT: order.unit_price_ht / 100,
+      totalHT: (order.unit_price_ht * order.quantity) / 100
+    }],
+    promoCode: order.promo_code,
+    promoDiscount: order.promo_discount ? order.promo_discount / 100 : undefined,
+    totalHT: order.total_ht / 100,
+    tvaRate: 0.20,
+    tvaAmount: (order.total_ttc - order.total_ht) / 100,
+    totalTTC: order.total_ttc / 100,
+    isPaid: true,
+    paymentMethod: 'Carte bancaire (Stripe)'
+  };
+
+  const pdfBuffer = await generateInvoicePDF(invoiceData);
+  const fileName = getInvoiceFileName(order.invoice_number);
+
+  // Retourner le PDF directement (convertir Buffer en Uint8Array pour Response)
+  return new Response(new Uint8Array(pdfBuffer), {
+    headers: {
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': `attachment; filename="${fileName}"`,
+      'Cache-Control': 'no-cache'
+    }
   });
 }

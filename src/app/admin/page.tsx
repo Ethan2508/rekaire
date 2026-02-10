@@ -675,7 +675,7 @@ export default function AdminDashboard() {
     }
   }
 
-  // Télécharger une facture existante
+  // Télécharger une facture existante (PDF généré à la demande)
   async function handleDownloadInvoice(orderId: string) {
     setIsDownloadingInvoice(true);
     try {
@@ -688,19 +688,28 @@ export default function AdminDashboard() {
         }
       });
 
-      const data = await response.json();
-
       if (!response.ok) {
-        throw new Error(data.error || 'Erreur téléchargement facture');
+        const text = await response.text();
+        let error = 'Erreur téléchargement facture';
+        try {
+          const data = JSON.parse(text);
+          error = data.error || error;
+        } catch {}
+        throw new Error(error);
       }
 
-      // Ouvrir l'URL de la facture dans un nouvel onglet
-      if (data.invoiceUrl) {
-        window.open(data.invoiceUrl, '_blank');
-        showToast('Facture ouverte', 'success');
-      } else {
-        throw new Error('URL de facture non disponible');
-      }
+      // Télécharger le PDF directement
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Facture-${selectedOrder?.invoice_number || orderId}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+
+      showToast('Facture téléchargée', 'success');
     } catch (error: any) {
       console.error('Download invoice error:', error);
       showToast(error.message || 'Erreur lors du téléchargement', 'error');
