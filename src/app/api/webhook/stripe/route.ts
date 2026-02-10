@@ -336,7 +336,11 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
           vatNumber: session.metadata?.billing_vat_number || undefined,
         },
         items: [{
-          description: `${productName} - Extincteur connecté anti-incendie`,
+          ref: 'RK01',
+          description: `Système autonome d'extinction incendie`,
+          shippingAddress: shippingAddressForEmail 
+            ? `${shippingAddressForEmail.line1}, ${shippingAddressForEmail.postalCode} ${shippingAddressForEmail.city}`
+            : undefined,
           quantity,
           unitPriceHT: unitPriceHTCents,
           totalHT: unitPriceHTCents * quantity,

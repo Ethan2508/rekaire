@@ -41,7 +41,9 @@ export interface InvoiceData {
   
   // Produits
   items: {
+    ref: string; // RK01
     description: string;
+    shippingAddress?: string; // Adresse de livraison
     quantity: number;
     unitPriceHT: number; // En centimes
     totalHT: number; // En centimes
@@ -147,7 +149,7 @@ const styles = StyleSheet.create({
   },
   tableHeader: {
     flexDirection: 'row',
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#f97316', // Orange Rekaire
     color: '#fff',
     padding: 10,
     fontSize: 9,
@@ -164,9 +166,10 @@ const styles = StyleSheet.create({
   tableRowAlt: {
     backgroundColor: '#fafafa',
   },
-  colDescription: { width: '45%' },
-  colQuantity: { width: '15%', textAlign: 'center' },
-  colUnitPrice: { width: '20%', textAlign: 'right' },
+  colRef: { width: '12%' },
+  colDescription: { width: '38%' },
+  colUnitPrice: { width: '18%', textAlign: 'right' },
+  colQuantity: { width: '12%', textAlign: 'center' },
   colTotal: { width: '20%', textAlign: 'right' },
   
   // Totaux
@@ -186,7 +189,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#e5e5e5',
   },
   totalRowFinal: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#f97316', // Orange Rekaire
     color: '#fff',
     fontFamily: 'Helvetica-Bold',
     fontSize: 12,
@@ -312,9 +315,10 @@ export const InvoiceDocument: React.FC<{ data: InvoiceData }> = ({ data }) => (
       {/* Table des produits */}
       <View style={styles.table}>
         <View style={styles.tableHeader}>
+          <Text style={styles.colRef}>Réf.</Text>
           <Text style={styles.colDescription}>Désignation</Text>
-          <Text style={styles.colQuantity}>Qté</Text>
           <Text style={styles.colUnitPrice}>Prix unit. HT</Text>
+          <Text style={styles.colQuantity}>Qté</Text>
           <Text style={styles.colTotal}>Total HT</Text>
         </View>
         
@@ -323,9 +327,13 @@ export const InvoiceDocument: React.FC<{ data: InvoiceData }> = ({ data }) => (
             key={index} 
             style={[styles.tableRow, ...(index % 2 === 1 ? [styles.tableRowAlt] : [])]}
           >
-            <Text style={styles.colDescription}>{item.description}</Text>
-            <Text style={styles.colQuantity}>{item.quantity}</Text>
+            <Text style={styles.colRef}>{item.ref}</Text>
+            <Text style={styles.colDescription}>
+              {item.description}
+              {item.shippingAddress && `\n- Adresse de livraison : ${item.shippingAddress}`}
+            </Text>
             <Text style={styles.colUnitPrice}>{formatPrice(item.unitPriceHT)}</Text>
+            <Text style={styles.colQuantity}>{item.quantity}</Text>
             <Text style={styles.colTotal}>{formatPrice(item.totalHT)}</Text>
           </View>
         ))}
@@ -334,11 +342,6 @@ export const InvoiceDocument: React.FC<{ data: InvoiceData }> = ({ data }) => (
       {/* Totaux */}
       <View style={styles.totalsSection}>
         <View style={styles.totalsBox}>
-          <View style={styles.totalRow}>
-            <Text style={styles.totalLabel}>Sous-total HT</Text>
-            <Text style={styles.totalValue}>{formatPrice(data.subtotalHT)}</Text>
-          </View>
-          
           {data.discountHT && data.discountHT > 0 && (
             <View style={[styles.totalRow, styles.discountRow]}>
               <Text style={styles.totalLabel}>
@@ -378,20 +381,10 @@ export const InvoiceDocument: React.FC<{ data: InvoiceData }> = ({ data }) => (
       {/* Footer avec mentions légales */}
       <View style={styles.footer}>
         <Text style={styles.legalText}>
-          <Text style={styles.legalBold}>NELIOR SAS</Text> au capital de 1 260,00 € 
-          - RCS Lyon 989 603 907 - APE 4791B
+          Nelior - SAS, société par actions simplifiée au capital de 1 260,00 €
         </Text>
         <Text style={styles.legalText}>
-          5 Rue Mazenod, 69003 LYON | Conditions de vente : rekaire.fr/cgv
-        </Text>
-        <Text style={styles.legalText}>
-          En cas de retard de paiement, des pénalités au taux de 3 fois le taux 
-          d&apos;intérêt légal seront appliquées, ainsi qu&apos;une indemnité forfaitaire 
-          de 40€ pour frais de recouvrement (art. L441-10 C. com.).
-        </Text>
-        <Text style={styles.legalText}>
-          Conformément à l&apos;article L. 441-9 du Code de commerce, le délai de paiement 
-          est fixé à 30 jours à compter de la date de réception des marchandises.
+          N° Siret : 98960390700019 - R.C.S. Lyon 989603907 - Code APE : 46.69C - TVA intracommunautaire : FR51989603907 - Option de TVA sur les débits
         </Text>
       </View>
     </Page>
