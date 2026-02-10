@@ -1,14 +1,12 @@
 // ============================================
 // REKAIRE - API: Génération automatique d'articles
 // Génère des articles avec OpenAI, stocke dans Supabase
+// Appelé par Vercel Cron (lundi et jeudi à 10h)
 // ============================================
 
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import OpenAI from "openai";
-
-// Secret pour sécuriser l'endpoint (optionnel)
-const API_SECRET = process.env.BLOG_API_SECRET || "rk-blog-2026-secret";
 
 // Supabase admin client
 const supabaseAdmin = createClient(
@@ -37,20 +35,12 @@ const TOPICS = [
 
 const CATEGORIES = ["Statistiques", "Prévention", "Tutoriels", "Réglementation", "Comparatifs", "Conseils", "Entreprises"];
 
-export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json().catch(() => ({}));
-    const { secret, topic: customTopic } = body;
-
-    // Vérification optionnelle du secret
-    if (secret && secret !== API_SECRET) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
+// Fonction principale de génération
+async function generateArticle(customTopic?: string) {
     // Vérifier la clé OpenAI
     const openaiKey = process.env.OPENAI_API_KEY;
     if (!openaiKey) {
-      return NextResponse.json({ error: "OpenAI API key not configured" }, { status: 500 });
+      return { error: "OpenAI API key not configured", status: 500 };
     }
 
     const openai = new OpenAI({ apiKey: openaiKey });
@@ -71,10 +61,10 @@ export async function POST(request: NextRequest) {
 
 PRODUIT RK01 :
 - Dispositif d'extinction automatique pour tableaux électriques
-- Prix : 70€ HT (60€ HT dès 2 unités)
-- Activation automatique à 175°C
+- Prix : 75€ HT (90€ TTC)
+- Activation automatique à 170°C
 - Durée de vie : 5 ans sans entretien
-- Installation en 30 secondes, sans outils
+- Installation en quelques secondes, sans outils
 - Fonctionne sans électricité ni batterie
 
 RÈGLES DE RÉDACTION :
@@ -98,7 +88,7 @@ CATÉGORIE : ${category}
   "excerpt": "Résumé captivant de 150-180 caractères qui donne envie de lire",
   "category": "${category}",
   "tags": ["sécurité incendie", "protection électrique", "prévention", "RK01", "extincteur automatique"],
-  "content": "## Introduction\\n\\nParagraphe d'accroche avec une statistique choc. Présentation du sujet.\\n\\nDeuxième paragraphe qui explique l'importance du sujet.\\n\\n## Les chiffres clés en France\\n\\nEn France, **300 000 incendies domestiques** se déclarent chaque année. Parmi eux :\\n\\n- **25 à 30%** sont d'origine électrique\\n- **70%** des incendies mortels se déclarent la nuit\\n- Plus de **10 000 blessés** et **500 décès** par an\\n\\nCes statistiques montrent l'importance de la prévention.\\n\\n## Les causes principales des incendies électriques\\n\\nLes incendies d'origine électrique proviennent souvent de :\\n\\n- Tableaux électriques défectueux ou surchargés\\n- Prises multiples en surcharge\\n- Câbles endommagés ou vétustes\\n- Appareils défaillants laissés branchés\\n\\nUne installation non conforme multiplie les risques.\\n\\n## Comment se protéger efficacement\\n\\nLa prévention passe par plusieurs mesures :\\n\\n- Faire vérifier son installation par un professionnel\\n- Ne pas surcharger les prises électriques\\n- Installer des détecteurs de fumée\\n- Utiliser des dispositifs de protection automatique\\n\\nLa protection du tableau électrique est essentielle car c'est souvent le point de départ des incendies.\\n\\n## Le RK01 : une protection automatique 24h/24\\n\\nLe RK01 est un dispositif d'extinction automatique conçu pour les tableaux électriques. Ses avantages :\\n\\n- **Activation automatique** à 175°C sans intervention\\n- **Installation en 30 secondes** sans outils\\n- **Durée de vie de 5 ans** sans entretien\\n- Fonctionne **sans électricité ni batterie**\\n\\nÀ partir de **70€ HT**, c'est un investissement minime pour protéger votre famille et vos biens.\\n\\n## Conclusion\\n\\nLes incendies électriques représentent un danger réel mais évitable. En combinant bonnes pratiques et équipements de protection comme le RK01, vous réduisez considérablement les risques.",
+  "content": "## Introduction\\n\\nParagraphe d'accroche...",
   "meta_title": "Titre SEO optimisé avec mot-clé | Rekaire",
   "meta_description": "Description SEO de 155 caractères avec mots-clés principaux pour Google",
   "keywords": ["incendie électrique", "protection tableau électrique", "extincteur automatique", "RK01", "sécurité incendie"],
@@ -126,7 +116,7 @@ IMPORTANT :
       articleData = JSON.parse(cleanJson);
     } catch {
       console.error("[Blog Generate] Parse error:", responseText);
-      return NextResponse.json({ error: "Failed to parse OpenAI response" }, { status: 500 });
+      return { error: "Failed to parse OpenAI response", status: 500 };
     }
 
     // Vérifier slug unique
@@ -164,12 +154,12 @@ IMPORTANT :
 
     if (insertError) {
       console.error("[Blog Generate] Insert error:", insertError);
-      return NextResponse.json({ error: "Failed to save article", details: insertError }, { status: 500 });
+      return { error: "Failed to save article", details: insertError, status: 500 };
     }
 
     console.log("[Blog Generate] Article created:", article.slug);
 
-    return NextResponse.json({
+    return {
       success: true,
       article: {
         id: article.id,
@@ -178,19 +168,42 @@ IMPORTANT :
         category: article.category,
         url: `/blog/${article.slug}`,
       },
-    });
+    };
+}
 
+// GET: Appelé par Vercel Cron
+export async function GET(request: NextRequest) {
+  // Vérifier le CRON_SECRET (Vercel envoie Authorization: Bearer <secret>)
+  const authHeader = request.headers.get("authorization");
+  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    const result = await generateArticle();
+    if (result.error) {
+      return NextResponse.json({ error: result.error }, { status: result.status || 500 });
+    }
+    return NextResponse.json(result);
   } catch (error) {
-    console.error("[Blog Generate] Error:", error);
+    console.error("[Blog Generate] Cron error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
-export async function GET() {
-  return NextResponse.json({
-    status: "ok",
-    message: "Blog generation API ready",
-    topics: TOPICS.length,
-    categories: CATEGORIES,
-  });
+// POST: Appel manuel (admin)
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json().catch(() => ({}));
+    const { topic: customTopic } = body;
+
+    const result = await generateArticle(customTopic);
+    if (result.error) {
+      return NextResponse.json({ error: result.error }, { status: result.status || 500 });
+    }
+    return NextResponse.json(result);
+  } catch (error) {
+    console.error("[Blog Generate] Error:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
 }
