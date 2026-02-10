@@ -1258,7 +1258,7 @@ function CheckoutContent() {
                                   setPromoError("");
                                 }}
                                 placeholder="REKAIRE12"
-                                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm uppercase"
+                                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm uppercase bg-white text-gray-900"
                               />
                               <button
                                 type="button"

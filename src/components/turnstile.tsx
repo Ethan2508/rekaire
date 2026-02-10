@@ -14,7 +14,7 @@ interface TurnstileProps {
   onExpire?: () => void;
   action?: string;
   theme?: "light" | "dark" | "auto";
-  size?: "normal" | "compact" | "invisible";
+  size?: "normal" | "compact" | "flexible";
 }
 
 declare global {
@@ -36,7 +36,7 @@ export function Turnstile({
   onExpire,
   action = "lead_capture",
   theme = "auto",
-  size = "invisible",
+  size = "flexible",
 }: TurnstileProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const widgetIdRef = useRef<string | null>(null);
