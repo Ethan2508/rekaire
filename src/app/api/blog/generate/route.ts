@@ -174,8 +174,11 @@ IMPORTANT :
 // GET: Appelé par Vercel Cron
 export async function GET(request: NextRequest) {
   // Vérifier le CRON_SECRET (Vercel envoie Authorization: Bearer <secret>)
+  const cronSecret = process.env.CRON_SECRET;
   const authHeader = request.headers.get("authorization");
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  
+  // 🔒 SÉCURITÉ: Vérifier que CRON_SECRET existe ET correspond
+  if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -191,8 +194,16 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST: Appel manuel (admin)
+// POST: Appel manuel (protégé par CRON_SECRET)
 export async function POST(request: NextRequest) {
+  // 🔒 SÉCURITÉ: Authentification requise
+  const cronSecret = process.env.CRON_SECRET;
+  const authHeader = request.headers.get("authorization");
+  
+  if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  
   try {
     const body = await request.json().catch(() => ({}));
     const { topic: customTopic } = body;

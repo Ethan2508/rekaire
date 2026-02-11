@@ -1,9 +1,10 @@
 // ============================================
 // REKAIRE - API Contact Form (Sécurisée)
-// Honeypot + Validation + Anti-spam
+// Rate Limiting + Honeypot + Validation + Anti-spam
 // ============================================
 
 import { NextRequest, NextResponse } from 'next/server';
+import { rateLimitDB } from '@/lib/rate-limit';
 
 // Validation email stricte
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -60,6 +61,15 @@ function isValidPhone(phone: string): boolean {
 }
 
 export async function POST(request: NextRequest) {
+  // 🔒 RATE LIMITING (5 requêtes par minute max)
+  const rateLimitResponse = await rateLimitDB(request, {
+    maxRequests: 5,
+    keyPrefix: "contact",
+  });
+  if (rateLimitResponse) {
+    return rateLimitResponse;
+  }
+
   try {
     const body = await request.json();
     const { 
