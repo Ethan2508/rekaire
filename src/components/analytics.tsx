@@ -1,53 +1,91 @@
 // ============================================
-// REKAIRE - GTM & Analytics Script Component
+// REKAIRE - GTM & Analytics Script Component (RGPD Compliant)
 // ============================================
 
+"use client";
+
+import { useEffect, useState } from "react";
 import Script from "next/script";
 import { trackingConfig } from "@/config/tracking";
 
+interface CookiePreferences {
+  necessary: boolean;
+  analytics: boolean;
+  marketing: boolean;
+}
+
+const PREFERENCES_KEY = "rekaire_cookie_preferences";
+
 export function Analytics() {
   const { gtm, ga4, meta, googleAds } = trackingConfig;
+  const [consent, setConsent] = useState<CookiePreferences | null>(null);
+
+  useEffect(() => {
+    // Vérifier le consentement existant
+    const savedPrefs = localStorage.getItem(PREFERENCES_KEY);
+    if (savedPrefs) {
+      setConsent(JSON.parse(savedPrefs));
+    }
+
+    // Écouter les changements de consentement
+    const handleConsent = (e: Event) => {
+      const customEvent = e as CustomEvent<CookiePreferences>;
+      setConsent(customEvent.detail);
+    };
+
+    window.addEventListener("cookieConsent", handleConsent);
+    return () => window.removeEventListener("cookieConsent", handleConsent);
+  }, []);
+
+  // Aucun script chargé sans consentement
+  if (!consent) return null;
 
   return (
     <>
-      {/* Google Tag Manager */}
-      <Script
-        id="gtm-script"
-        strategy="afterInteractive"
-        dangerouslySetInnerHTML={{
-          __html: `
-            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-            })(window,document,'script','dataLayer','${gtm.id}');
-          `,
-        }}
-      />
+      {/* GTM - chargé uniquement si analytics OU marketing acceptés */}
+      {(consent.analytics || consent.marketing) && (
+        <Script
+          id="gtm-script"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+              new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+              j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+              'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+              })(window,document,'script','dataLayer','${gtm.id}');
+            `,
+          }}
+        />
+      )}
 
-      {/* Google Analytics 4 (backup direct) */}
-      <Script
-        src={`https://www.googletagmanager.com/gtag/js?id=${ga4.id}`}
-        strategy="afterInteractive"
-      />
-      <Script
-        id="ga4-config"
-        strategy="afterInteractive"
-        dangerouslySetInnerHTML={{
-          __html: `
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', '${ga4.id}', {
-              page_path: window.location.pathname,
-            });
-            gtag('config', '${googleAds.id}');
-          `,
-        }}
-      />
+      {/* Google Analytics 4 - uniquement si analytics accepté */}
+      {consent.analytics && (
+        <>
+          <Script
+            src={`https://www.googletagmanager.com/gtag/js?id=${ga4.id}`}
+            strategy="afterInteractive"
+          />
+          <Script
+            id="ga4-config"
+            strategy="afterInteractive"
+            dangerouslySetInnerHTML={{
+              __html: `
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${ga4.id}', {
+                  page_path: window.location.pathname,
+                });
+                gtag('config', '${googleAds.id}');
+              `,
+            }}
+          />
+        </>
+      )}
 
-      {/* Meta Pixel */}
-      {meta.pixelId && !meta.pixelId.includes('PLACEHOLDER') && (
+      {/* Meta Pixel - uniquement si marketing accepté */}
+      {consent.marketing && meta.pixelId && !meta.pixelId.includes('PLACEHOLDER') && (
         <Script
           id="meta-pixel"
           strategy="afterInteractive"

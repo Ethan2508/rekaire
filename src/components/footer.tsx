@@ -130,7 +130,18 @@ export function Footer() {
 
         {/* Bottom Bar */}
         <div className="mt-12 pt-8 border-t border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p className="text-gray-400 text-xs">{content.footer.copyright}</p>
+          <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
+            <p className="text-gray-400 text-xs">{content.footer.copyright}</p>
+            <span className="hidden sm:inline text-gray-300">•</span>
+            <a 
+              href="https://stapes.fr" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="text-gray-400 hover:text-orange-500 text-xs transition-colors"
+            >
+              Site réalisé par stapes.fr
+            </a>
+          </div>
           <div className="flex items-center gap-3">
             <span className="text-gray-400 text-xs">Paiement sécurisé par</span>
             <div className="px-3 py-1.5 bg-white rounded-md border border-gray-200">
