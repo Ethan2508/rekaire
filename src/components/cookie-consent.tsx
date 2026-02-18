@@ -238,10 +238,3 @@ export function CookieConsent() {
     </>
   );
 }
-
-// Déclaration du type pour window.dataLayer
-declare global {
-  interface Window {
-    dataLayer?: Array<Record<string, unknown>>;
-  }
-}
