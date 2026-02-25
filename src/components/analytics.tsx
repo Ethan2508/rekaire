@@ -77,6 +77,30 @@ export function Analytics() {
                 gtag('config', '${ga4.id}', {
                   page_path: window.location.pathname,
                 });
+              `,
+            }}
+          />
+        </>
+      )}
+
+      {/* Google Ads - uniquement si marketing accepté */}
+      {consent.marketing && googleAds.id && !googleAds.id.includes('PLACEHOLDER') && (
+        <>
+          {/* Charger gtag.js si pas déjà chargé par GA4 */}
+          {!consent.analytics && (
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${googleAds.id}`}
+              strategy="afterInteractive"
+            />
+          )}
+          <Script
+            id="google-ads-config"
+            strategy="afterInteractive"
+            dangerouslySetInnerHTML={{
+              __html: `
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                ${!consent.analytics ? "gtag('js', new Date());" : ""}
                 gtag('config', '${googleAds.id}');
               `,
             }}
