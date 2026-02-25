@@ -161,7 +161,7 @@ export function SalesCounterBadge() {
         <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
       </span>
       <span className="text-sm font-semibold text-emerald-700">
-        {fixedCount.toLocaleString('fr-FR')}+ unités vendues
+        {fixedCount.toLocaleString('fr-FR')} unités vendues
       </span>
     </motion.div>
   );

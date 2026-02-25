@@ -42,8 +42,8 @@ export function Analytics() {
 
   return (
     <>
-      {/* GTM - chargé uniquement si analytics OU marketing acceptés */}
-      {(consent.analytics || consent.marketing) && (
+      {/* GTM - chargé uniquement si configuré ET analytics OU marketing acceptés */}
+      {(consent.analytics || consent.marketing) && gtm.id && !gtm.id.includes('PLACEHOLDER') && (
         <Script
           id="gtm-script"
           strategy="afterInteractive"
