@@ -17,16 +17,27 @@ const distributors = [
 
 // Clients protégés par le RK01
 const protectedClients = [
-  { name: "Brice Robert", logo: "/images/partners/bricerobert.webp" },
+  { name: "4CAD", logo: "/images/partners/4cad-logo.png" },
+  { name: "Appart Fitness", logo: "/images/partners/appart-fitness-logo.webp" },
+  { name: "ASVEL", logo: "/images/partners/logo-asvel.png" },
   { name: "Atalian", logo: "/images/partners/atalian.png" },
-  { name: "Engie", logo: "/images/partners/engie-logo.png" },
+  { name: "Brice Robert", logo: "/images/partners/bricerobert.webp" },
+  { name: "Casino", logo: "/images/partners/Casino_Shopping_logo.png" },
+  { name: "Coursier.fr", logo: "/images/partners/logo-coursier1.png" },
+  { name: "Edifice", logo: "/images/partners/edifice-logo.svg" },
+  { name: "Engie Home Services", logo: "/images/partners/Logo-engie-home-services.png" },
   { name: "Eurodis", logo: "/images/partners/eurodis-logo.jpg" },
   { name: "Ideal Pneu", logo: "/images/partners/idealpneu-logo.png" },
   { name: "IKKS", logo: "/images/partners/ikks-logo.png" },
+  { name: "Kiloutou", logo: "/images/partners/kiloutou-logo.svg" },
+  { name: "Rosenbauer", logo: "/images/partners/Rosenbauer_Logo.svg" },
+  { name: "Saint-Antoine", logo: "/images/partners/logo-st-antoine.png" },
+  { name: "Salti", logo: "/images/partners/salti-logo.svg" },
   { name: "Socotec", logo: "/images/partners/SOCOTEC-LOGO.png" },
   { name: "Sonepar", logo: "/images/partners/sonepar-logo.png" },
   { name: "Speedy", logo: "/images/partners/speedy-logo.png" },
   { name: "Uber", logo: "/images/partners/uber-logo.png" },
+  { name: "Vink France", logo: "/images/partners/vink-france.png" },
   { name: "Yamada", logo: "/images/partners/yamada-logo.png" },
   { name: "Yesss Electrique", logo: "/images/partners/YESSS-ELECTRIQUE-logo.png" },
 ];
@@ -120,12 +131,7 @@ export function PartnersSection() {
                         alt={client.name}
                         width={150}
                         height={80}
-                        className={`w-auto object-contain opacity-80 hover:opacity-100 transition-opacity ${
-                          client.name === 'Viva Energie' ? 'max-h-28 md:max-h-32' : 
-                          client.name === 'Yamada' ? 'max-h-10 md:max-h-12 scale-80' : 
-                          client.name === 'Uber' ? 'max-h-8 md:max-h-10' : 
-                          'max-h-12 md:max-h-16'
-                        }`}
+                        className="w-auto h-auto max-w-[120px] max-h-12 md:max-h-14 object-contain opacity-80 hover:opacity-100 transition-opacity"
                       />
                     </div>
                   </div>
@@ -156,11 +162,7 @@ export function PartnersSection() {
                         alt={client.name}
                         width={150}
                         height={80}
-                        className={`w-auto object-contain opacity-80 hover:opacity-100 transition-opacity ${
-                          client.name === 'Yamada' ? 'max-h-10 md:max-h-12 scale-80' : 
-                          client.name === 'Uber' ? 'max-h-8 md:max-h-10' : 
-                          'max-h-12 md:max-h-16'
-                        }`}
+                        className="w-auto h-auto max-w-[120px] max-h-12 md:max-h-14 object-contain opacity-80 hover:opacity-100 transition-opacity"
                       />
                     </div>
                   </div>
