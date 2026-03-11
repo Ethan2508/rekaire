@@ -4,6 +4,7 @@
 
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { Analytics, GTMNoScript } from "@/components/analytics";
 import { CookieConsent } from "@/components/cookie-consent";
@@ -96,6 +97,42 @@ export default function RootLayout({
   return (
     <html lang="fr" className={`${inter.variable}`}>
       <head>
+        {/* Google Consent Mode v2 + gtag - AVANT tout autre script */}
+        <Script
+          id="google-consent-init"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('consent', 'default', {
+                'analytics_storage': 'denied',
+                'ad_storage': 'denied',
+                'ad_user_data': 'denied',
+                'ad_personalization': 'denied',
+                'wait_for_update': 500
+              });
+            `,
+          }}
+        />
+        {/* Google Tag (gtag.js) - Google Ads */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=AW-17976614746"
+          strategy="beforeInteractive"
+        />
+        <Script
+          id="google-ads-config"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'AW-17976614746');
+              gtag('config', 'G-G46KL6NKEE');
+            `,
+          }}
+        />
         <OrganizationSchema />
         <WebSiteSchema />
         <LocalBusinessSchema />

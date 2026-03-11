@@ -27,7 +27,7 @@ declare global {
 }
 
 export function Analytics() {
-  const { gtm, ga4, meta, googleAds } = trackingConfig;
+  const { meta } = trackingConfig;
 
   useEffect(() => {
     // Fonction pour mettre à jour le consentement Google
@@ -61,62 +61,8 @@ export function Analytics() {
 
   return (
     <>
-      {/* Google Consent Mode v2 - Défaut: tout sur denied */}
-      <Script
-        id="google-consent-default"
-        strategy="beforeInteractive"
-        dangerouslySetInnerHTML={{
-          __html: `
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('consent', 'default', {
-              'analytics_storage': 'denied',
-              'ad_storage': 'denied',
-              'ad_user_data': 'denied',
-              'ad_personalization': 'denied',
-              'wait_for_update': 500
-            });
-          `,
-        }}
-      />
-
-      {/* GTM - chargé si configuré */}
-      {gtm.id && !gtm.id.includes('PLACEHOLDER') && (
-        <Script
-          id="gtm-script"
-          strategy="afterInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-              new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-              j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-              'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-              })(window,document,'script','dataLayer','${gtm.id}');
-            `,
-          }}
-        />
-      )}
-
-      {/* Google Analytics 4 + Google Ads - Toujours chargés */}
-      <Script
-        src={`https://www.googletagmanager.com/gtag/js?id=${ga4.id}`}
-        strategy="afterInteractive"
-      />
-      <Script
-        id="gtag-config"
-        strategy="afterInteractive"
-        dangerouslySetInnerHTML={{
-          __html: `
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', '${ga4.id}', {
-              page_path: window.location.pathname,
-            });
-            ${googleAds.id && !googleAds.id.includes('PLACEHOLDER') ? `gtag('config', '${googleAds.id}');` : ''}
-          `,
-        }}
-      />
+      {/* Les scripts Google sont maintenant dans layout.tsx avec beforeInteractive */}
+      {/* Ce composant gère uniquement les mises à jour de consentement et Meta Pixel */}
 
       {/* Meta Pixel - chargé si configuré et consentement vérifié côté client */}
       {meta.pixelId && !meta.pixelId.includes('PLACEHOLDER') && (
