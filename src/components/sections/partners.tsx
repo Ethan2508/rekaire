@@ -15,28 +15,32 @@ const distributors = [
   { name: "Synexium", logo: "/images/partners/synexium.png" },
 ];
 
-// Clients protégés par le RK01
-const protectedClients = [
+// Clients protégés par le RK01 - Rangée 1
+const protectedClientsRow1 = [
   { name: "4CAD", logo: "/images/partners/4cad-logo.png" },
   { name: "Appart Fitness", logo: "/images/partners/appart-fitness-logo.webp" },
   { name: "ASVEL", logo: "/images/partners/logo-asvel.png" },
   { name: "Atalian", logo: "/images/partners/atalian.png" },
   { name: "Brice Robert", logo: "/images/partners/bricerobert.webp" },
   { name: "Casino", logo: "/images/partners/Casino_Shopping_logo.png" },
+  { name: "Uber", logo: "/images/partners/uber-logo.png" },
+  { name: "Speedy", logo: "/images/partners/speedy-logo.png" },
+  { name: "Kiloutou", logo: "/images/partners/kiloutou-logo.svg" },
+  { name: "Rosenbauer", logo: "/images/partners/Rosenbauer_Logo.svg" },
+  { name: "Socotec", logo: "/images/partners/SOCOTEC-LOGO.png" },
+  { name: "Sonepar", logo: "/images/partners/sonepar-logo.png" },
+];
+
+// Clients protégés par le RK01 - Rangée 2
+const protectedClientsRow2 = [
   { name: "Coursier.fr", logo: "/images/partners/logo-coursier1.png" },
   { name: "Edifice", logo: "/images/partners/edifice-logo.svg" },
   { name: "Engie Home Services", logo: "/images/partners/Logo-engie-home-services.png" },
   { name: "Eurodis", logo: "/images/partners/eurodis-logo.jpg" },
   { name: "Ideal Pneu", logo: "/images/partners/idealpneu-logo.png" },
   { name: "IKKS", logo: "/images/partners/ikks-logo.png" },
-  { name: "Kiloutou", logo: "/images/partners/kiloutou-logo.svg" },
-  { name: "Rosenbauer", logo: "/images/partners/Rosenbauer_Logo.svg" },
   { name: "Saint-Antoine", logo: "/images/partners/logo-st-antoine.png" },
   { name: "Salti", logo: "/images/partners/salti-logo.svg" },
-  { name: "Socotec", logo: "/images/partners/SOCOTEC-LOGO.png" },
-  { name: "Sonepar", logo: "/images/partners/sonepar-logo.png" },
-  { name: "Speedy", logo: "/images/partners/speedy-logo.png" },
-  { name: "Uber", logo: "/images/partners/uber-logo.png" },
   { name: "Vink France", logo: "/images/partners/vink-france.png" },
   { name: "Yamada", logo: "/images/partners/yamada-logo.png" },
   { name: "Yesss Electrique", logo: "/images/partners/YESSS-ELECTRIQUE-logo.png" },
@@ -120,7 +124,7 @@ export function PartnersSection() {
                 }}
               >
                 {/* Dupliquer 3 fois pour défilement infini */}
-                {[...protectedClients, ...protectedClients, ...protectedClients].map((client, index) => (
+                {[...protectedClientsRow1, ...protectedClientsRow1, ...protectedClientsRow1].map((client, index) => (
                   <div
                     key={`row1-${index}`}
                     className="flex-shrink-0 w-48"
@@ -151,7 +155,7 @@ export function PartnersSection() {
                 }}
               >
                 {/* Dupliquer 3 fois pour défilement infini */}
-                {[...protectedClients, ...protectedClients, ...protectedClients].map((client, index) => (
+                {[...protectedClientsRow2, ...protectedClientsRow2, ...protectedClientsRow2].map((client, index) => (
                   <div
                     key={`row2-${index}`}
                     className="flex-shrink-0 w-48"
