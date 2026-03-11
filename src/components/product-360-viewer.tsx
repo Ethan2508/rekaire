@@ -16,7 +16,7 @@ interface Product360ViewerProps {
 }
 
 export function Product360Viewer({
-  totalFrames = 60,
+  totalFrames = 251,
   basePath = "/images/product/360/frame_",
   className = "",
 }: Product360ViewerProps) {
@@ -60,18 +60,18 @@ export function Product360Viewer({
     }
   }, [loadedCount, totalFrames]);
 
-  // Auto-rotation au début
+  // Auto-rotation au début (plus rapide avec 251 frames)
   useEffect(() => {
     if (isLoading || hasInteracted) return;
 
     const interval = setInterval(() => {
       setCurrentFrame((prev) => (prev % totalFrames) + 1);
-    }, 100);
+    }, 40); // 40ms pour une rotation fluide
 
-    // Arrêter après une rotation complète
+    // Arrêter après ~3 secondes
     const timeout = setTimeout(() => {
       clearInterval(interval);
-    }, totalFrames * 100);
+    }, 3000);
 
     return () => {
       clearInterval(interval);
@@ -84,7 +84,7 @@ export function Product360Viewer({
       if (!containerRef.current) return;
 
       const deltaX = clientX - lastXRef.current;
-      const sensitivity = 0.3; // Ajuster pour plus ou moins de sensibilité
+      const sensitivity = 1.2; // Ajusté pour 251 frames
       const frameChange = Math.round(deltaX * sensitivity);
 
       if (frameChange !== 0) {
@@ -189,13 +189,32 @@ export function Product360Viewer({
         )}
       </div>
 
-      {/* Indicateur de frame (optionnel) */}
-      <div className="flex justify-center mt-4">
-        <div className="flex items-center gap-2 text-sm text-gray-500">
-          <RotateCw className="w-4 h-4" />
-          <span>Vue interactive 360°</span>
+      {/* Slider de contrôle */}
+      {!isLoading && (
+        <div className="mt-4 px-4">
+          <input
+            type="range"
+            min={1}
+            max={totalFrames}
+            value={currentFrame}
+            onChange={(e) => {
+              setCurrentFrame(Number(e.target.value));
+              setHasInteracted(true);
+            }}
+            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-orange-500"
+            style={{
+              background: `linear-gradient(to right, #f97316 0%, #f97316 ${((currentFrame - 1) / (totalFrames - 1)) * 100}%, #e5e7eb ${((currentFrame - 1) / (totalFrames - 1)) * 100}%, #e5e7eb 100%)`
+            }}
+          />
+          <div className="flex justify-between items-center mt-2 text-sm text-gray-500">
+            <span className="flex items-center gap-1">
+              <RotateCw className="w-4 h-4" />
+              Vue 360°
+            </span>
+            <span className="text-xs">{Math.round((currentFrame / totalFrames) * 100)}%</span>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
