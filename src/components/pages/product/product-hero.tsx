@@ -10,15 +10,13 @@ import Image from "next/image";
 import { formatPrice, PRICES } from "@/config/product";
 import { ProductOrder } from "@/components/product-order";
 import { VideoModal } from "@/components/video-modal";
-import { Product360Viewer } from "@/components/product-360-viewer";
-import { Check, Shield, Zap, Clock, ChevronLeft, ChevronRight, Sparkles, ShieldCheck, Truck, RotateCw } from "lucide-react";
+import { Check, Shield, Zap, Clock, ChevronLeft, ChevronRight, Sparkles, ShieldCheck, Truck } from "lucide-react";
 
 // Nouvelles images produit depuis les fiches marketing
 const productImages = [
-  { src: "/images/product/gallery/fiche1.png", alt: "RK01 - Vue principale", type: "image" as const },
-  { src: "/images/product/gallery/fiche2.png", alt: "RK01 - Packaging", type: "image" as const },
-  { src: "/images/product/gallery/fiche3.png", alt: "RK01 - Détails techniques", type: "image" as const },
-  { src: "360", alt: "RK01 - Vue 360°", type: "360" as const },
+  { src: "/images/product/gallery/fiche1.png", alt: "RK01 - Vue principale" },
+  { src: "/images/product/gallery/fiche2.png", alt: "RK01 - Packaging" },
+  { src: "/images/product/gallery/fiche3.png", alt: "RK01 - Détails techniques" },
 ];
 
 export function ProductHero() {
@@ -53,58 +51,41 @@ export function ProductHero() {
               {/* Main Image */}
               <div className="relative aspect-square sm:aspect-[4/3]">
                 <AnimatePresence mode="wait">
-                  {productImages[currentImage].type === "360" ? (
-                    <motion.div
-                      key="360-viewer"
-                      initial={{ opacity: 0, scale: 0.98 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.98 }}
-                      transition={{ duration: 0.4 }}
-                      className="absolute inset-0 flex items-center justify-center"
-                    >
-                      <Product360Viewer className="w-full h-full" />
-                    </motion.div>
-                  ) : (
-                    <motion.div
-                      key={currentImage}
-                      initial={{ opacity: 0, scale: 0.98 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.98 }}
-                      transition={{ duration: 0.4 }}
-                      className="absolute inset-0"
-                    >
-                      <Image
-                        src={productImages[currentImage].src}
-                        alt={productImages[currentImage].alt}
-                        fill
-                        className="object-contain p-2"
-                        priority
-                      />
-                    </motion.div>
-                  )}
+                  <motion.div
+                    key={currentImage}
+                    initial={{ opacity: 0, scale: 0.98 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.98 }}
+                    transition={{ duration: 0.4 }}
+                    className="absolute inset-0"
+                  >
+                    <Image
+                      src={productImages[currentImage].src}
+                      alt={productImages[currentImage].alt}
+                      fill
+                      className="object-contain p-2"
+                      priority
+                    />
+                  </motion.div>
                 </AnimatePresence>
                 
-                {/* Navigation Arrows - Hidden in 360 mode */}
-                {productImages[currentImage].type !== "360" && (
-                  <>
-                    <motion.button
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={prevImage}
-                      className="absolute left-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white shadow-lg shadow-gray-300/50 flex items-center justify-center hover:shadow-xl transition-shadow z-10 border border-gray-100"
-                    >
-                      <ChevronLeft className="w-5 h-5 text-gray-700" />
-                    </motion.button>
-                    <motion.button
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={nextImage}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white shadow-lg shadow-gray-300/50 flex items-center justify-center hover:shadow-xl transition-shadow z-10 border border-gray-100"
-                    >
-                      <ChevronRight className="w-5 h-5 text-gray-700" />
-                    </motion.button>
-                  </>
-                )}
+                {/* Navigation Arrows */}
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={prevImage}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white shadow-lg shadow-gray-300/50 flex items-center justify-center hover:shadow-xl transition-shadow z-10 border border-gray-100"
+                >
+                  <ChevronLeft className="w-5 h-5 text-gray-700" />
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={nextImage}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white shadow-lg shadow-gray-300/50 flex items-center justify-center hover:shadow-xl transition-shadow z-10 border border-gray-100"
+                >
+                  <ChevronRight className="w-5 h-5 text-gray-700" />
+                </motion.button>
               </div>
 
               {/* Premium Dots indicator */}
@@ -137,20 +118,13 @@ export function ProductHero() {
                       : "border-gray-200 hover:border-orange-300 hover:shadow-md"
                   }`}
                 >
-                  {img.type === "360" ? (
-                    <div className="w-full h-full flex flex-col items-center justify-center text-gray-600">
-                      <RotateCw className="w-8 h-8 mb-1" />
-                      <span className="text-xs font-medium">360°</span>
-                    </div>
-                  ) : (
-                    <Image
-                      src={img.src}
-                      alt={`Miniature ${index + 1}`}
-                      width={96}
-                      height={96}
-                      className="w-full h-full object-contain"
-                    />
-                  )}
+                  <Image
+                    src={img.src}
+                    alt={`Miniature ${index + 1}`}
+                    width={96}
+                    height={96}
+                    className="w-full h-full object-contain"
+                  />
                 </motion.button>
               ))}
             </div>

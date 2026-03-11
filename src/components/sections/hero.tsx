@@ -5,13 +5,13 @@
 // ============================================
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import { motion } from "framer-motion";
 import { formatPrice, PRICES } from "@/config/product";
 import { CTAButton } from "@/components/cta-button";
 import { VideoModal } from "@/components/video-modal";
 import { SalesCounterBadge } from "@/components/live-sales-counter";
-import { Shield, Truck, Award, Flame, Zap, Check, Sparkles } from "lucide-react";
+import { Product360Viewer } from "@/components/product-360-viewer";
+import { Shield, Truck, Flame } from "lucide-react";
 
 // Texte rotatif pour le hero
 const rotatingTexts = ["MAISON", "BUREAU", "LOCAL", "DÉPÔT"];
@@ -133,7 +133,7 @@ export function HeroSection() {
               </motion.div>
             </motion.div>
 
-            {/* Right - Product showcase (order-1 on mobile, order-2 on desktop) */}
+            {/* Right - Product 360° showcase (order-1 on mobile, order-2 on desktop) */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -143,67 +143,25 @@ export function HeroSection() {
               {/* Glow effect behind product */}
               <div className="absolute inset-0 bg-gradient-to-br from-orange-200/40 to-orange-100/20 rounded-full blur-[80px] scale-75" />
               
-              {/* Product container */}
+              {/* Product 360° viewer */}
               <div className="relative px-4 sm:px-8">
-                {/* Product card - sans fond blanc */}
-                <motion.div
-                  animate={{ y: [0, -8, 0] }}
-                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                  className="relative"
-                >
-                  {/* Product image */}
-                  <div className="relative aspect-square max-w-[392px] sm:max-w-[448px] mx-auto">
-                    <Image
-                      src="/images/product/rk01-main.png"
-                      alt="RK01 - Système autonome d'extinction incendie"
-                      fill
-                      className="object-contain"
-                      priority
-                    />
-                  </div>
+                <div className="relative max-w-[450px] mx-auto">
+                  <Product360Viewer className="w-full" />
+                </div>
 
-                  {/* Stats */}
-                  <div className="grid grid-cols-3 gap-4 mt-6 pt-6 border-gray-200">
-                    {[
-                      { value: "< 5 sec", label: "Temps d'activation" },
-                      { value: "5 min", label: "Temps d'installation" },
-                      { value: "5 ans", label: "Durée de vie" },
-                    ].map((stat) => (
-                      <div key={stat.label} className="text-center">
-                        <p className="text-xl font-bold text-gray-900">{stat.value}</p>
-                        <p className="text-xs text-gray-500 mt-1">{stat.label}</p>
-                      </div>
-                    ))}
-                  </div>
-                </motion.div>
-
-                {/* Floating feature badges - hidden on mobile to avoid overflow issues */}
-                <motion.div
-                  animate={{ y: [0, -5, 0] }}
-                  transition={{ duration: 3, repeat: Infinity, delay: 0.5 }}
-                  className="hidden sm:flex absolute -left-2 top-1/4 px-3 py-2 rounded-xl bg-white border border-gray-200 shadow-md text-gray-700 text-xs font-medium items-center gap-1.5"
-                >
-                  <Check className="w-3.5 h-3.5 text-emerald-500" />
-                  Sans entretien
-                </motion.div>
-                
-                <motion.div
-                  animate={{ y: [0, -5, 0] }}
-                  transition={{ duration: 3, repeat: Infinity, delay: 1 }}
-                  className="hidden sm:flex absolute -right-2 top-1/3 px-3 py-2 rounded-xl bg-white border border-gray-200 shadow-md text-gray-700 text-xs font-medium items-center gap-1.5"
-                >
-                  <Zap className="w-3.5 h-3.5 text-orange-500" />
-                  Automatique
-                </motion.div>
-                
-                <motion.div
-                  animate={{ y: [0, -5, 0] }}
-                  transition={{ duration: 3, repeat: Infinity, delay: 1.5 }}
-                  className="hidden sm:flex absolute -left-1 bottom-1/4 px-3 py-2 rounded-xl bg-emerald-50 border border-emerald-200 shadow-md text-emerald-700 text-xs font-medium items-center gap-1.5"
-                >
-                  <Sparkles className="w-3.5 h-3.5 text-emerald-500" />
-                  Écoresponsable
-                </motion.div>
+                {/* Stats */}
+                <div className="grid grid-cols-3 gap-4 mt-4 pt-4">
+                  {[
+                    { value: "< 5 sec", label: "Temps d'activation" },
+                    { value: "5 min", label: "Temps d'installation" },
+                    { value: "5 ans", label: "Durée de vie" },
+                  ].map((stat) => (
+                    <div key={stat.label} className="text-center">
+                      <p className="text-xl font-bold text-gray-900">{stat.value}</p>
+                      <p className="text-xs text-gray-500 mt-1">{stat.label}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
             </motion.div>
           </div>
