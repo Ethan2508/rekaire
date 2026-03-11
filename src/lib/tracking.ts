@@ -9,14 +9,8 @@ import { trackingConfig, type TrackingEvent, type TrackingEventName } from "@/co
 // Vérifie si on est côté client
 const isClient = typeof window !== "undefined";
 
-// Types pour les data layers
-declare global {
-  interface Window {
-    dataLayer: Record<string, unknown>[];
-    gtag: (...args: unknown[]) => void;
-    fbq: (...args: unknown[]) => void;
-  }
-}
+// Types pour les data layers - déclarés dans analytics.tsx
+// On réutilise les types globaux sans les redéclarer
 
 // ============================================
 // Google Tag Manager
