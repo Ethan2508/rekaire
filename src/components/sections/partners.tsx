@@ -7,7 +7,6 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { Handshake, Users } from "lucide-react";
-import { useEffect, useState } from "react";
 
 // Partenaires distributeurs
 const distributors = [
@@ -47,17 +46,8 @@ const protectedClientsRow2 = [
 ];
 
 export function PartnersSection() {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const itemsPerView = 4; // 4 logos visibles à la fois sur desktop
-  const totalSlides = Math.ceil(protectedClients.length / itemsPerView);
-
-  // Auto-rotation du carrousel toutes les 6 secondes
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % totalSlides);
-    }, 6000);
-    return () => clearInterval(interval);
-  }, [totalSlides]);
+  // Ces variables ne sont plus utilisées avec le nouveau carrousel infini
+  // mais conservées pour compatibilité future
 
   return (
     <section className="py-20 bg-gray-50 border-y border-gray-200">
