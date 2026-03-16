@@ -7,6 +7,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Send, User, Mail, Building2, MessageSquare, CheckCircle2, Loader2, Sparkles } from "lucide-react";
+import { trackEvent } from "@/lib/tracking";
 
 type FormData = {
   firstName: string;
@@ -47,12 +48,51 @@ export function ContactForm() {
     setIsSubmitting(true);
     setError(null);
 
-    // Simulation d'envoi (à connecter à une API réelle)
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: `${formData.firstName} ${formData.lastName}`,
+          email: formData.email,
+          company: formData.company || undefined,
+          subject: formData.subject,
+          message: formData.message,
+          // Honeypot fields (vides)
+          honeypot: '',
+          website: '',
+          fax: '',
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Erreur lors de l\'envoi');
+      }
+
+      // ✅ Tracking conversion formulaire
+      trackEvent({
+        event: 'cta_click',
+        data: {
+          cta_location: 'contact_form',
+          form_type: formData.type,
+          subject: formData.subject,
+        },
+      });
+
+      // Track Google Ads conversion pour formulaire
+      if (typeof window !== 'undefined' && window.gtag) {
+        window.gtag('event', 'conversion', {
+          send_to: 'AW-17976614746/FORM_CONVERSION_LABEL',
+          value: 10.0,
+          currency: 'EUR',
+        });
+      }
+
       setIsSubmitted(true);
-    } catch {
-      setError("Une erreur est survenue. Veuillez réessayer.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Une erreur est survenue. Veuillez réessayer.");
     } finally {
       setIsSubmitting(false);
     }

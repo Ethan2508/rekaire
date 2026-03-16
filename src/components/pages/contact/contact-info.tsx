@@ -9,6 +9,16 @@ import { Mail, Phone, Clock, MessageCircle, FileText, ArrowRight, Shield } from 
 import { siteConfig } from "@/config/site";
 import Link from "next/link";
 
+// Fonction pour tracker les clics téléphone
+const trackPhoneClick = () => {
+  if (typeof window !== 'undefined' && window.gtag) {
+    window.gtag('event', 'conversion', {
+      send_to: 'AW-17976614746/PHONE_CLICK_LABEL',
+    });
+    console.log('📞 Phone click tracked');
+  }
+};
+
 const contactMethods = [
   {
     icon: Mail,
@@ -78,6 +88,7 @@ export function ContactInfo() {
                   <a
                     href={method.href}
                     className="text-gray-600 hover:text-orange-600 transition-colors font-medium"
+                    onClick={method.href.startsWith('tel:') ? trackPhoneClick : undefined}
                   >
                     {method.value}
                   </a>
