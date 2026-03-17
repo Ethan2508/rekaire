@@ -7,7 +7,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Send, User, Mail, Building2, MessageSquare, CheckCircle2, Loader2, Sparkles } from "lucide-react";
-import { trackEvent } from "@/lib/tracking";
 
 type FormData = {
   firstName: string;
@@ -53,41 +52,28 @@ export function ContactForm() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: `${formData.firstName} ${formData.lastName}`,
+          name: `${formData.firstName} ${formData.lastName}`.trim(),
           email: formData.email,
           company: formData.company || undefined,
-          subject: formData.subject,
+          subject: formData.subject || 'Contact général',
           message: formData.message,
-          // Honeypot fields (vides)
-          honeypot: '',
-          website: '',
-          fax: '',
         }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Erreur lors de l\'envoi');
+        throw new Error(data.error || 'Une erreur est survenue');
       }
 
-      // ✅ Tracking conversion formulaire
-      trackEvent({
-        event: 'cta_click',
-        data: {
-          cta_location: 'contact_form',
-          form_type: formData.type,
-          subject: formData.subject,
-        },
-      });
-
-      // Track Google Ads conversion pour formulaire
+      // ✅ Google Ads Conversion Tracking
       if (typeof window !== 'undefined' && window.gtag) {
         window.gtag('event', 'conversion', {
-          send_to: 'AW-17976614746/FORM_CONVERSION_LABEL',
-          value: 10.0,
+          send_to: 'AW-17976614746/FORM_CONTACT',
+          value: 15.0,
           currency: 'EUR',
         });
+        console.log('📊 Conversion formulaire trackée');
       }
 
       setIsSubmitted(true);

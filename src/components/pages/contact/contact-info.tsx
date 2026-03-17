@@ -9,13 +9,13 @@ import { Mail, Phone, Clock, MessageCircle, FileText, ArrowRight, Shield } from 
 import { siteConfig } from "@/config/site";
 import Link from "next/link";
 
-// Fonction pour tracker les clics téléphone
+// ✅ Tracking clic téléphone pour Google Ads
 const trackPhoneClick = () => {
   if (typeof window !== 'undefined' && window.gtag) {
     window.gtag('event', 'conversion', {
-      send_to: 'AW-17976614746/PHONE_CLICK_LABEL',
+      send_to: 'AW-17976614746/PHONE_CLICK',
     });
-    console.log('📞 Phone click tracked');
+    console.log('📞 Clic téléphone tracké');
   }
 };
 

@@ -178,55 +178,82 @@ export async function POST(request: NextRequest) {
     // Envoyer email via Resend
     // ========================================
     if (process.env.RESEND_API_KEY) {
-      const { Resend } = await import('resend');
-      const resend = new Resend(process.env.RESEND_API_KEY);
-      
       try {
+        const { Resend } = await import('resend');
+        const resend = new Resend(process.env.RESEND_API_KEY);
+        
         await resend.emails.send({
-          from: 'Rekaire Contact <contact@rekaire.fr>',
+          from: 'Rekaire Contact <noreply@rekaire.fr>',
           to: 'contact@rekaire.fr',
           replyTo: sanitizedData.email,
           subject: `[Contact] ${sanitizedData.subject}`,
           html: `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-              <div style="background: linear-gradient(135deg, #f97316, #ea580c); padding: 20px; border-radius: 8px 8px 0 0;">
-                <h1 style="color: white; margin: 0; font-size: 24px;">📧 Nouveau message de contact</h1>
-              </div>
-              <div style="background: #f9fafb; padding: 24px; border: 1px solid #e5e7eb;">
-                <table style="width: 100%; border-collapse: collapse;">
-                  <tr>
-                    <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;"><strong>Nom :</strong></td>
-                    <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;">${sanitizedData.name}</td>
-                  </tr>
-                  <tr>
-                    <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;"><strong>Email :</strong></td>
-                    <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;"><a href="mailto:${sanitizedData.email}">${sanitizedData.email}</a></td>
-                  </tr>
-                  ${sanitizedData.phone ? `<tr><td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;"><strong>Téléphone :</strong></td><td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;"><a href="tel:${sanitizedData.phone}">${sanitizedData.phone}</a></td></tr>` : ''}
-                  ${sanitizedData.company ? `<tr><td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;"><strong>Entreprise :</strong></td><td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;">${sanitizedData.company}</td></tr>` : ''}
-                  <tr>
-                    <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;"><strong>Sujet :</strong></td>
-                    <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;">${sanitizedData.subject}</td>
-                  </tr>
-                </table>
-                <div style="margin-top: 20px; padding: 16px; background: white; border-radius: 8px; border: 1px solid #e5e7eb;">
-                  <p style="margin: 0 0 8px 0; font-weight: bold;">Message :</p>
-                  <p style="margin: 0; white-space: pre-wrap;">${sanitizedData.message}</p>
+            <!DOCTYPE html>
+            <html>
+            <head>
+              <style>
+                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                .header { background: linear-gradient(135deg, #f97316, #ea580c); color: white; padding: 20px; border-radius: 8px 8px 0 0; }
+                .content { background: #f9fafb; padding: 20px; border: 1px solid #e5e7eb; }
+                .field { margin-bottom: 15px; }
+                .label { font-weight: bold; color: #374151; }
+                .value { color: #1f2937; }
+                .message-box { background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #f97316; }
+                .footer { font-size: 12px; color: #6b7280; padding: 15px; text-align: center; }
+              </style>
+            </head>
+            <body>
+              <div class="container">
+                <div class="header">
+                  <h2 style="margin:0;">📧 Nouveau message de contact</h2>
+                </div>
+                <div class="content">
+                  <div class="field">
+                    <span class="label">Nom :</span> 
+                    <span class="value">${sanitizedData.name}</span>
+                  </div>
+                  <div class="field">
+                    <span class="label">Email :</span> 
+                    <span class="value"><a href="mailto:${sanitizedData.email}">${sanitizedData.email}</a></span>
+                  </div>
+                  ${sanitizedData.phone ? `
+                  <div class="field">
+                    <span class="label">Téléphone :</span> 
+                    <span class="value"><a href="tel:${sanitizedData.phone}">${sanitizedData.phone}</a></span>
+                  </div>` : ''}
+                  ${sanitizedData.company ? `
+                  <div class="field">
+                    <span class="label">Entreprise :</span> 
+                    <span class="value">${sanitizedData.company}</span>
+                  </div>` : ''}
+                  <div class="field">
+                    <span class="label">Sujet :</span> 
+                    <span class="value">${sanitizedData.subject}</span>
+                  </div>
+                  <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 20px 0;">
+                  <div class="field">
+                    <span class="label">Message :</span>
+                  </div>
+                  <div class="message-box">
+                    ${sanitizedData.message.replace(/\n/g, '<br>')}
+                  </div>
+                </div>
+                <div class="footer">
+                  Envoyé le ${new Date(sanitizedData.timestamp).toLocaleString('fr-FR')} | IP: ${sanitizedData.ip}
                 </div>
               </div>
-              <div style="background: #374151; padding: 16px; border-radius: 0 0 8px 8px; text-align: center;">
-                <p style="color: #9ca3af; margin: 0; font-size: 12px;">Envoyé le ${new Date(sanitizedData.timestamp).toLocaleString('fr-FR')} • IP: ${sanitizedData.ip}</p>
-              </div>
-            </div>
+            </body>
+            </html>
           `,
         });
         console.log('✅ Email envoyé via Resend');
       } catch (emailError) {
         console.error('❌ Erreur envoi email Resend:', emailError);
-        // On continue même si l'email échoue
+        // On continue quand même pour ne pas bloquer l'utilisateur
       }
     } else {
-      console.warn('⚠️ RESEND_API_KEY non configurée');
+      console.warn('⚠️ RESEND_API_KEY non configurée - email non envoyé');
     }
     
     return NextResponse.json({ 
