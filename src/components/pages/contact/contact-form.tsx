@@ -69,7 +69,7 @@ export function ContactForm() {
       // ✅ Google Ads Conversion Tracking
       if (typeof window !== 'undefined' && window.gtag) {
         window.gtag('event', 'conversion', {
-          send_to: 'AW-17976614746/FORM_CONTACT',
+          send_to: 'AW-17976614746/QhySCMKaqoocENq-9ftC',
           value: 15.0,
           currency: 'EUR',
         });
