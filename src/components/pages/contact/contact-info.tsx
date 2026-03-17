@@ -13,7 +13,9 @@ import Link from "next/link";
 const trackPhoneClick = () => {
   if (typeof window !== 'undefined' && window.gtag) {
     window.gtag('event', 'conversion', {
-      send_to: 'AW-17976614746/PHONE_CLICK',
+      send_to: 'AW-17976614746/jN4rCMzZtIocENq-9ftC',
+      value: 1.0,
+      currency: 'EUR',
     });
     console.log('📞 Clic téléphone tracké');
   }
