@@ -68,7 +68,7 @@ export function CTASection() {
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            onClick={() => window.location.href = '/produit#commander'}
+            onClick={() => window.location.href = '/produit'}
             className="inline-flex items-center gap-2 px-8 py-4 bg-gray-900 hover:bg-gray-800 text-white font-semibold rounded-full shadow-xl transition-all"
           >
             Commander maintenant

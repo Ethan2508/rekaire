@@ -35,22 +35,8 @@ export function CTAButton({
   const handleClick = () => {
     trackCTAClick(location);
     
-    if (pathname === "/produit") {
-      // Déjà sur la page produit, scroll direct vers #commander
-      const el = document.getElementById("commander");
-      if (el) {
-        el.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
-    } else {
-      // Naviguer vers la page produit puis scroll
-      router.push("/produit#commander");
-      // Attendre que la page charge puis scroll
-      setTimeout(() => {
-        const el = document.getElementById("commander");
-        if (el) {
-          el.scrollIntoView({ behavior: "smooth", block: "start" });
-        }
-      }, 500);
+    if (pathname !== "/produit") {
+      router.push("/produit");
     }
   };
 
