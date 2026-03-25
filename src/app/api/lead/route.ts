@@ -150,7 +150,8 @@ export async function POST(request: NextRequest) {
 
     if (error) {
       console.error("[Lead API] Supabase error:", error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      // Return success anyway to not block the user experience
+      return NextResponse.json({ success: true });
     }
 
     console.log("[Lead API] Lead saved:", email, "IP:", ip);

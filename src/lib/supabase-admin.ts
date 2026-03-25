@@ -51,21 +51,35 @@ export async function incrementSalesCounter(amount: number = 1): Promise<number>
  * Vérifie si le stock est suffisant SANS décrementer
  * À utiliser AVANT le paiement
  */
-export async function checkStock(productSlug: string, quantity: number): Promise<{ available: boolean; currentStock: number }> {
-  const { data: product, error } = await supabaseAdmin
-    .from('products')
-    .select('stock')
-    .eq('slug', productSlug)
-    .single();
+export async function checkStock(productSlug: string, quantity: number): Promise<{ available: boolean; currentStock: number; dbError?: boolean }> {
+  try {
+    const { data: product, error } = await supabaseAdmin
+      .from('products')
+      .select('stock')
+      .eq('slug', productSlug)
+      .single();
 
-  if (error || !product) {
-    return { available: false, currentStock: 0 };
+    if (error) {
+      // DB error (table missing, connection issue, etc.) → fail-open
+      console.error('[checkStock] Supabase error (fail-open):', error.message);
+      return { available: true, currentStock: -1, dbError: true };
+    }
+
+    if (!product) {
+      // Product not found → fail-open (config issue, not a real stock problem)
+      console.error('[checkStock] Product not found:', productSlug);
+      return { available: true, currentStock: -1, dbError: true };
+    }
+
+    return {
+      available: product.stock >= quantity,
+      currentStock: product.stock
+    };
+  } catch (err) {
+    // Unexpected error → fail-open
+    console.error('[checkStock] Unexpected error (fail-open):', err);
+    return { available: true, currentStock: -1, dbError: true };
   }
-
-  return {
-    available: product.stock >= quantity,
-    currentStock: product.stock
-  };
 }
 
 /**

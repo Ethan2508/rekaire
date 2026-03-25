@@ -32,7 +32,7 @@ import { Turnstile, useTurnstile } from "@/components/turnstile";
 import { CheckoutProgress } from "@/components/checkout-progress";
 import { trackCTAClick, trackCheckoutStart } from "@/lib/tracking";
 import { generateOrderId } from "@/lib/order";
-import { validatePromoCode, incrementPromoUsage, formatDiscount } from "@/lib/promo";
+import { validatePromoCode, formatDiscount } from "@/lib/promo";
 import { getMainProduct, formatPrice, calculateTotal } from "@/config/product";
 import Link from "next/link";
 import Image from "next/image";
@@ -375,10 +375,7 @@ function CheckoutContent() {
       const orderId = generateOrderId();
       trackCheckoutStart(orderId, product.id, product.name, unitPriceHT, product.currency);
 
-      // Incrémenter l'usage du code promo si appliqué
-      if (appliedPromoCode) {
-        await incrementPromoUsage(appliedPromoCode.id);
-      }
+      // Note: l'usage du code promo est incrémenté côté serveur
 
       try {
         const response = await fetch("/api/checkout", {
@@ -418,11 +415,13 @@ function CheckoutContent() {
         if (data.url) {
           window.location.href = data.url;
         } else {
-          console.error("No checkout URL returned");
+          console.error("Checkout error:", response.status, data);
+          setErrors({ submit: data.error || "Erreur lors de la création du paiement. Veuillez réessayer." });
           setIsLoading(false);
         }
       } catch (error) {
         console.error("Checkout error:", error);
+        setErrors({ submit: "Erreur de connexion. Veuillez réessayer." });
         setIsLoading(false);
       }
     }
@@ -1067,6 +1066,9 @@ function CheckoutContent() {
                         </div>
                         {errors.cgv && (
                           <p className="text-red-500 text-xs">{errors.cgv}</p>
+                        )}
+                        {errors.submit && (
+                          <p className="text-red-500 text-sm font-medium bg-red-50 border border-red-200 rounded-lg px-4 py-2">{errors.submit}</p>
                         )}
 
                         <div className="flex gap-3">

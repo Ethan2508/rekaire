@@ -210,7 +210,7 @@ export function CheckoutForm({ quantity, onBack }: CheckoutFormProps) {
       if (data.url) {
         window.location.href = data.url;
       } else {
-        console.error("No checkout URL returned");
+        console.error("Checkout error:", response.status, data);
         setIsLoading(false);
       }
     } catch (error) {

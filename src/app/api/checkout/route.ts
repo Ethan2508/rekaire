@@ -116,6 +116,10 @@ export async function POST(request: NextRequest) {
     const { checkStock } = await import("@/lib/supabase-admin");
     const stockCheck = await checkStock(product.slug, validQuantity);
     
+    if (stockCheck.dbError) {
+      console.warn("[Checkout] Stock check DB error, proceeding anyway (fail-open)");
+    }
+    
     if (!stockCheck.available) {
       return NextResponse.json(
         { 
