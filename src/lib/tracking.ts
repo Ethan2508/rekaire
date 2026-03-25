@@ -92,14 +92,14 @@ export function trackEvent({ event, data }: TrackingEvent) {
     add_to_cart: "AddToCart",
     view_item: "ViewContent",
     begin_checkout: "InitiateCheckout",
-    purchase: "Purchase",
+    contact_form: "Lead",
   };
 
   const metaEventName = metaEventMap[event];
   if (metaEventName) {
     trackMetaEvent(metaEventName, {
-      value: data?.order_value ? data.order_value / 100 : undefined,
-      currency: data?.currency || "EUR",
+      value: data?.order_value ? Number(data.order_value) / 100 : undefined,
+      currency: (data?.currency as string) || "EUR",
       content_ids: data?.product_id ? [data.product_id] : undefined,
       content_name: data?.product_name,
     });
@@ -107,7 +107,7 @@ export function trackEvent({ event, data }: TrackingEvent) {
 
   // Google Ads Conversion (pour payment_success uniquement)
   if (event === "payment_success" && data?.order_value) {
-    trackGoogleAdsConversion(data.order_value, data.currency || "EUR", data.order_id);
+    trackGoogleAdsConversion(Number(data.order_value), (data.currency as string) || "EUR", data.order_id as string);
   }
 
   // Log en dev
