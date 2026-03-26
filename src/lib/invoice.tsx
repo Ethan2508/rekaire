@@ -3,8 +3,9 @@
 // Utilise @react-pdf/renderer
 // ============================================
 
-import { Document, Page, Text, View, StyleSheet, renderToBuffer } from '@react-pdf/renderer';
+import { Document, Page, Text, View, Image, StyleSheet, renderToBuffer } from '@react-pdf/renderer';
 import React from 'react';
+import { siteConfig } from '@/config/site';
 
 // Styles pour le PDF
 const styles = StyleSheet.create({
@@ -23,15 +24,9 @@ const styles = StyleSheet.create({
     borderBottomColor: '#eb5122',
   },
   logo: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#eb5122',
-    letterSpacing: 2,
-  },
-  logoSubtitle: {
-    fontSize: 9,
-    color: '#666',
-    marginTop: 4,
+    width: 120,
+    height: 'auto',
+    marginBottom: 4,
   },
   invoiceTitle: {
     fontSize: 20,
@@ -312,8 +307,7 @@ const InvoiceDocument: React.FC<{ data: InvoiceData }> = ({ data }) => (
       {/* Header */}
       <View style={styles.header}>
         <View>
-          <Text style={styles.logo}>REKAIRE</Text>
-          <Text style={styles.logoSubtitle}>Protection incendie intelligente</Text>
+          <Image style={styles.logo} src={`${siteConfig.url}/images/logo.png`} />
         </View>
         <View>
           <Text style={styles.invoiceTitle}>FACTURE</Text>

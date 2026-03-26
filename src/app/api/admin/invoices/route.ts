@@ -112,7 +112,7 @@ export async function POST(request: NextRequest) {
         }
       },
       items: [{
-        description: 'RK01 - Extincteur automatique intelligent',
+        description: 'RK01 - Système autonome d\'extinction incendie',
         quantity: order.quantity,
         unitPriceHT: order.unit_price_ht / 100, // Convertir de centimes en euros
         totalHT: (order.unit_price_ht * order.quantity) / 100
@@ -239,7 +239,7 @@ export async function GET(request: NextRequest) {
       }
     },
     items: [{
-      description: 'RK01 - Extincteur automatique intelligent',
+      description: 'RK01 - Système autonome d\'extinction incendie',
       quantity: order.quantity,
       unitPriceHT: order.unit_price_ht / 100,
       totalHT: (order.unit_price_ht * order.quantity) / 100
