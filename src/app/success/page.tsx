@@ -205,7 +205,6 @@ function SuccessContent() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900">{product.name}</h3>
-                  <p className="text-sm text-gray-500">{product.shortDescription}</p>
                 </div>
               </div>
             </div>
@@ -219,8 +218,12 @@ function SuccessContent() {
                     Email de confirmation envoyé
                   </p>
                   <p className="text-sm text-gray-600">
-                    Un email avec votre facture et les détails de livraison a été envoyé à{" "}
-                    <span className="font-medium">{verificationData?.email}</span>
+                    Un email avec votre facture et les détails de livraison a été envoyé
+                    {verificationData?.email ? (
+                      <> à <span className="font-medium">{verificationData.email}</span>.</>
+                    ) : (
+                      <>.</>  
+                    )}
                   </p>
                 </div>
               </div>
