@@ -112,8 +112,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     backgroundColor: '#f9f9f9',
   },
+  colRef: {
+    width: '12%',
+  },
   colDescription: {
-    width: '45%',
+    width: '33%',
   },
   colQty: {
     width: '10%',
@@ -211,7 +214,7 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontWeight: 'bold',
     fontSize: 10,
-    width: '45%',
+    width: '33%',
   },
   tableHeaderQty: {
     color: '#ffffff',
@@ -268,6 +271,7 @@ export interface InvoiceData {
     };
   };
   items: Array<{
+    ref: string;
     description: string;
     quantity: number;
     unitPriceHT: number;
@@ -347,6 +351,7 @@ const InvoiceDocument: React.FC<{ data: InvoiceData }> = ({ data }) => (
       <View style={styles.table}>
         {/* Header */}
         <View style={styles.tableHeader}>
+          <Text style={{...styles.tableHeaderText, width: '12%'}}>RÉF</Text>
           <Text style={styles.tableHeaderDesc}>DESCRIPTION</Text>
           <Text style={styles.tableHeaderQty}>QTÉ</Text>
           <Text style={styles.tableHeaderUnit}>PRIX UNITAIRE HT</Text>
@@ -355,6 +360,7 @@ const InvoiceDocument: React.FC<{ data: InvoiceData }> = ({ data }) => (
         {/* Items */}
         {data.items.map((item, index) => (
           <View key={index} style={index % 2 === 1 ? styles.tableRowAlt : styles.tableRow}>
+            <Text style={styles.colRef}>{item.ref}</Text>
             <Text style={styles.colDescription}>{item.description}</Text>
             <Text style={styles.colQty}>{item.quantity.toString()}</Text>
             <Text style={styles.colUnit}>{formatCurrency(item.unitPriceHT)}</Text>
