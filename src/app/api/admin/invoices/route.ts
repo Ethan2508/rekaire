@@ -164,15 +164,18 @@ export async function POST(request: NextRequest) {
       { invoiceNumber }
     );
 
-    // Envoyer l'email avec la facture
+    // Envoyer l'email avec la facture en pièce jointe
     if (sendEmail && order.customer_email) {
+      const pdfBase64 = pdfBuffer.toString('base64');
       await sendInvoiceEmail({
         customerEmail: order.customer_email,
         customerName: order.customer_name,
         orderNumber: order.order_number,
         invoiceNumber,
         invoiceUrl,
-        totalTTC: order.total_ttc / 100
+        totalTTC: order.total_ttc / 100,
+        pdfBase64,
+        pdfFilename: fileName,
       });
     }
 

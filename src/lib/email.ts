@@ -793,8 +793,10 @@ export interface InvoiceEmailData {
   customerName?: string;
   orderNumber: string;
   invoiceNumber: string;
-  invoiceUrl: string;
+  invoiceUrl?: string;
   totalTTC: number; // en euros
+  pdfBase64?: string; // PDF en base64 pour pièce jointe
+  pdfFilename?: string;
 }
 
 export async function sendInvoiceEmail(data: InvoiceEmailData) {
@@ -839,13 +841,11 @@ export async function sendInvoiceEmail(data: InvoiceEmailData) {
         <p><strong>Commande:</strong> ${data.orderNumber}</p>
         <p><strong>Montant TTC:</strong> ${amount} €</p>
         
-        <a href="${data.invoiceUrl}" class="btn" target="_blank">
-          📥 Télécharger la facture PDF
-        </a>
+        ${data.invoiceUrl ? `<a href="${data.invoiceUrl}" class="btn" target="_blank">📥 Télécharger la facture PDF</a>` : `<p style="font-size: 14px; color: #666;">📎 La facture PDF est en pièce jointe de cet email.</p>`}
       </div>
       
       <p style="font-size: 14px; color: #666;">
-        Ce lien est valable pendant 7 jours. Pour obtenir une nouvelle copie, contactez-nous.
+        ${data.invoiceUrl ? 'Ce lien est valable pendant 7 jours. Pour obtenir une nouvelle copie, contactez-nous.' : 'Conservez cet email pour vos archives.'}
       </p>
     </div>
     
@@ -870,12 +870,18 @@ Votre facture pour la commande ${data.orderNumber} est disponible.
 Facture N°: ${data.invoiceNumber}
 Montant TTC: ${amount} €
 
-Télécharger: ${data.invoiceUrl}
+${data.invoiceUrl ? `Télécharger: ${data.invoiceUrl}` : 'La facture PDF est en pièce jointe de cet email.'}
 
-Ce lien est valable pendant 7 jours.
+${data.invoiceUrl ? 'Ce lien est valable pendant 7 jours.' : 'Conservez cet email pour vos archives.'}
 
 © ${new Date().getFullYear()} Rekaire
       `,
+      ...(data.pdfBase64 && data.pdfFilename && {
+        attachments: [{
+          filename: data.pdfFilename,
+          content: data.pdfBase64,
+        }],
+      }),
     });
 
     console.log("[Email] Invoice email sent to:", data.customerEmail);
