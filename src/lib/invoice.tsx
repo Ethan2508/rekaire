@@ -425,6 +425,14 @@ export async function generateInvoicePDF(data: InvoiceData): Promise<Buffer> {
 }
 
 /**
+ * Génère le PDF en base64 (pour pièce jointe email)
+ */
+export async function generateInvoicePDFBase64(data: InvoiceData): Promise<string> {
+  const buffer = await generateInvoicePDF(data);
+  return buffer.toString('base64');
+}
+
+/**
  * Génère le nom de fichier pour une facture
  */
 export function getInvoiceFileName(invoiceNumber: string): string {

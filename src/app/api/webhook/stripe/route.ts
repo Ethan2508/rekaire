@@ -7,7 +7,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { verifyWebhookSignature, getCheckoutSession } from "@/lib/stripe";
 import { sendOrderConfirmationEmail, sendAdminNotificationEmail } from "@/lib/email";
 import { incrementSalesCounter, decrementStock, createOrder as createSupabaseOrder, orderExistsByStripeSession, getNextInvoiceNumber } from "@/lib/supabase-admin";
-import { generateInvoicePDFBase64, InvoiceData } from "@/lib/invoice-pdf";
+import { generateInvoicePDFBase64 } from "@/lib/invoice";
+import type { InvoiceData } from "@/lib/invoice";
 import Stripe from "stripe";
 
 // Désactive le body parser pour les webhooks Stripe
@@ -322,39 +323,35 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
 
       const invoiceData: InvoiceData = {
         invoiceNumber: invoiceNumber,
-        invoiceDate: new Date(),
-        orderId,
+        orderNumber: orderId,
+        date: new Date(),
         customer: {
           name: billingAddressForEmail?.name || shippingAddressForEmail?.name || session.customer_details?.name || 'Client',
           company: session.metadata?.billing_company || session.metadata?.customer_company || undefined,
-          address: billingAddressForEmail?.line1 || shippingAddressForEmail?.line1 || '',
-          postalCode: billingAddressForEmail?.postalCode || shippingAddressForEmail?.postalCode || '',
-          city: billingAddressForEmail?.city || shippingAddressForEmail?.city || '',
-          country: billingAddressForEmail?.country || 'France',
           email: customerEmail,
           phone: customerPhone || undefined,
-          vatNumber: session.metadata?.billing_vat_number || undefined,
+          address: {
+            line1: billingAddressForEmail?.line1 || shippingAddressForEmail?.line1 || '',
+            postalCode: billingAddressForEmail?.postalCode || shippingAddressForEmail?.postalCode || '',
+            city: billingAddressForEmail?.city || shippingAddressForEmail?.city || '',
+            country: billingAddressForEmail?.country || 'France',
+          },
         },
         items: [{
           ref: 'RK01',
           description: `Système autonome d'extinction incendie`,
-          shippingAddress: shippingAddressForEmail 
-            ? `${shippingAddressForEmail.line1}, ${shippingAddressForEmail.postalCode} ${shippingAddressForEmail.city}`
-            : undefined,
           quantity,
-          unitPriceHT: unitPriceHTCents,
-          totalHT: unitPriceHTCents * quantity,
+          unitPriceHT: unitPriceHTCents / 100,
+          totalHT: (unitPriceHTCents * quantity) / 100,
         }],
-        subtotalHT: subtotalHTCents,
-        discountHT: discountHTCents,
-        discountCode: promoCode || undefined,
-        totalHT: amountHT,
-        vatRate: 20,
-        vatAmount,
-        totalTTC: amountTTC,
+        promoCode: promoCode || undefined,
+        promoDiscount: discountHTCents ? discountHTCents / 100 : undefined,
+        totalHT: amountHT / 100,
+        tvaRate: 0.20,
+        tvaAmount: vatAmount / 100,
+        totalTTC: amountTTC / 100,
+        isPaid: true,
         paymentMethod: 'Carte bancaire (Stripe)',
-        paymentDate: new Date(),
-        stripePaymentId: paymentIntentId,
       };
 
       // Générer le PDF en base64
