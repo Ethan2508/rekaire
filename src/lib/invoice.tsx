@@ -244,14 +244,14 @@ const styles = StyleSheet.create({
 // Informations de l'entreprise NELIOR
 const COMPANY_INFO = {
   name: 'NELIOR',
-  address: '123 Rue de l\'Innovation',
-  postalCode: '75001',
-  city: 'Paris',
+  address: '5 Rue Mazenod',
+  postalCode: '69003',
+  city: 'LYON',
   country: 'France',
-  siret: '123 456 789 00012',
-  tva: 'FR12345678901',
+  siret: '989 603 907 00019',
+  tva: 'FR51989603907',
   email: 'contact@rekaire.fr',
-  phone: '+33 1 23 45 67 89',
+  phone: '+33 (0) 4 82 53 06 19',
   website: 'www.rekaire.fr',
 };
 
@@ -331,9 +331,6 @@ const InvoiceDocument: React.FC<{ data: InvoiceData }> = ({ data }) => (
           <Text style={styles.text}>{COMPANY_INFO.address}</Text>
           <Text style={styles.text}>{COMPANY_INFO.postalCode} {COMPANY_INFO.city}</Text>
           <Text style={styles.text}>{COMPANY_INFO.country}</Text>
-          <Text style={styles.textWithMargin}>SIRET: {COMPANY_INFO.siret}</Text>
-          <Text style={styles.text}>TVA: {COMPANY_INFO.tva}</Text>
-          <Text style={styles.text}>Email: {COMPANY_INFO.email}</Text>
         </View>
         {/* Customer info */}
         <View style={styles.column}>
@@ -358,7 +355,7 @@ const InvoiceDocument: React.FC<{ data: InvoiceData }> = ({ data }) => (
         <View style={styles.tableHeader}>
           <Text style={styles.tableHeaderDesc}>DESCRIPTION</Text>
           <Text style={styles.tableHeaderQty}>QTÉ</Text>
-          <Text style={styles.tableHeaderUnit}>PRIX UNIT. HT</Text>
+          <Text style={styles.tableHeaderUnit}>PRIX UNITAIRE HT</Text>
           <Text style={styles.tableHeaderTotal}>TOTAL HT</Text>
         </View>
         {/* Items */}
