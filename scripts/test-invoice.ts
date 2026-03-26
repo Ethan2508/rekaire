@@ -30,7 +30,8 @@ async function main() {
       },
     },
     items: [{
-      description: 'RK01 - Extincteur automatique intelligent',
+      ref: 'RK01',
+      description: 'Système autonome d\'extinction incendie',
       quantity: 2,
       unitPriceHT: 75,
       totalHT: 150,
