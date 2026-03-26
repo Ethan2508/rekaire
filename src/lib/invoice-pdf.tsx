@@ -277,11 +277,7 @@ export const InvoiceDocument: React.FC<{ data: InvoiceData }> = ({ data }) => (
           <Text style={styles.companyDetails}>
             5 Rue Mazenod{'\n'}
             69003 LYON{'\n'}
-            France{'\n'}
-            {'\n'}
-            SIRET : 989 603 907 00019{'\n'}
-            TVA Intracomm. : FR51989603907{'\n'}
-            contact@rekaire.fr
+            France
           </Text>
         </View>
         
@@ -315,9 +311,9 @@ export const InvoiceDocument: React.FC<{ data: InvoiceData }> = ({ data }) => (
       {/* Table des produits */}
       <View style={styles.table}>
         <View style={styles.tableHeader}>
-          <Text style={styles.colRef}>Réf.</Text>
-          <Text style={styles.colDescription}>Désignation</Text>
-          <Text style={styles.colUnitPrice}>Prix unit. HT</Text>
+          <Text style={styles.colRef}>Réf</Text>
+          <Text style={styles.colDescription}>Description</Text>
+          <Text style={styles.colUnitPrice}>Prix unitaire HT</Text>
           <Text style={styles.colQuantity}>Qté</Text>
           <Text style={styles.colTotal}>Total HT</Text>
         </View>

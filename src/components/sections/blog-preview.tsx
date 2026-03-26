@@ -4,53 +4,44 @@
 // REKAIRE - Blog Preview Section (Homepage)
 // ============================================
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Calendar, Clock, ArrowRight, BookOpen } from "lucide-react";
+import { supabase } from "@/lib/supabase";
 
 interface Article {
-  _id: string;
+  id: string;
   title: string;
-  slug: { current: string };
+  slug: string;
   excerpt: string;
   category: string;
-  readTime?: number;
-  publishedAt: string;
+  read_time?: number;
+  published_at: string;
 }
 
-// Articles statiques (fallback)
-const fallbackArticles = [
-  {
-    _id: "1",
-    title: "Incendies électriques en France : les chiffres alarmants",
-    slug: { current: "incendies-electriques-france-statistiques" },
-    excerpt: "Chaque année, 300 000 incendies domestiques dont 25% d'origine électrique. Découvrez les statistiques.",
-    category: "Statistiques",
-    readTime: 5,
-    publishedAt: "2025-01-15",
-  },
-  {
-    _id: "2",
-    title: "Comment protéger efficacement votre tableau électrique ?",
-    slug: { current: "protection-tableau-electrique-guide" },
-    excerpt: "Guide complet pour sécuriser votre installation électrique et prévenir les risques d'incendie.",
-    category: "Prévention",
-    readTime: 7,
-    publishedAt: "2025-01-08",
-  },
-  {
-    _id: "3",
-    title: "Installation du RK01 : guide étape par étape",
-    slug: { current: "rk01-installation-etapes" },
-    excerpt: "Installez votre dispositif RK01 en quelques minutes seulement avec notre tutoriel.",
-    category: "Tutoriels",
-    readTime: 4,
-    publishedAt: "2025-01-02",
-  },
-];
-
 export function BlogPreviewSection() {
-  const articles = fallbackArticles;
+  const [articles, setArticles] = useState<Article[]>([]);
+
+  useEffect(() => {
+    const loadArticles = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('articles')
+          .select('id, title, slug, excerpt, category, read_time, published_at')
+          .eq('published', true)
+          .order('published_at', { ascending: false })
+          .limit(3);
+
+        if (!error && data && data.length > 0) {
+          setArticles(data);
+        }
+      } catch (err) {
+        console.error('Blog preview fetch error:', err);
+      }
+    };
+    loadArticles();
+  }, []);
 
   const formatDate = (date: string) => {
     return new Date(date).toLocaleDateString('fr-FR', { 
@@ -59,6 +50,8 @@ export function BlogPreviewSection() {
       year: 'numeric' 
     });
   };
+
+  if (articles.length === 0) return null;
 
   return (
     <section className="py-20 lg:py-24 bg-white">
@@ -86,14 +79,14 @@ export function BlogPreviewSection() {
         <div className="grid md:grid-cols-3 gap-6 mb-12">
           {articles.map((article, index) => (
             <motion.article
-              key={article._id}
+              key={article.id}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
               className="group"
             >
-              <Link href={`/blog/${article.slug.current}`}>
+              <Link href={`/blog/${article.slug}`}>
                 <div className="h-full bg-gray-50 border border-gray-200 rounded-2xl p-6 hover:border-orange-300 hover:shadow-lg transition-all">
                   {/* Category */}
                   <span className="inline-block px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-xs font-medium mb-4">
@@ -114,12 +107,12 @@ export function BlogPreviewSection() {
                   <div className="flex items-center gap-4 text-xs text-gray-500">
                     <div className="flex items-center gap-1">
                       <Calendar className="w-3.5 h-3.5" />
-                      {formatDate(article.publishedAt)}
+                      {formatDate(article.published_at)}
                     </div>
-                    {article.readTime && (
+                    {article.read_time && (
                       <div className="flex items-center gap-1">
                         <Clock className="w-3.5 h-3.5" />
-                        {article.readTime} min
+                        {article.read_time} min
                       </div>
                     )}
                   </div>
