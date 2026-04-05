@@ -8,6 +8,7 @@ import { getMainProduct, calculateTotal } from "@/config/product";
 import { isValidOrderId } from "@/lib/order";
 import { createClient } from "@supabase/supabase-js";
 import { rateLimitDB } from "@/lib/rate-limit";
+import * as Sentry from "@sentry/nextjs";
 
 // Supabase admin client pour bypass RLS
 const supabaseAdmin = createClient(
@@ -279,6 +280,9 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error("[Checkout API] Error:", error);
+    Sentry.captureException(error, {
+      tags: { api: "checkout" },
+    });
     return NextResponse.json(
       { error: "Failed to create checkout session" },
       { status: 500 }

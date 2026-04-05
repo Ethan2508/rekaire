@@ -62,7 +62,7 @@ export function trackGoogleAdsConversion(
   
   window.gtag("event", "conversion", {
     send_to: `${trackingConfig.googleAds.id}/${trackingConfig.googleAds.conversionLabel}`,
-    value: conversionValue ? conversionValue / 100 : undefined, // Convertir centimes en euros
+    value: conversionValue || undefined, // Valeur déjà en euros
     currency,
     transaction_id: orderId,
   });
@@ -98,7 +98,7 @@ export function trackEvent({ event, data }: TrackingEvent) {
   const metaEventName = metaEventMap[event];
   if (metaEventName) {
     trackMetaEvent(metaEventName, {
-      value: data?.order_value ? Number(data.order_value) / 100 : undefined,
+      value: data?.order_value ? Number(data.order_value) : undefined, // Valeur déjà en euros
       currency: (data?.currency as string) || "EUR",
       content_ids: data?.product_id ? [data.product_id] : undefined,
       content_name: data?.product_name,

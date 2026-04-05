@@ -10,6 +10,7 @@ import { incrementSalesCounter, decrementStock, createOrder as createSupabaseOrd
 import { generateInvoicePDFBase64 } from "@/lib/invoice";
 import type { InvoiceData } from "@/lib/invoice";
 import Stripe from "stripe";
+import * as Sentry from "@sentry/nextjs";
 
 // Désactive le body parser pour les webhooks Stripe
 export const runtime = "nodejs";
@@ -83,6 +84,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ received: true });
   } catch (error) {
     console.error("[Webhook] Error processing event:", error);
+    Sentry.captureException(error, {
+      tags: { api: "webhook-stripe", eventType: event.type },
+      extra: { eventId: event.id },
+    });
     return NextResponse.json(
       { error: "Webhook handler failed" },
       { status: 500 }
@@ -232,6 +237,9 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
 
   } catch (supabaseError) {
     console.error("[Webhook] Error updating Supabase:", supabaseError);
+    Sentry.captureException(supabaseError, {
+      tags: { api: "webhook-stripe", step: "supabase-update" },
+    });
     // Ne pas bloquer le webhook même si Supabase échoue
   }
 
@@ -367,6 +375,9 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
       console.log("[Webhook] Invoice PDF generated successfully");
     } catch (invoiceError) {
       console.error("[Webhook] Failed to generate invoice PDF:", invoiceError);
+      Sentry.captureException(invoiceError, {
+        tags: { api: "webhook-stripe", step: "invoice-generation" },
+      });
       // Continue sans facture PDF (l'email partira quand même)
     }
   }
