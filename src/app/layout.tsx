@@ -97,6 +97,13 @@ export default function RootLayout({
   return (
     <html lang="fr" className={`${inter.variable}`}>
       <head>
+        {/* Preload de l'image LCP (premier frame du viewer 360°) */}
+        <link
+          rel="preload"
+          as="image"
+          href="/images/product/360/frame_001.webp"
+          fetchPriority="high"
+        />
         {/* Google Consent Mode v2 + gtag - AVANT tout autre script */}
         <Script
           id="google-consent-init"

@@ -133,13 +133,9 @@ export function HeroSection() {
               </motion.div>
             </motion.div>
 
-            {/* Right - Product 360° showcase (order-1 on mobile, order-2 on desktop) */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              className="relative order-1 lg:order-2"
-            >
+            {/* Right - Product 360° showcase (order-1 on mobile, order-2 on desktop)
+                Pas d'animation framer-motion ici: c'est l'élément LCP, il doit être visible immédiatement */}
+            <div className="relative order-1 lg:order-2">
               {/* Glow effect behind product */}
               <div className="absolute inset-0 bg-gradient-to-br from-orange-200/40 to-orange-100/20 rounded-full blur-[80px] scale-75" />
               
@@ -163,7 +159,7 @@ export function HeroSection() {
                   ))}
                 </div>
               </div>
-            </motion.div>
+            </div>
           </div>
         </div>
       </div>
