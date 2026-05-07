@@ -115,14 +115,14 @@ export default function RootLayout({
             `,
           }}
         />
-        {/* Google Tag (gtag.js) - Google Ads */}
+        {/* Google Tag (gtag.js) - Google Ads — chargé après hydration pour ne pas bloquer le rendu */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=AW-17976614746"
-          strategy="beforeInteractive"
+          strategy="afterInteractive"
         />
         <Script
           id="google-ads-config"
-          strategy="beforeInteractive"
+          strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: `
               window.dataLayer = window.dataLayer || [];

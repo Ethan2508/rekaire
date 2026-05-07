@@ -22,18 +22,19 @@ export function Product360Viewer({
 }: Product360ViewerProps) {
   const [currentFrame, setCurrentFrame] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
+  const [firstFrameReady, setFirstFrameReady] = useState(false);
   const [loadedCount, setLoadedCount] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const lastXRef = useRef(0);
 
-  // Précharger toutes les images
+  // Précharger toutes les images APRÈS le rendu initial (pour ne pas bloquer le LCP)
   useEffect(() => {
     let mounted = true;
     const images: HTMLImageElement[] = [];
 
-    const preloadImages = async () => {
+    const preloadImages = () => {
       for (let i = 1; i <= totalFrames; i++) {
         const img = new window.Image();
         img.src = `${basePath}${String(i).padStart(3, "0")}.webp`;
@@ -46,16 +47,26 @@ export function Product360Viewer({
       }
     };
 
-    preloadImages();
+    // Différer le préchargement: attendre que le navigateur soit idle
+    // pour ne pas bloquer le LCP / FCP / TBT.
+    const w = window as Window & { requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number };
+    let idleHandle: number | undefined;
+    let timeoutHandle: ReturnType<typeof setTimeout> | undefined;
+    if (typeof w.requestIdleCallback === "function") {
+      idleHandle = w.requestIdleCallback(() => preloadImages(), { timeout: 3000 });
+    } else {
+      timeoutHandle = setTimeout(preloadImages, 1500);
+    }
 
     return () => {
       mounted = false;
+      if (timeoutHandle) clearTimeout(timeoutHandle);
     };
   }, [totalFrames, basePath]);
 
-  // Quand toutes les images sont chargées
+  // Quand assez d'images sont chargées (au moins 30 frames pour permettre la rotation)
   useEffect(() => {
-    if (loadedCount >= totalFrames) {
+    if (loadedCount >= Math.min(30, totalFrames)) {
       setIsLoading(false);
     }
   }, [loadedCount, totalFrames]);
@@ -147,31 +158,31 @@ export function Product360Viewer({
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        {/* Loading indicator */}
-        {isLoading && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-50 rounded-2xl">
+        {/* Image principale toujours rendue (frame_001 sert de LCP) */}
+        <Image
+          src={`${basePath}${String(currentFrame).padStart(3, "0")}.webp`}
+          alt={`Vue 360° du RK01 - Image ${currentFrame}`}
+          fill
+          sizes="(max-width: 1024px) 100vw, 50vw"
+          className="object-contain"
+          priority
+          draggable={false}
+          onLoad={() => setFirstFrameReady(true)}
+        />
+
+        {/* Loading overlay (au-dessus de l'image, pour ne pas masquer le LCP) */}
+        {isLoading && firstFrameReady && (
+          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur px-4 py-2 rounded-full shadow-md flex items-center gap-2">
             <motion.div
               animate={{ rotate: 360 }}
               transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
             >
-              <RotateCw className="w-12 h-12 text-orange-500" />
+              <RotateCw className="w-4 h-4 text-orange-500" />
             </motion.div>
-            <p className="mt-4 text-gray-600">
-              Chargement... {Math.round((loadedCount / totalFrames) * 100)}%
+            <p className="text-sm text-gray-600">
+              Chargement 360°... {Math.round((loadedCount / totalFrames) * 100)}%
             </p>
           </div>
-        )}
-
-        {/* Images - toutes préchargées, une seule visible */}
-        {!isLoading && (
-          <Image
-            src={`${basePath}${String(currentFrame).padStart(3, "0")}.webp`}
-            alt={`Vue 360° du RK01 - Image ${currentFrame}`}
-            fill
-            className="object-contain"
-            priority
-            draggable={false}
-          />
         )}
 
         {/* Instruction overlay */}
