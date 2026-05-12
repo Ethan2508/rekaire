@@ -26,6 +26,29 @@ Sentry.init({
   // Enable sending user PII (Personally Identifiable Information)
   // https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/options/#sendDefaultPii
   sendDefaultPii: true,
+
+  // Ignorer les erreurs bruyantes et non-actionnables
+  ignoreErrors: [
+    // Fetch annulé par le navigateur (navigation, unmount, fermeture onglet)
+    "AbortError",
+    "signal is aborted without reason",
+    "The user aborted a request",
+    "The operation was aborted",
+    // Erreurs réseau côté utilisateur
+    "NetworkError",
+    "Failed to fetch",
+    "Load failed",
+    "Network request failed",
+    // Bruit navigateur (extensions, ResizeObserver)
+    "ResizeObserver loop limit exceeded",
+    "ResizeObserver loop completed with undelivered notifications",
+    "Non-Error promise rejection captured",
+    // Scripts tiers Google qui échouent côté client
+    "Jsloader error",
+    // Hydration errors transitoires
+    "Hydration failed",
+    "Text content does not match",
+  ],
 });
 
 export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;
