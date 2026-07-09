@@ -28,6 +28,7 @@ const protectedClientsRow1 = [
   { name: "Rosenbauer", logo: "/images/partners/Rosenbauer_Logo.svg" },
   { name: "Socotec", logo: "/images/partners/SOCOTEC-LOGO.png" },
   { name: "Sonepar", logo: "/images/partners/sonepar-logo.png" },
+  { name: "Mat'éclair", logo: "/images/partners/mateclair-logo.jpg" },
 ];
 
 // Clients protégés par le RK01 - Rangée 2
@@ -43,6 +44,8 @@ const protectedClientsRow2 = [
   { name: "Vink France", logo: "/images/partners/vink-france.png" },
   { name: "Yamada", logo: "/images/partners/yamada-logo.png" },
   { name: "Yesss Electrique", logo: "/images/partners/YESSS-ELECTRIQUE-logo.png" },
+  { name: "Auschinsky", logo: "/images/partners/auschinsky-logo.svg" },
+  { name: "Ely Gestion", logo: "/images/partners/elygestion-logo.avif" },
 ];
 
 export function PartnersSection() {
