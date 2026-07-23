@@ -30,18 +30,27 @@ export function CookieConsent() {
 
   useEffect(() => {
     // Vérifier si l'utilisateur a déjà fait un choix
-    const consent = localStorage.getItem(CONSENT_KEY);
+    // localStorage peut lever SecurityError (mode privé, cookies tiers bloqués, iframe cross-origin)
+    let consent: string | null = null;
+    let savedPrefs: string | null = null;
+    try {
+      consent = localStorage.getItem(CONSENT_KEY);
+      savedPrefs = localStorage.getItem(PREFERENCES_KEY);
+    } catch {
+      // Storage inaccessible : on affiche la bannière par défaut, sans persistance possible
+    }
+
     if (!consent) {
       // Attendre un peu avant d'afficher la bannière
       const timer = setTimeout(() => setShowBanner(true), 1000);
       return () => clearTimeout(timer);
-    } else {
-      // Charger les préférences existantes
-      const savedPrefs = localStorage.getItem(PREFERENCES_KEY);
-      if (savedPrefs) {
+    } else if (savedPrefs) {
+      try {
         const prefs = JSON.parse(savedPrefs) as CookiePreferences;
         setPreferences(prefs);
         loadScripts(prefs);
+      } catch {
+        // JSON invalide : ignorer
       }
     }
   }, []);
@@ -76,8 +85,12 @@ export function CookieConsent() {
   };
 
   const saveConsent = (status: ConsentStatus, prefs: CookiePreferences) => {
-    localStorage.setItem(CONSENT_KEY, status);
-    localStorage.setItem(PREFERENCES_KEY, JSON.stringify(prefs));
+    try {
+      localStorage.setItem(CONSENT_KEY, status);
+      localStorage.setItem(PREFERENCES_KEY, JSON.stringify(prefs));
+    } catch {
+      // Storage inaccessible : le choix ne sera pas persisté, mais on continue la session
+    }
     setPreferences(prefs);
     setShowBanner(false);
     setShowSettings(false);

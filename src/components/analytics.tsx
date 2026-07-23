@@ -43,10 +43,15 @@ export function Analytics() {
     };
 
     // Vérifier le consentement existant au chargement
-    const savedPrefs = localStorage.getItem(PREFERENCES_KEY);
-    if (savedPrefs) {
-      const prefs = JSON.parse(savedPrefs) as CookiePreferences;
-      updateGoogleConsent(prefs);
+    // localStorage peut lever SecurityError (mode privé, iframe cross-origin, etc.)
+    try {
+      const savedPrefs = localStorage.getItem(PREFERENCES_KEY);
+      if (savedPrefs) {
+        const prefs = JSON.parse(savedPrefs) as CookiePreferences;
+        updateGoogleConsent(prefs);
+      }
+    } catch {
+      // Storage inaccessible : consentement par défaut (denied)
     }
 
     // Écouter les changements de consentement
@@ -72,9 +77,13 @@ export function Analytics() {
           dangerouslySetInnerHTML={{
             __html: `
               (function() {
-                var prefs = localStorage.getItem('${PREFERENCES_KEY}');
+                var prefs;
+                try { prefs = localStorage.getItem('${PREFERENCES_KEY}'); }
+                catch (e) { return; }
                 if (!prefs) return;
-                var consent = JSON.parse(prefs);
+                var consent;
+                try { consent = JSON.parse(prefs); }
+                catch (e) { return; }
                 if (!consent.marketing) return;
                 
                 !function(f,b,e,v,n,t,s)
