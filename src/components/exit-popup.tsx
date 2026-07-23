@@ -18,8 +18,13 @@ export function ExitPopup() {
 
   useEffect(() => {
     // Vérifier si déjà affiché dans cette session
-    const shown = sessionStorage.getItem("exitPopupShown");
-    if (shown) return;
+    // sessionStorage peut lever SecurityError (mode privé, iframe cross-origin, cookies bloqués)
+    try {
+      const shown = sessionStorage.getItem("exitPopupShown");
+      if (shown) return;
+    } catch {
+      // Storage inaccessible : on continue sans persistance
+    }
 
     let exitIntent = false;
 
@@ -29,7 +34,11 @@ export function ExitPopup() {
         exitIntent = true;
         setIsVisible(true);
         setHasShown(true);
-        sessionStorage.setItem("exitPopupShown", "true");
+        try {
+          sessionStorage.setItem("exitPopupShown", "true");
+        } catch {
+          // Ignorer : le popup pourra se re-déclencher sur cette session
+        }
       }
     };
 
