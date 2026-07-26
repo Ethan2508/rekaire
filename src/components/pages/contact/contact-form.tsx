@@ -6,12 +6,14 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Send, User, Mail, Building2, MessageSquare, CheckCircle2, Loader2, Sparkles } from "lucide-react";
+import { Send, User, Mail, Phone, Building2, MessageSquare, CheckCircle2, Loader2, Sparkles } from "lucide-react";
+import { Turnstile } from "@/components/turnstile";
 
 type FormData = {
   firstName: string;
   lastName: string;
   email: string;
+  phone: string;
   company: string;
   subject: string;
   message: string;
@@ -33,6 +35,7 @@ export function ContactForm() {
     firstName: "",
     lastName: "",
     email: "",
+    phone: "",
     company: "",
     subject: "",
     message: "",
@@ -41,6 +44,7 @@ export function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [turnstileToken, setTurnstileToken] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,9 +58,11 @@ export function ContactForm() {
         body: JSON.stringify({
           name: `${formData.firstName} ${formData.lastName}`.trim(),
           email: formData.email,
+          phone: formData.phone,
           company: formData.company || undefined,
           subject: formData.subject || 'Contact général',
           message: formData.message,
+          turnstileToken,
         }),
       });
 
@@ -117,6 +123,7 @@ export function ContactForm() {
               firstName: "",
               lastName: "",
               email: "",
+              phone: "",
               company: "",
               subject: "",
               message: "",
@@ -225,21 +232,41 @@ export function ContactForm() {
             </div>
 
             {/* Email */}
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                Email *
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <input
-                  type="email"
-                  id="email"
-                  required
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full pl-12 pr-4 py-3.5 rounded-xl border-2 border-gray-200 focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 outline-none transition-all bg-gray-50/50 hover:bg-white text-gray-900 placeholder:text-gray-400"
-                  placeholder="jean.dupont@email.com"
-                />
+            <div className="grid sm:grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                  Email *
+                </label>
+                <div className="relative">
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <input
+                    type="email"
+                    id="email"
+                    required
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    className="w-full pl-12 pr-4 py-3.5 rounded-xl border-2 border-gray-200 focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 outline-none transition-all bg-gray-50/50 hover:bg-white text-gray-900 placeholder:text-gray-400"
+                    placeholder="jean.dupont@email.com"
+                  />
+                </div>
+              </div>
+              <div>
+                <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+                  Téléphone *
+                </label>
+                <div className="relative">
+                  <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <input
+                    type="tel"
+                    id="phone"
+                    required
+                    autoComplete="tel"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    className="w-full pl-12 pr-4 py-3.5 rounded-xl border-2 border-gray-200 focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 outline-none transition-all bg-gray-50/50 hover:bg-white text-gray-900 placeholder:text-gray-400"
+                    placeholder="06 12 34 56 78"
+                  />
+                </div>
               </div>
             </div>
 
@@ -317,10 +344,19 @@ export function ContactForm() {
               </motion.div>
             )}
 
+            <Turnstile
+              siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "0x4AAAAAACaF8eEKeVuSgb_P"}
+              onVerify={setTurnstileToken}
+              onExpire={() => setTurnstileToken("")}
+              onError={() => setTurnstileToken("")}
+              action="contact_form"
+              size="flexible"
+            />
+
             {/* Submit */}
             <motion.button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isSubmitting || !turnstileToken}
               whileHover={{ scale: isSubmitting ? 1 : 1.01 }}
               whileTap={{ scale: isSubmitting ? 1 : 0.98 }}
               className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 disabled:from-orange-300 disabled:to-orange-400 text-white font-semibold py-4 px-6 rounded-xl transition-all flex items-center justify-center gap-2 shadow-xl shadow-orange-500/25 hover:shadow-2xl hover:shadow-orange-500/30"

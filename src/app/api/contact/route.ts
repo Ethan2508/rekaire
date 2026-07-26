@@ -6,6 +6,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { rateLimitDB } from '@/lib/rate-limit';
 
+const TURNSTILE_SECRET = process.env.TURNSTILE_SECRET_KEY;
+
 // Validation email stricte
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
@@ -60,6 +62,30 @@ function isValidPhone(phone: string): boolean {
   return /^(\+33|0033|0)?[1-9][0-9]{8,9}$/.test(cleanPhone);
 }
 
+async function verifyTurnstile(token: string, ip: string): Promise<boolean> {
+  if (!TURNSTILE_SECRET) {
+    console.warn('[Contact API] TURNSTILE_SECRET_KEY non configuré');
+    return process.env.NODE_ENV !== 'production';
+  }
+
+  try {
+    const response = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        secret: TURNSTILE_SECRET,
+        response: token,
+        remoteip: ip,
+      }),
+    });
+    const data = await response.json() as { success?: boolean };
+    return data.success === true;
+  } catch (error) {
+    console.error('[Contact API] Turnstile verification error:', error);
+    return false;
+  }
+}
+
 export async function POST(request: NextRequest) {
   // 🔒 RATE LIMITING (5 requêtes par minute max)
   const rateLimitResponse = await rateLimitDB(request, {
@@ -83,6 +109,7 @@ export async function POST(request: NextRequest) {
       honeypot, 
       website,
       fax,
+      turnstileToken,
     } = body;
     
     // ========================================
@@ -91,6 +118,15 @@ export async function POST(request: NextRequest) {
     if (honeypot || website || fax) {
       console.log('🤖 Bot détecté via honeypot');
       // Retourner success pour ne pas alerter le bot
+      return NextResponse.json({ success: true });
+    }
+
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
+      || request.headers.get('x-real-ip')
+      || 'unknown';
+
+    if (!turnstileToken || !await verifyTurnstile(turnstileToken, ip)) {
+      console.log('[Contact API] Soumission bloquée par Turnstile');
       return NextResponse.json({ success: true });
     }
     
@@ -161,7 +197,7 @@ export async function POST(request: NextRequest) {
       subject: subject ? sanitizeInput(subject) : 'Contact depuis le site',
       message: sanitizeInput(message),
       timestamp: new Date().toISOString(),
-      ip: request.headers.get('x-forwarded-for')?.split(',')[0].trim() || 'unknown',
+      ip,
     };
     
     // ========================================
