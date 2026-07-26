@@ -4,7 +4,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { motion } from "framer-motion";
 import { Send, User, Mail, Phone, Building2, MessageSquare, CheckCircle2, Loader2, Sparkles } from "lucide-react";
 import { Turnstile } from "@/components/turnstile";
@@ -45,6 +45,7 @@ export function ContactForm() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [turnstileToken, setTurnstileToken] = useState("");
+  const clearTurnstileToken = useCallback(() => setTurnstileToken(""), []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -347,8 +348,8 @@ export function ContactForm() {
             <Turnstile
               siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "0x4AAAAAACaF8eEKeVuSgb_P"}
               onVerify={setTurnstileToken}
-              onExpire={() => setTurnstileToken("")}
-              onError={() => setTurnstileToken("")}
+              onExpire={clearTurnstileToken}
+              onError={clearTurnstileToken}
               action="contact_form"
               size="flexible"
             />
