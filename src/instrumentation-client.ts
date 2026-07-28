@@ -49,6 +49,22 @@ Sentry.init({
     "Hydration failed",
     "Text content does not match",
   ],
+
+  beforeSend(event) {
+    const exception = event.exception?.values?.[0];
+    const isCircularJsonError = exception?.value?.includes(
+      "Converting circular structure to JSON"
+    );
+    const isInjectedAppendChildHook = exception?.stacktrace?.frames?.some(
+      (frame) => frame.function === "HTMLParagraphElement.appendChild"
+    );
+
+    if (isCircularJsonError && isInjectedAppendChildHook) {
+      return null;
+    }
+
+    return event;
+  },
 });
 
 export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;
