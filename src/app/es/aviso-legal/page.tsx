@@ -25,6 +25,7 @@ export default function AvisoLegalPage() {
         </p>
         <ul>
           <li><strong>Denominación social:</strong> {c.legalName} (marca comercial {c.name})</li>
+          <li><strong>Domicilio social:</strong> {c.address}</li>
           <li><strong>Forma jurídica:</strong> sociedad por acciones simplificada (SAS) de derecho francés</li>
           <li><strong>Registro:</strong> Registre du Commerce et des Sociétés de {c.rcs}</li>
           <li><strong>SIREN:</strong> {c.siren} · <strong>SIRET:</strong> {c.siret}</li>

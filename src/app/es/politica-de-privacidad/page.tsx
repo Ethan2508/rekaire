@@ -20,7 +20,7 @@ export default function PrivacidadPage() {
       <section>
         <h2>1. Responsable del tratamiento</h2>
         <p>
-          {c.legalName} (marca {c.name}), {c.rcs}, NIF-IVA {c.tva}. Contacto:{" "}
+          {c.legalName} (marca {c.name}), {c.address}, {c.rcs}, NIF-IVA {c.tva}. Contacto:{" "}
           <a href={`mailto:${siteEs.contact.email}`}>{siteEs.contact.email}</a>.
         </p>
       </section>

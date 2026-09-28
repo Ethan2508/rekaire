@@ -33,6 +33,9 @@ export default function MentionsLegalesPage() {
                   <strong>Raison sociale :</strong> {siteConfig.company.legalName}
                 </p>
                 <p className="text-gray-700 mb-2">
+                  <strong>Siège social :</strong> {siteConfig.company.address}
+                </p>
+                <p className="text-gray-700 mb-2">
                   <strong>SIREN :</strong> {siteConfig.company.siren}
                 </p>
                 <p className="text-gray-700 mb-2">
