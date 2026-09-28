@@ -121,6 +121,12 @@ function geoRedirect(request: NextRequest, host: string, site: SiteId): NextResp
 function routeSite(request: NextRequest): NextResponse {
   const host = getHost(request);
   const { pathname, searchParams } = request.nextUrl;
+
+  // rekaire.es → www.rekaire.es (comme rekaire.fr → www.rekaire.fr côté Vercel)
+  if (host === 'rekaire.es') {
+    const url = new URL(`${pathname}${request.nextUrl.search}`, SITE_URLS.es);
+    return NextResponse.redirect(url, 308);
+  }
   const { site, setPreviewCookie } = resolveSite(request, host);
 
   let response: NextResponse | null = null;

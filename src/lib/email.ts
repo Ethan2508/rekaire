@@ -4,7 +4,8 @@
 
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Clé absente sur les previews (Production uniquement) : le build passe, seuls les envois échouent
+const resend = new Resend(process.env.RESEND_API_KEY || "re_missing_preview_key");
 
 const FROM_EMAIL = process.env.EMAIL_FROM || "contact@rekaire.fr";
 const FROM_NAME = "Rekaire";

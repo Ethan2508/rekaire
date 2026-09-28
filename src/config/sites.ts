@@ -6,9 +6,10 @@
 
 export type SiteId = "fr" | "es";
 
+// Domaines principaux (www) : rekaire.fr et rekaire.es redirigent vers www
 export const SITE_URLS: Record<SiteId, string> = {
-  fr: "https://rekaire.fr",
-  es: "https://rekaire.es",
+  fr: "https://www.rekaire.fr",
+  es: "https://www.rekaire.es",
 };
 
 export const ES_HOSTS = ["rekaire.es", "www.rekaire.es"];

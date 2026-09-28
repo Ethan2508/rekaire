@@ -4,11 +4,14 @@
 
 import Stripe from "stripe";
 
-if (!process.env.STRIPE_SECRET_KEY) {
+// En production la clé est obligatoire (échec du build si absente).
+// Sur les previews, la clé live n'est volontairement pas exposée : le build passe
+// et seuls les appels Stripe échouent.
+if (!process.env.STRIPE_SECRET_KEY && process.env.VERCEL_ENV === "production") {
   throw new Error("STRIPE_SECRET_KEY is not defined");
 }
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_missing_preview_key", {
   apiVersion: "2026-01-28.clover",
   typescript: true,
 });
