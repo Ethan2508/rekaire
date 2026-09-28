@@ -14,6 +14,11 @@ const nextConfig: NextConfig = {
     unoptimized: process.env.NODE_ENV === 'development',
   },
   
+  // Deux root layouts (src/app/(fr) et src/app/es) : page 404 globale dans src/app/global-not-found.tsx
+  experimental: {
+    globalNotFound: true,
+  },
+
   // Variables d'environnement exposées
   env: {
     NEXT_PUBLIC_VERCEL_ENV: process.env.VERCEL_ENV || 'development',

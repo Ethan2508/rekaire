@@ -11,8 +11,10 @@ import { CTASection } from "@/components/sections";
 import { ProductSchema, BreadcrumbSchema } from "@/components/schema-org";
 import { siteConfig } from "@/config/site";
 import type { Metadata } from "next";
+import { hreflangAlternates } from "@/config/sites";
 
 export const metadata: Metadata = {
+  alternates: hreflangAlternates("fr", "/produit"),
   title: "RK01 - Système Autonome d'Extinction Incendie | Rekaire",
   description: "Découvrez le RK01, notre système autonome d'extinction incendie pour tableaux électriques. Protection automatique 24/7, sans maintenance, durée de vie 5 ans.",
 };

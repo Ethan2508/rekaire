@@ -15,6 +15,7 @@ interface TurnstileProps {
   action?: string;
   theme?: "light" | "dark" | "auto";
   size?: "normal" | "compact" | "flexible";
+  language?: string; // "auto" (langue du navigateur) ou code ISO, ex. "es"
 }
 
 declare global {
@@ -59,6 +60,7 @@ export function Turnstile({
   action = "lead_capture",
   theme = "auto",
   size = "flexible",
+  language = "auto",
 }: TurnstileProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const widgetIdRef = useRef<string | null>(null);
@@ -91,8 +93,9 @@ export function Turnstile({
       action,
       theme,
       size,
+      language,
     });
-  }, [siteKey, onVerify, onError, onExpire, action, theme, size]);
+  }, [siteKey, onVerify, onError, onExpire, action, theme, size, language]);
 
   useEffect(() => {
     let cancelled = false;

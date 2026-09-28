@@ -19,7 +19,47 @@ interface CookiePreferences {
 const CONSENT_KEY = "rekaire_cookie_consent";
 const PREFERENCES_KEY = "rekaire_cookie_preferences";
 
-export function CookieConsent() {
+const texts = {
+  fr: {
+    title: "🍪 Nous utilisons des cookies",
+    intro: "Nous utilisons des cookies pour améliorer votre expérience, analyser le trafic et personnaliser le contenu. En cliquant sur \"Tout accepter\", vous consentez à l'utilisation de tous les cookies.",
+    more: "En savoir plus",
+    policyHref: "/confidentialite",
+    acceptAll: "Tout accepter",
+    rejectAll: "Tout refuser",
+    customize: "Personnaliser",
+    settingsTitle: "Paramètres des cookies",
+    necessaryTitle: "Cookies nécessaires",
+    necessaryDesc: "Essentiels au fonctionnement du site (session, sécurité)",
+    analyticsTitle: "Cookies analytiques",
+    analyticsDesc: "Google Analytics pour comprendre l'utilisation du site",
+    marketingTitle: "Cookies marketing",
+    marketingDesc: "Meta Pixel et Google Ads pour des publicités pertinentes",
+    save: "Enregistrer mes préférences",
+    close: "Fermer",
+  },
+  es: {
+    title: "Utilizamos cookies",
+    intro: "Utilizamos cookies propias y de terceros para analizar el uso del sitio y medir nuestras campañas. Puede aceptarlas, rechazarlas o configurarlas.",
+    more: "Política de cookies",
+    policyHref: "/politica-de-cookies",
+    acceptAll: "Aceptar todas",
+    rejectAll: "Rechazar todas",
+    customize: "Configurar",
+    settingsTitle: "Configuración de cookies",
+    necessaryTitle: "Cookies técnicas",
+    necessaryDesc: "Imprescindibles para el funcionamiento y la seguridad del sitio",
+    analyticsTitle: "Cookies analíticas",
+    analyticsDesc: "Google Analytics, para conocer el uso del sitio",
+    marketingTitle: "Cookies publicitarias",
+    marketingDesc: "Google Ads, para medir y mejorar nuestras campañas",
+    save: "Guardar preferencias",
+    close: "Cerrar",
+  },
+} as const;
+
+export function CookieConsent({ locale = "fr" }: { locale?: keyof typeof texts } = {}) {
+  const t = texts[locale];
   const [showBanner, setShowBanner] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [preferences, setPreferences] = useState<CookiePreferences>({
@@ -127,14 +167,12 @@ export function CookieConsent() {
                 </div>
                 <div className="flex-1">
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                    🍪 Nous utilisons des cookies
+                    {t.title}
                   </h3>
                   <p className="text-gray-600 text-sm leading-relaxed mb-4">
-                    Nous utilisons des cookies pour améliorer votre expérience, analyser le trafic 
-                    et personnaliser le contenu. En cliquant sur &quot;Tout accepter&quot;, vous consentez 
-                    à l&apos;utilisation de tous les cookies.{" "}
-                    <Link href="/confidentialite" className="text-orange-600 hover:underline">
-                      En savoir plus
+                    {t.intro}{" "}
+                    <Link href={t.policyHref} className="text-orange-600 hover:underline">
+                      {t.more}
                     </Link>
                   </p>
 
@@ -144,21 +182,21 @@ export function CookieConsent() {
                       className="flex-1 sm:flex-none px-6 py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
                     >
                       <Check className="w-4 h-4" />
-                      Tout accepter
+                      {t.acceptAll}
                     </button>
                     <button
                       onClick={handleRejectAll}
                       className="flex-1 sm:flex-none px-6 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
                     >
                       <X className="w-4 h-4" />
-                      Tout refuser
+                      {t.rejectAll}
                     </button>
                     <button
                       onClick={() => setShowSettings(true)}
                       className="flex-1 sm:flex-none px-6 py-2.5 border border-gray-300 hover:border-gray-400 text-gray-700 font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
                     >
                       <Settings className="w-4 h-4" />
-                      Personnaliser
+                      {t.customize}
                     </button>
                   </div>
                 </div>
@@ -169,10 +207,11 @@ export function CookieConsent() {
             <div className="p-6 sm:p-8">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-semibold text-gray-900">
-                  Paramètres des cookies
+                  {t.settingsTitle}
                 </h3>
                 <button
                   onClick={() => setShowSettings(false)}
+                  aria-label={t.close}
                   className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
                 >
                   <X className="w-5 h-5 text-gray-500" />
@@ -183,9 +222,9 @@ export function CookieConsent() {
                 {/* Cookies nécessaires */}
                 <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                   <div>
-                    <h4 className="font-medium text-gray-900">Cookies nécessaires</h4>
+                    <h4 className="font-medium text-gray-900">{t.necessaryTitle}</h4>
                     <p className="text-sm text-gray-500">
-                      Essentiels au fonctionnement du site (session, sécurité)
+                      {t.necessaryDesc}
                     </p>
                   </div>
                   <div className="w-12 h-6 bg-orange-500 rounded-full flex items-center justify-end px-1 cursor-not-allowed opacity-60">
@@ -196,9 +235,9 @@ export function CookieConsent() {
                 {/* Cookies analytics */}
                 <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                   <div>
-                    <h4 className="font-medium text-gray-900">Cookies analytiques</h4>
+                    <h4 className="font-medium text-gray-900">{t.analyticsTitle}</h4>
                     <p className="text-sm text-gray-500">
-                      Google Analytics pour comprendre l&apos;utilisation du site
+                      {t.analyticsDesc}
                     </p>
                   </div>
                   <button
@@ -214,9 +253,9 @@ export function CookieConsent() {
                 {/* Cookies marketing */}
                 <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                   <div>
-                    <h4 className="font-medium text-gray-900">Cookies marketing</h4>
+                    <h4 className="font-medium text-gray-900">{t.marketingTitle}</h4>
                     <p className="text-sm text-gray-500">
-                      Meta Pixel et Google Ads pour des publicités pertinentes
+                      {t.marketingDesc}
                     </p>
                   </div>
                   <button
@@ -235,13 +274,13 @@ export function CookieConsent() {
                   onClick={handleSavePreferences}
                   className="flex-1 px-6 py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-medium rounded-lg transition-colors"
                 >
-                  Enregistrer mes préférences
+                  {t.save}
                 </button>
                 <button
                   onClick={handleAcceptAll}
                   className="px-6 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-colors"
                 >
-                  Tout accepter
+                  {t.acceptAll}
                 </button>
               </div>
             </div>

@@ -3,6 +3,8 @@
 // ============================================
 
 import dynamic from "next/dynamic";
+import type { Metadata } from "next";
+import { hreflangAlternates } from "@/config/sites";
 import {
   Header,
   Footer,
@@ -19,6 +21,10 @@ const BlogPreviewSection = dynamic(() => import("@/components/sections/blog-prev
 const GuaranteesSection = dynamic(() => import("@/components/sections/guarantees").then((m) => ({ default: m.GuaranteesSection })));
 const CTASection = dynamic(() => import("@/components/sections/cta").then((m) => ({ default: m.CTASection })));
 const LiveSalesCounter = dynamic(() => import("@/components/live-sales-counter").then((m) => ({ default: m.LiveSalesCounter })));
+
+export const metadata: Metadata = {
+  alternates: hreflangAlternates("fr", "/"),
+};
 
 export default function HomePage() {
   return (

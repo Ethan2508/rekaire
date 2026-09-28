@@ -12,7 +12,13 @@ import { usePathname } from "next/navigation";
 import { CTAButton } from "./cta-button";
 import { Menu, X } from "lucide-react";
 
-const navLinks = [
+export interface NavLink {
+  href: string;
+  label: string;
+  scrollToTop?: boolean;
+}
+
+const defaultNavLinks: NavLink[] = [
   { href: "/produit", label: "Notre solution", scrollToTop: true },
   { href: "/a-propos", label: "À propos" },
   { href: "/faq", label: "FAQ" },
@@ -20,10 +26,18 @@ const navLinks = [
   { href: "/contact", label: "Contact" },
 ];
 
-export function Header() {
+interface HeaderProps {
+  // Par défaut : navigation et CTA du site français
+  navLinks?: NavLink[];
+  renderCTA?: (placement: "desktop" | "mobile") => React.ReactNode;
+  menuLabel?: string;
+}
+
+export function Header({ navLinks = defaultNavLinks, renderCTA, menuLabel = "Menu" }: HeaderProps = {}) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const pathname = usePathname();
+  // Sur rekaire.es, les pages sont servies via le préfixe interne /es
+  const pathname = usePathname()?.replace(/^\/es(?=\/|$)/, "") || "/";
 
   useEffect(() => {
     const handleScroll = () => {
@@ -94,14 +108,14 @@ export function Header() {
 
             {/* Desktop CTA */}
             <div className="hidden lg:flex items-center">
-              <CTAButton location="header" size="default" />
+              {renderCTA ? renderCTA("desktop") : <CTAButton location="header" size="default" />}
             </div>
 
             {/* Mobile Menu Button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="lg:hidden w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-gray-200 transition-colors"
-              aria-label="Menu"
+              aria-label={menuLabel}
             >
               <AnimatePresence mode="wait">
                 {mobileMenuOpen ? (
@@ -188,11 +202,13 @@ export function Header() {
                   transition={{ delay: navLinks.length * 0.05 }}
                   className="pt-4 border-t border-gray-200"
                 >
-                  <CTAButton
-                    location="header"
-                    size="default"
-                    className="w-full justify-center"
-                  />
+                  {renderCTA ? renderCTA("mobile") : (
+                    <CTAButton
+                      location="header"
+                      size="default"
+                      className="w-full justify-center"
+                    />
+                  )}
                 </motion.div>
               </nav>
             </motion.div>

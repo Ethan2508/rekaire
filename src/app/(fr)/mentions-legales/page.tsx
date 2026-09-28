@@ -5,8 +5,10 @@
 import { Header, Footer } from "@/components";
 import { siteConfig } from "@/config/site";
 import type { Metadata } from "next";
+import { hreflangAlternates } from "@/config/sites";
 
 export const metadata: Metadata = {
+  alternates: hreflangAlternates("fr", "/mentions-legales"),
   title: "Mentions légales",
   description: "Mentions légales du site Rekaire",
 };

@@ -5,8 +5,10 @@
 import { Header, Footer } from "@/components";
 import { ContactHero, ContactForm, ContactInfo } from "@/components/pages/contact";
 import type { Metadata } from "next";
+import { hreflangAlternates } from "@/config/sites";
 
 export const metadata: Metadata = {
+  alternates: hreflangAlternates("fr", "/contact"),
   title: "Contact | Rekaire",
   description: "Contactez l'équipe Rekaire - Questions sur le RK01, demandes de devis professionnels, support technique. Réponse sous 24-48h.",
 };

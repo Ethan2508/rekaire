@@ -13,12 +13,21 @@ interface Product360ViewerProps {
   totalFrames?: number;
   basePath?: string;
   className?: string;
+  // Textes (français par défaut)
+  altPrefix?: string;
+  dragHint?: string;
+  loadingLabel?: string;
+  viewLabel?: string;
 }
 
 export function Product360Viewer({
   totalFrames = 251,
   basePath = "/images/product/360/frame_",
   className = "",
+  altPrefix = "Vue 360° du RK01 - Image",
+  dragHint = "Glissez pour faire tourner",
+  loadingLabel = "Chargement 360°...",
+  viewLabel = "Vue 360°",
 }: Product360ViewerProps) {
   const [currentFrame, setCurrentFrame] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
@@ -161,7 +170,7 @@ export function Product360Viewer({
         {/* Image principale toujours rendue (frame_001 sert de LCP) */}
         <Image
           src={`${basePath}${String(currentFrame).padStart(3, "0")}.webp`}
-          alt={`Vue 360° du RK01 - Image ${currentFrame}`}
+          alt={`${altPrefix} ${currentFrame}`}
           fill
           sizes="(max-width: 1024px) 100vw, 50vw"
           className="object-contain"
@@ -180,7 +189,7 @@ export function Product360Viewer({
               <RotateCw className="w-4 h-4 text-orange-500" />
             </motion.div>
             <p className="text-sm text-gray-600">
-              Chargement 360°... {Math.round((loadedCount / totalFrames) * 100)}%
+              {loadingLabel} {Math.round((loadedCount / totalFrames) * 100)}%
             </p>
           </div>
         )}
@@ -194,7 +203,7 @@ export function Product360Viewer({
           >
             <div className="bg-black/60 text-white px-4 py-2 rounded-full flex items-center gap-2">
               <Hand className="w-5 h-5" />
-              <span className="text-sm">Glissez pour faire tourner</span>
+              <span className="text-sm">{dragHint}</span>
             </div>
           </motion.div>
         )}
@@ -220,7 +229,7 @@ export function Product360Viewer({
           <div className="flex justify-between items-center mt-2 text-sm text-gray-500">
             <span className="flex items-center gap-1">
               <RotateCw className="w-4 h-4" />
-              Vue 360°
+              {viewLabel}
             </span>
             <span className="text-xs">{Math.round((currentFrame / totalFrames) * 100)}%</span>
           </div>

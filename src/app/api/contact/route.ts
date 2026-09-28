@@ -56,10 +56,65 @@ function sanitizeInput(input: string): string {
     .substring(0, 5000); // Limit length
 }
 
-function isValidPhone(phone: string): boolean {
+function isValidPhone(phone: string, locale: Locale): boolean {
+  const cleanPhone = phone.replace(/[\s.()-]/g, '');
+  if (locale === 'es') {
+    // Formato internacional (clientes españoles y extranjeros)
+    return /^(\+|00)?[0-9]{9,15}$/.test(cleanPhone);
+  }
   // Accepte les formats français et internationaux
-  const cleanPhone = phone.replace(/[\s.-]/g, '');
   return /^(\+33|0033|0)?[1-9][0-9]{8,9}$/.test(cleanPhone);
+}
+
+// ========================================
+// Site espagnol (formulaire professionnel rekaire.es)
+// ========================================
+
+type Locale = 'fr' | 'es';
+
+const MESSAGES = {
+  fr: {
+    turnstile: 'La vérification anti-spam a échoué. Veuillez réessayer.',
+    required: 'Veuillez remplir tous les champs obligatoires (nom, email, message)',
+    nameLength: 'Le nom doit contenir au moins 2 caractères',
+    messageLength: 'Le message doit contenir au moins 10 caractères',
+    email: 'Adresse email invalide',
+    phone: 'Numéro de téléphone invalide',
+    spam: 'Votre message a été identifié comme spam',
+    consent: '',
+    success: 'Votre message a bien été envoyé. Nous vous répondrons dans les plus brefs délais.',
+    error: 'Une erreur est survenue. Veuillez réessayer.',
+  },
+  es: {
+    turnstile: 'La verificación antispam ha fallado. Inténtalo de nuevo.',
+    required: 'Completa todos los campos obligatorios.',
+    nameLength: 'El nombre debe tener al menos 2 caracteres.',
+    messageLength: 'El mensaje debe tener al menos 10 caracteres.',
+    email: 'Dirección de email no válida.',
+    phone: 'Número de teléfono no válido.',
+    spam: 'Tu mensaje ha sido identificado como spam.',
+    consent: 'Debes aceptar la política de privacidad.',
+    success: 'Tu solicitud se ha enviado correctamente. Te responderemos lo antes posible.',
+    error: 'Se ha producido un error. Inténtalo de nuevo.',
+  },
+} as const;
+
+const ES_REQUEST_TYPES: Record<string, string> = {
+  proyecto: 'Estudiar un proyecto',
+  documentacion: 'Solicitud de documentación técnica',
+  distribuidor: 'Distribuidor',
+  contacto: 'Contacto',
+};
+
+// Destinataire des demandes espagnoles (contacto@rekaire.es une fois la boîte OVH active)
+const ES_RECIPIENT = process.env.CONTACT_EMAIL_ES || 'contact@rekaire.fr';
+
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
 }
 
 async function verifyTurnstile(token: string, ip: string): Promise<boolean> {
@@ -110,7 +165,16 @@ export async function POST(request: NextRequest) {
       website,
       fax,
       turnstileToken,
+      // Champs du formulaire professionnel espagnol
+      requestType,
+      province,
+      activity,
+      panels,
+      panelSize,
+      consent,
     } = body;
+    const locale: Locale = body.locale === 'es' ? 'es' : 'fr';
+    const t = MESSAGES[locale];
     
     // ========================================
     // Honeypot check (les bots remplissent ces champs)
@@ -129,55 +193,42 @@ export async function POST(request: NextRequest) {
     // a expiré doit pouvoir réessayer au lieu de perdre son message
     if (!turnstileToken || !await verifyTurnstile(turnstileToken, ip)) {
       console.log('[Contact API] Soumission bloquée par Turnstile');
-      return NextResponse.json(
-        { error: 'La vérification anti-spam a échoué. Veuillez réessayer.' },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: t.turnstile }, { status: 403 });
     }
     
     // ========================================
     // Validation des champs requis
     // ========================================
-    if (!name || !email || !message) {
-      return NextResponse.json(
-        { error: 'Veuillez remplir tous les champs obligatoires (nom, email, message)' },
-        { status: 400 }
-      );
+    if (!name || !email || !message ||
+        (locale === 'es' && (!company || !phone || !province || !activity))) {
+      return NextResponse.json({ error: t.required }, { status: 400 });
+    }
+
+    if (locale === 'es' && consent !== true) {
+      return NextResponse.json({ error: t.consent }, { status: 400 });
     }
     
     // Longueur minimale
     if (name.length < 2) {
-      return NextResponse.json(
-        { error: 'Le nom doit contenir au moins 2 caractères' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: t.nameLength }, { status: 400 });
     }
     
     if (message.length < 10) {
-      return NextResponse.json(
-        { error: 'Le message doit contenir au moins 10 caractères' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: t.messageLength }, { status: 400 });
     }
     
     // ========================================
     // Validation email
     // ========================================
     if (!isValidEmail(email)) {
-      return NextResponse.json(
-        { error: 'Adresse email invalide' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: t.email }, { status: 400 });
     }
     
     // ========================================
     // Validation téléphone (si fourni)
     // ========================================
-    if (phone && !isValidPhone(phone)) {
-      return NextResponse.json(
-        { error: 'Numéro de téléphone invalide' },
-        { status: 400 }
-      );
+    if (phone && !isValidPhone(phone, locale)) {
+      return NextResponse.json({ error: t.phone }, { status: 400 });
     }
     
     // ========================================
@@ -185,10 +236,7 @@ export async function POST(request: NextRequest) {
     // ========================================
     if (containsSpam(name) || containsSpam(message) || containsSpam(subject || '')) {
       console.log('🚫 Spam détecté dans formulaire contact');
-      return NextResponse.json(
-        { error: 'Votre message a été identifié comme spam' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: t.spam }, { status: 400 });
     }
     
     // ========================================
@@ -204,6 +252,19 @@ export async function POST(request: NextRequest) {
       timestamp: new Date().toISOString(),
       ip,
     };
+
+    // Détails professionnels (site espagnol), échappés pour l'email
+    const esDetails: [string, string][] = locale === 'es'
+      ? ([
+          ['Solicitud', ES_REQUEST_TYPES[requestType] || 'Contacto'],
+          ['Provincia', province],
+          ['Actividad', activity],
+          ['Nº aprox. de cuadros', panels],
+          ['Dimensiones / volumen', panelSize],
+        ] as [string, unknown][])
+          .filter(([, v]) => typeof v === 'string' && v.trim() !== '')
+          .map(([k, v]) => [k, escapeHtml(sanitizeInput(v as string).substring(0, 200))])
+      : [];
     
     // ========================================
     // Log pour debug (en prod, envoyer par email)
@@ -223,11 +284,13 @@ export async function POST(request: NextRequest) {
         const { Resend } = await import('resend');
         const resend = new Resend(process.env.RESEND_API_KEY);
         
+        const esSubject = `[ES] ${ES_REQUEST_TYPES[requestType] || 'Contacto'} – ${sanitizedData.company || sanitizedData.name}`;
+
         await resend.emails.send({
-          from: 'Rekaire Contact <noreply@rekaire.fr>',
-          to: 'contact@rekaire.fr',
+          from: locale === 'es' ? 'Rekaire España <noreply@rekaire.fr>' : 'Rekaire Contact <noreply@rekaire.fr>',
+          to: locale === 'es' ? ES_RECIPIENT : 'contact@rekaire.fr',
           replyTo: sanitizedData.email,
-          subject: `[Contact] ${sanitizedData.subject}`,
+          subject: locale === 'es' ? esSubject : `[Contact] ${sanitizedData.subject}`,
           html: `
             <!DOCTYPE html>
             <html>
@@ -272,6 +335,11 @@ export async function POST(request: NextRequest) {
                     <span class="label">Sujet :</span> 
                     <span class="value">${sanitizedData.subject}</span>
                   </div>
+                  ${esDetails.map(([label, value]) => `
+                  <div class="field">
+                    <span class="label">${label} :</span> 
+                    <span class="value">${value}</span>
+                  </div>`).join('')}
                   <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 20px 0;">
                   <div class="field">
                     <span class="label">Message :</span>
@@ -299,7 +367,7 @@ export async function POST(request: NextRequest) {
     
     return NextResponse.json({ 
       success: true,
-      message: 'Votre message a bien été envoyé. Nous vous répondrons dans les plus brefs délais.'
+      message: t.success,
     });
     
   } catch (error) {

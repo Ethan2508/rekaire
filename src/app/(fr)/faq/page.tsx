@@ -9,8 +9,10 @@ import { FAQContact } from "@/components/pages/faq/faq-contact";
 import { FAQSchema, BreadcrumbSchema } from "@/components/schema-org";
 import { siteConfig } from "@/config/site";
 import type { Metadata } from "next";
+import { hreflangAlternates } from "@/config/sites";
 
 export const metadata: Metadata = {
+  alternates: hreflangAlternates("fr", "/faq"),
   title: "FAQ - Questions fréquentes | Rekaire",
   description: "Retrouvez toutes les réponses à vos questions sur le RK01, son installation, son fonctionnement et notre service client.",
 };

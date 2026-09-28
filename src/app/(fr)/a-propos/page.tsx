@@ -9,8 +9,10 @@ import { AboutValues } from "@/components/pages/about/about-values";
 import { AboutTeam } from "@/components/pages/about/about-team";
 import { CTASection } from "@/components/sections";
 import type { Metadata } from "next";
+import { hreflangAlternates } from "@/config/sites";
 
 export const metadata: Metadata = {
+  alternates: hreflangAlternates("fr", "/a-propos"),
   title: "À propos - Qui sommes-nous | Rekaire",
   description: "Découvrez Rekaire, notre mission de protection contre les incendies électriques et notre engagement pour la sécurité de vos installations.",
 };
