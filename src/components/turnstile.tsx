@@ -29,6 +29,28 @@ declare global {
   }
 }
 
+// Chargement unique du script, partagé entre tous les widgets de la page
+let scriptPromise: Promise<void> | null = null;
+
+function loadTurnstileScript(): Promise<void> {
+  if (window.turnstile) return Promise.resolve();
+  if (!scriptPromise) {
+    scriptPromise = new Promise((resolve) => {
+      window.onTurnstileLoad = () => resolve();
+      const script = document.createElement("script");
+      script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onTurnstileLoad";
+      script.async = true;
+      script.defer = true;
+      script.onerror = () => {
+        // Permettre une nouvelle tentative au prochain montage
+        scriptPromise = null;
+      };
+      document.head.appendChild(script);
+    });
+  }
+  return scriptPromise;
+}
+
 export function Turnstile({
   siteKey,
   onVerify,
@@ -40,7 +62,6 @@ export function Turnstile({
 }: TurnstileProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const widgetIdRef = useRef<string | null>(null);
-  const scriptLoadedRef = useRef(false);
 
   const renderWidget = useCallback(() => {
     if (!containerRef.current || !window.turnstile) return;
@@ -74,24 +95,14 @@ export function Turnstile({
   }, [siteKey, onVerify, onError, onExpire, action, theme, size]);
 
   useEffect(() => {
-    // Load Turnstile script if not already loaded
-    if (!scriptLoadedRef.current && !window.turnstile) {
-      scriptLoadedRef.current = true;
-      
-      window.onTurnstileLoad = () => {
-        renderWidget();
-      };
+    let cancelled = false;
 
-      const script = document.createElement("script");
-      script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onTurnstileLoad";
-      script.async = true;
-      script.defer = true;
-      document.head.appendChild(script);
-    } else if (window.turnstile) {
-      renderWidget();
-    }
+    loadTurnstileScript().then(() => {
+      if (!cancelled) renderWidget();
+    });
 
     return () => {
+      cancelled = true;
       if (widgetIdRef.current && window.turnstile) {
         try {
           window.turnstile.remove(widgetIdRef.current);
@@ -99,6 +110,7 @@ export function Turnstile({
           // Ignore cleanup errors
         }
       }
+      widgetIdRef.current = null;
     };
   }, [renderWidget]);
 

@@ -5,7 +5,7 @@
 // Parcours optimisé avec étapes + CGV conditionnelles
 // ============================================
 
-import { useState, useEffect, useRef, Suspense } from "react";
+import { useState, useEffect, useRef, useCallback, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -56,6 +56,11 @@ function CheckoutContent() {
 
   // Turnstile CAPTCHA
   const { setToken: setTurnstileToken, getToken: getTurnstileToken } = useTurnstile();
+  // Widget dédié à la demande de devis : un token Turnstile est à usage unique
+  // et celui du dessus est déjà consommé par /api/lead
+  const [quoteTurnstileToken, setQuoteTurnstileToken] = useState("");
+  const [quoteTurnstileKey, setQuoteTurnstileKey] = useState(0);
+  const clearQuoteTurnstileToken = useCallback(() => setQuoteTurnstileToken(""), []);
 
   const [quantity, setQuantity] = useState(Math.max(1, Math.min(100, initialQty)));
   const [step, setStep] = useState(1);
@@ -351,23 +356,30 @@ function CheckoutContent() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            firstName: formData.firstName,
-            lastName: formData.lastName,
+            name: `${formData.firstName} ${formData.lastName}`.trim(),
             email: formData.email,
             phone: formData.phone,
             company: isCompany ? formData.companyName : "",
             subject: "devis",
             message: `Demande de devis pour ${quantity} unités RK01.\n\nAdresse de livraison :\n${formData.address}\n${formData.postalCode} ${formData.city}\n\nMessage : ${formData.message || "Aucun message supplémentaire"}`,
+            turnstileToken: quoteTurnstileToken,
           }),
         });
 
         if (response.ok) {
           router.push("/contact?success=devis");
         } else {
+          const data = await response.json().catch(() => ({}));
+          setErrors({ submit: data.error || "Erreur lors de l'envoi de la demande de devis. Veuillez réessayer." });
+          setQuoteTurnstileToken("");
+          setQuoteTurnstileKey((k) => k + 1);
           setIsLoading(false);
         }
       } catch (error) {
         console.error("Quote request error:", error);
+        setErrors({ submit: "Erreur de connexion. Veuillez réessayer." });
+        setQuoteTurnstileToken("");
+        setQuoteTurnstileKey((k) => k + 1);
         setIsLoading(false);
       }
     } else {
@@ -1071,6 +1083,18 @@ function CheckoutContent() {
                           <p className="text-red-500 text-sm font-medium bg-red-50 border border-red-200 rounded-lg px-4 py-2">{errors.submit}</p>
                         )}
 
+                        {isQuoteMode && (
+                          <Turnstile
+                            key={quoteTurnstileKey}
+                            siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "0x4AAAAAACaF8eEKeVuSgb_P"}
+                            onVerify={setQuoteTurnstileToken}
+                            onExpire={clearQuoteTurnstileToken}
+                            onError={clearQuoteTurnstileToken}
+                            action="quote_request"
+                            size="flexible"
+                          />
+                        )}
+
                         <div className="flex gap-3">
                           <button
                             type="button"
@@ -1084,7 +1108,7 @@ function CheckoutContent() {
                           {isQuoteMode ? (
                             <button
                               type="submit"
-                              disabled={isLoading}
+                              disabled={isLoading || !quoteTurnstileToken}
                               className="flex-1 py-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 disabled:opacity-50"
                             >
                               {isLoading ? (

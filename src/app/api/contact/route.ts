@@ -125,9 +125,14 @@ export async function POST(request: NextRequest) {
       || request.headers.get('x-real-ip')
       || 'unknown';
 
+    // Erreur explicite (et non faux succès) : un vrai client dont le token
+    // a expiré doit pouvoir réessayer au lieu de perdre son message
     if (!turnstileToken || !await verifyTurnstile(turnstileToken, ip)) {
       console.log('[Contact API] Soumission bloquée par Turnstile');
-      return NextResponse.json({ success: true });
+      return NextResponse.json(
+        { error: 'La vérification anti-spam a échoué. Veuillez réessayer.' },
+        { status: 403 }
+      );
     }
     
     // ========================================

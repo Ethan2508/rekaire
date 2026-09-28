@@ -45,6 +45,8 @@ export function ContactForm() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [turnstileToken, setTurnstileToken] = useState("");
+  // Incrémenté pour remonter le widget et obtenir un nouveau token (usage unique)
+  const [turnstileKey, setTurnstileKey] = useState(0);
   const clearTurnstileToken = useCallback(() => setTurnstileToken(""), []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -86,7 +88,10 @@ export function ContactForm() {
       setIsSubmitted(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Une erreur est survenue. Veuillez réessayer.");
+      setTurnstileKey((k) => k + 1);
     } finally {
+      // Le token a été consommé par le serveur, qu'il ait réussi ou non
+      setTurnstileToken("");
       setIsSubmitting(false);
     }
   };
@@ -346,6 +351,7 @@ export function ContactForm() {
             )}
 
             <Turnstile
+              key={turnstileKey}
               siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "0x4AAAAAACaF8eEKeVuSgb_P"}
               onVerify={setTurnstileToken}
               onExpire={clearTurnstileToken}
