@@ -63,6 +63,16 @@ Sentry.init({
       return null;
     }
 
+    // Scripts injectés par les navigateurs intégrés des applis (Facebook, Instagram, Messenger…),
+    // ex. « Java object is gone » levé par app://navigation_performance_logger_android
+    // quand le visiteur quitte la page : rien à voir avec le site.
+    const isInAppBrowserScript = exception?.stacktrace?.frames?.some(
+      (frame) => frame.filename?.startsWith("app://") && !frame.filename.startsWith("app:///_next/")
+    );
+    if (isInAppBrowserScript) {
+      return null;
+    }
+
     return event;
   },
 });
