@@ -12,6 +12,8 @@ import {
   createOrder as createSupabaseOrder,
   orderExistsByStripeSession,
   getNextInvoiceNumber,
+  setOrderInvoiceNumber,
+  OrderInsertError,
 } from "@/lib/supabase-admin";
 import { generateInvoicePDFBase64 } from "@/lib/invoice";
 import type { InvoiceData } from "@/lib/invoice";
@@ -30,7 +32,12 @@ export type FulfillmentResult =
 // Appelée par le webhook Stripe, par la page de succès (fallback) et par le
 // rapprochement quotidien, pour qu'une commande payée finisse toujours en base.
 // ============================================
-export async function fulfillPaidSession(sessionId: string, source: FulfillmentSource): Promise<FulfillmentResult> {
+export async function fulfillPaidSession(
+  sessionId: string,
+  source: FulfillmentSource,
+  options: { sendEmails?: boolean } = {}
+): Promise<FulfillmentResult> {
+  const sendEmails = options.sendEmails ?? true;
   const log = (msg: string, extra?: unknown) => console.log(`[Fulfillment:${source}] ${msg}`, extra ?? "");
 
   if (await orderExistsByStripeSession(sessionId)) {
@@ -107,17 +114,8 @@ export async function fulfillPaidSession(sessionId: string, source: FulfillmentS
   const shippingDetails = (session as any).shipping_details;
   const billingAddress = session.customer_details?.address;
   
-  // ============================================
-  // GÉNÉRATION DU NUMÉRO DE FACTURE (notre système, pas Stripe)
-  // ============================================
   let invoiceNumber: string | undefined;
-  try {
-    invoiceNumber = await getNextInvoiceNumber();
-    console.log("[Fulfillment] Generated invoice number:", invoiceNumber);
-  } catch (invoiceNumError) {
-    console.error("[Fulfillment] Failed to generate invoice number:", invoiceNumError);
-  }
-  
+
   try {
     const amountTotal = session.amount_total || 0;
     const totalTTC = amountTotal;
@@ -174,10 +172,20 @@ export async function fulfillPaidSession(sessionId: string, source: FulfillmentS
       // Code promo & Facture maison
       promo_code: promoCode,
       promo_discount: promoDiscount,
-      invoice_number: invoiceNumber,
       invoice_url: undefined, // On n'héberge pas le PDF, il est envoyé par email
     });
-    console.log("[Fulfillment] Order created in Supabase with full billing/shipping addresses");
+    log("Order created in Supabase with full billing/shipping addresses");
+
+    // Numéro de facture attribué uniquement à une commande réellement enregistrée
+    try {
+      invoiceNumber = await getNextInvoiceNumber();
+      await setOrderInvoiceNumber(session.id, invoiceNumber);
+      log("Invoice number:", invoiceNumber);
+    } catch (invoiceNumError) {
+      console.error(`[Fulfillment:${source}] Failed to assign invoice number:`, invoiceNumError);
+      Sentry.captureException(invoiceNumError, { tags: { api: "fulfillment", source, step: "invoice-number" } });
+      invoiceNumber = undefined;
+    }
 
     // Décrémenter le stock
     await decrementStock('rk01', expectedQuantity); // 🔒 Utiliser la quantité validée
@@ -188,6 +196,11 @@ export async function fulfillPaidSession(sessionId: string, source: FulfillmentS
     console.log("[Fulfillment] Sales counter updated to", newCount);
 
   } catch (supabaseError) {
+    if (supabaseError instanceof OrderInsertError && supabaseError.isDuplicate) {
+      // Un autre traitement (webhook / page de succès) vient d'enregistrer cette session
+      log(`Commande déjà enregistrée en parallèle pour ${sessionId}, aucun email renvoyé`);
+      return { status: "duplicate" };
+    }
     console.error(`[Fulfillment:${source}] Error updating Supabase:`, supabaseError);
     Sentry.captureException(supabaseError, {
       tags: { api: "fulfillment", source, step: "supabase-update" },
@@ -347,13 +360,18 @@ export async function fulfillPaidSession(sessionId: string, source: FulfillmentS
     }
   }
 
+  if (!sendEmails) {
+    log("Order recorded without emails (repair mode):", orderId);
+    return { status: "created", orderNumber: orderId, emailSent: false };
+  }
+
   // Envoie l'email de confirmation au client (avec facture PDF en pièce jointe)
   const emailResult = await sendOrderConfirmationEmail(emailData);
 
   if (emailResult.success) {
-    console.log("[Fulfillment] Confirmation email sent to:", customerEmail);
+    log("Confirmation email sent to:", customerEmail);
   } else {
-    console.error("[Fulfillment] Failed to send confirmation email");
+    console.error(`[Fulfillment:${source}] Failed to send confirmation email`);
   }
 
   // Envoie notification admin (avec tous les détails)

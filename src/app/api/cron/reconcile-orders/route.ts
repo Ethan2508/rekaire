@@ -15,7 +15,7 @@ export const maxDuration = 120;
 
 const LOOKBACK_HOURS = 72;
 
-async function reconcile() {
+async function reconcile(sendEmails: boolean) {
   const since = Math.floor(Date.now() / 1000) - LOOKBACK_HOURS * 3600;
   const missing: string[] = [];
   const recovered: string[] = [];
@@ -30,7 +30,7 @@ async function reconcile() {
     const label = `${session.metadata?.order_id || "?"} — ${((session.amount_total || 0) / 100).toFixed(2)} € — ${session.customer_details?.email || "?"} (${session.id})`;
     missing.push(label);
     try {
-      const result = await fulfillPaidSession(session.id, "reconciliation");
+      const result = await fulfillPaidSession(session.id, "reconciliation", { sendEmails });
       (result.status === "created" ? recovered : failed).push(`${label} → ${result.status}`);
     } catch (error) {
       failed.push(`${label} → ${error instanceof Error ? error.message : String(error)}`);
@@ -63,7 +63,9 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const result = await reconcile();
+    // ?silent=1 : réparation manuelle, enregistre sans renvoyer d'emails au client
+    const silent = request.nextUrl.searchParams.get("silent") === "1";
+    const result = await reconcile(!silent);
     console.log("[Reconcile] Résultat :", result);
     return NextResponse.json(result);
   } catch (error) {

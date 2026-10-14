@@ -48,8 +48,26 @@ export async function GET(request: NextRequest) {
           });
         }
 
-        // Session payée mais absente en base : le webhook n'est pas (encore) passé.
-        // Filet de sécurité : on enregistre la commande nous-mêmes (idempotent).
+        // Session payée mais absente en base : on laisse d'abord quelques secondes au webhook
+        for (let attempt = 0; attempt < 4; attempt++) {
+          await new Promise((r) => setTimeout(r, 2000));
+          const { data: late } = await supabaseAdmin
+            .from("orders")
+            .select("id, status, order_number, customer_email")
+            .eq("stripe_session_id", sessionId)
+            .single();
+          if (late) {
+            return NextResponse.json({
+              verified: true,
+              orderId: late.id,
+              orderNumber: late.order_number,
+              status: late.status,
+              email: late.customer_email,
+            });
+          }
+        }
+
+        // Toujours rien : le webhook n'est pas passé. Filet de sécurité (idempotent, unicité en base).
         try {
           const result = await fulfillPaidSession(sessionId, "success-page");
           console.log(`[VerifyPayment] Fallback fulfillment: ${result.status}`);

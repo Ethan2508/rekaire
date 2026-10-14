@@ -175,17 +175,19 @@ export async function createOrder(orderData: {
   promo_discount?: number;
   invoice_number?: string;
   invoice_url?: string;
-}): Promise<string | null> {
-  // Récupérer le product_id
-  const { data: product } = await supabaseAdmin
-    .from('products')
-    .select('id')
-    .eq('slug', orderData.product_slug)
-    .single();
-
-  if (!product) {
-    console.error('Product not found:', orderData.product_slug);
-    return null;
+}): Promise<string> {
+  // product_id : la table products peut ne pas exister (c'est le cas en production).
+  // On ne doit JAMAIS perdre une commande pour ça : on retombe sur l'identifiant historique du RK01.
+  let productId: string = LEGACY_PRODUCT_IDS[orderData.product_slug] ?? LEGACY_PRODUCT_IDS.rk01;
+  try {
+    const { data: product } = await supabaseAdmin
+      .from('products')
+      .select('id')
+      .eq('slug', orderData.product_slug)
+      .single();
+    if (product?.id) productId = product.id;
+  } catch {
+    // Table absente : on garde l'identifiant historique
   }
 
   const { data, error } = await supabaseAdmin
@@ -194,10 +196,11 @@ export async function createOrder(orderData: {
       order_number: orderData.order_number,
       stripe_session_id: orderData.stripe_session_id,
       stripe_payment_intent: orderData.stripe_payment_intent,
-      product_id: product.id,
+      product_id: productId,
       quantity: orderData.quantity,
       unit_price_ht: orderData.unit_price_ht,
       total_ht: orderData.total_ht,
+      tva_amount: orderData.total_ttc - orderData.total_ht,
       total_ttc: orderData.total_ttc,
       customer_email: orderData.customer_email,
       customer_name: orderData.customer_name,
@@ -230,10 +233,35 @@ export async function createOrder(orderData: {
 
   if (error) {
     console.error('Error creating order:', error);
-    return null;
+    // Jamais silencieux : l'appelant doit savoir que la commande n'est pas en base
+    throw new OrderInsertError(error.message, error.code);
   }
 
   return data.id;
+}
+
+export class OrderInsertError extends Error {
+  constructor(message: string, public readonly code?: string) {
+    super(message);
+    this.name = 'OrderInsertError';
+  }
+  // Violation d'unicité sur stripe_session_id : la commande a déjà été enregistrée par un autre traitement
+  get isDuplicate() {
+    return this.code === '23505';
+  }
+}
+
+// Identifiants produit historiques (table products supprimée en production)
+const LEGACY_PRODUCT_IDS: Record<string, string> = {
+  rk01: '322f7d7f-da9f-4c07-a8d4-8cbd39fc89f7',
+};
+
+export async function setOrderInvoiceNumber(stripeSessionId: string, invoiceNumber: string): Promise<void> {
+  const { error } = await supabaseAdmin
+    .from('orders')
+    .update({ invoice_number: invoiceNumber })
+    .eq('stripe_session_id', stripeSessionId);
+  if (error) throw new Error(`invoice_number update failed: ${error.message}`);
 }
 
 // ============================================
