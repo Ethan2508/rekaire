@@ -4,6 +4,7 @@
 // ============================================
 
 import { NextRequest, NextResponse } from "next/server";
+import type Stripe from "stripe";
 import { createClient } from "@supabase/supabase-js";
 import { stripe } from "@/lib/stripe";
 import * as Sentry from "@sentry/nextjs";
@@ -74,9 +75,21 @@ export async function POST(request: NextRequest) {
     // Si amount est fourni, l'utiliser (remboursement partiel), sinon remboursement total
     const refundAmount = amount ? Math.round(amount * 100) : undefined; // Convertir en centimes
 
+    // Remboursement déjà effectué chez Stripe (ex. échec précédent de la mise à jour en base) :
+    // on le réutilise au lieu d'en créer un second, et on resynchronise la commande.
+    let refund: Stripe.Refund | undefined;
+    if (!refundAmount) {
+      const existing = await stripe.refunds.list({ payment_intent: order.stripe_payment_intent, limit: 10 });
+      const done = existing.data.filter((r) => r.status === "succeeded" || r.status === "pending");
+      const refundedTotal = done.reduce((sum, r) => sum + r.amount, 0);
+      if (done.length > 0 && refundedTotal >= (order.total_ttc || 0)) {
+        refund = done[0];
+        console.log(`[Refund] Remboursement Stripe déjà existant (${refund.id}), resynchronisation de la commande`);
+      }
+    }
+
     // Créer le remboursement dans Stripe
-    let refund;
-    try {
+    if (!refund) try {
       refund = await stripe.refunds.create({
         payment_intent: order.stripe_payment_intent,
         amount: refundAmount,
@@ -113,7 +126,10 @@ export async function POST(request: NextRequest) {
         status: newStatus,
         refund_id: refund.id,
         refund_amount: refund.amount,
-        refund_reason: reason || null,
+        // Pas de colonne refund_reason en base : le motif est consigné dans les notes
+        notes: [order.notes, `Remboursement ${new Date().toLocaleDateString("fr-FR")} : ${reason || "requested_by_customer"}`]
+          .filter(Boolean)
+          .join("\n"),
         refunded_at: new Date().toISOString(),
         refunded_by: user.email,
       })
