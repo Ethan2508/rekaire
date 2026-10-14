@@ -892,3 +892,36 @@ ${data.invoiceUrl ? 'Ce lien est valable pendant 7 jours.' : 'Conservez cet emai
     return { success: false, error };
   }
 }
+
+// ============================================
+// Alerte admin (incident sur le tunnel de commande)
+// ============================================
+export async function sendAdminAlertEmail(params: {
+  subject: string;
+  lines: string[]; // une ligne par information, affichée telle quelle
+}) {
+  const adminEmail = process.env.ADMIN_EMAIL || "admin@rekaire.fr";
+  const escape = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  try {
+    const result = await resend.emails.send({
+      from: `${FROM_NAME} <${FROM_EMAIL}>`,
+      to: adminEmail,
+      subject: `🚨 ${params.subject}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+          <div style="background: #dc2626; color: white; padding: 16px 20px; border-radius: 8px 8px 0 0;">
+            <h2 style="margin: 0; font-size: 18px;">${escape(params.subject)}</h2>
+          </div>
+          <div style="background: #fef2f2; border: 1px solid #fecaca; padding: 20px; border-radius: 0 0 8px 8px; color: #1f2937; line-height: 1.6;">
+            ${params.lines.map((l) => `<p style="margin: 0 0 8px;">${escape(l)}</p>`).join("")}
+            <p style="margin-top: 16px; font-size: 12px; color: #6b7280;">Alerte automatique envoyée par le site rekaire.fr</p>
+          </div>
+        </div>
+      `,
+    });
+    return { success: true, data: result };
+  } catch (error) {
+    console.error("[Email] Admin alert failed:", error);
+    return { success: false, error };
+  }
+}

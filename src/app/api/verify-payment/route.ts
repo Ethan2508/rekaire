@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { stripe } from "@/lib/stripe";
+import { fulfillPaidSession } from "@/lib/fulfillment";
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -47,7 +48,31 @@ export async function GET(request: NextRequest) {
           });
         }
 
-        // Session payée mais pas encore en DB (webhook en cours)
+        // Session payée mais absente en base : le webhook n'est pas (encore) passé.
+        // Filet de sécurité : on enregistre la commande nous-mêmes (idempotent).
+        try {
+          const result = await fulfillPaidSession(sessionId, "success-page");
+          console.log(`[VerifyPayment] Fallback fulfillment: ${result.status}`);
+        } catch (fulfillError) {
+          console.error("[VerifyPayment] Fallback fulfillment failed:", fulfillError);
+        }
+
+        const { data: created } = await supabaseAdmin
+          .from("orders")
+          .select("id, status, order_number, customer_email")
+          .eq("stripe_session_id", sessionId)
+          .single();
+
+        if (created) {
+          return NextResponse.json({
+            verified: true,
+            orderId: created.id,
+            orderNumber: created.order_number,
+            status: created.status,
+            email: created.customer_email,
+          });
+        }
+
         return NextResponse.json({
           verified: true,
           pending: true,
