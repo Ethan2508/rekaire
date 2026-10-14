@@ -39,7 +39,7 @@ export const trackingConfig = {
 
   // Meta (Facebook) Pixel
   meta: {
-    pixelId: "PLACEHOLDER_META_PIXEL", // À configurer si nécessaire
+    pixelId: "1625307878980940", // Pixel Meta « Rekaire » (Gestionnaire d'événements)
   },
 
   // Conversion values

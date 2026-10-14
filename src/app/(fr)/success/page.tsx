@@ -23,6 +23,8 @@ interface VerificationResult {
   orderNumber?: string;
   email?: string;
   error?: string;
+  amount?: number;
+  quantity?: number;
 }
 
 function SuccessContent() {
@@ -54,10 +56,14 @@ function SuccessContent() {
           setState("verified");
           setVerificationData(data);
           // Track conversion
+          // Montant réellement payé ; à défaut, prix unitaire du produit
           trackPaymentSuccess(
-            data.orderId || orderId || "",
-            product.priceCents / 100,
-            "EUR"
+            data.orderNumber || data.orderId || orderId || "",
+            typeof data.amount === "number" ? data.amount : product.priceCents / 100,
+            "EUR",
+            product.id,
+            product.name,
+            data.quantity
           );
         } else if (data.pending) {
           setState("pending");

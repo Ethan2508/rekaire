@@ -6,7 +6,6 @@
 "use client";
 
 import { useEffect } from "react";
-import Script from "next/script";
 import { trackingConfig } from "@/config/tracking";
 
 interface CookiePreferences {
@@ -22,7 +21,7 @@ declare global {
   interface Window {
     gtag: (...args: unknown[]) => void;
     dataLayer: unknown[];
-    fbq: (...args: unknown[]) => void;
+    fbq?: (...args: unknown[]) => void;
   }
 }
 
@@ -42,6 +41,34 @@ export function Analytics() {
       }
     };
 
+    // Charge le pixel Meta une seule fois, et seulement avec le consentement marketing
+    const loadMetaPixel = (prefs: CookiePreferences) => {
+      if (!prefs.marketing || !meta.pixelId || meta.pixelId.includes("PLACEHOLDER") || window.fbq) return;
+      /* eslint-disable */
+      // Code officiel Meta
+      (function (f: any, b: Document, e: string, v: string) {
+        if (f.fbq) return;
+        const n: any = (f.fbq = function (...args: unknown[]) {
+          n.callMethod ? n.callMethod.apply(n, args) : n.queue.push(args);
+        });
+        if (!f._fbq) f._fbq = n;
+        n.push = n;
+        n.loaded = true;
+        n.version = "2.0";
+        n.queue = [];
+        const t = b.createElement(e) as HTMLScriptElement;
+        t.async = true;
+        t.src = v;
+        const s = b.getElementsByTagName(e)[0];
+        s.parentNode?.insertBefore(t, s);
+      })(window, document, "script", "https://connect.facebook.net/en_US/fbevents.js");
+      /* eslint-enable */
+      // Relu via une fonction : TypeScript le croit encore absent après le test ci-dessus
+      const getFbq = () => window.fbq;
+      getFbq()?.("init", meta.pixelId);
+      getFbq()?.("track", "PageView");
+    };
+
     // Vérifier le consentement existant au chargement
     // localStorage peut lever SecurityError (mode privé, iframe cross-origin, etc.)
     try {
@@ -49,6 +76,7 @@ export function Analytics() {
       if (savedPrefs) {
         const prefs = JSON.parse(savedPrefs) as CookiePreferences;
         updateGoogleConsent(prefs);
+        loadMetaPixel(prefs);
       }
     } catch {
       // Storage inaccessible : consentement par défaut (denied)
@@ -58,49 +86,18 @@ export function Analytics() {
     const handleConsent = (e: Event) => {
       const customEvent = e as CustomEvent<CookiePreferences>;
       updateGoogleConsent(customEvent.detail);
+      loadMetaPixel(customEvent.detail);
     };
 
     window.addEventListener("cookieConsent", handleConsent);
     return () => window.removeEventListener("cookieConsent", handleConsent);
-  }, []);
+  }, [meta.pixelId]);
 
   return (
     <>
       {/* Les scripts Google sont maintenant dans layout.tsx avec beforeInteractive */}
-      {/* Ce composant gère uniquement les mises à jour de consentement et Meta Pixel */}
+      {/* Ce composant gère les mises à jour de consentement ; le pixel Meta est chargé dans le useEffect */}
 
-      {/* Meta Pixel - chargé si configuré et consentement vérifié côté client */}
-      {meta.pixelId && !meta.pixelId.includes('PLACEHOLDER') && (
-        <Script
-          id="meta-pixel"
-          strategy="afterInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                var prefs;
-                try { prefs = localStorage.getItem('${PREFERENCES_KEY}'); }
-                catch (e) { return; }
-                if (!prefs) return;
-                var consent;
-                try { consent = JSON.parse(prefs); }
-                catch (e) { return; }
-                if (!consent.marketing) return;
-                
-                !function(f,b,e,v,n,t,s)
-                {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-                n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-                if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-                n.queue=[];t=b.createElement(e);t.async=!0;
-                t.src=v;s=b.getElementsByTagName(e)[0];
-                s.parentNode.insertBefore(t,s)}(window, document,'script',
-                'https://connect.facebook.net/en_US/fbevents.js');
-                fbq('init', '${meta.pixelId}');
-                fbq('track', 'PageView');
-              })();
-            `,
-          }}
-        />
-      )}
     </>
   );
 }

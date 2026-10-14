@@ -38,6 +38,10 @@ export async function GET(request: NextRequest) {
           .eq("stripe_session_id", sessionId)
           .single();
 
+        // Montant réellement payé (quantité et code promo inclus), pour le suivi des conversions
+        const amountPaid = (session.amount_total || 0) / 100;
+        const quantity = parseInt(session.metadata?.quantity || "1", 10);
+
         if (order) {
           return NextResponse.json({
             verified: true,
@@ -45,6 +49,8 @@ export async function GET(request: NextRequest) {
             orderNumber: order.order_number,
             status: order.status,
             email: order.customer_email,
+            amount: amountPaid,
+            quantity,
           });
         }
 
@@ -63,6 +69,8 @@ export async function GET(request: NextRequest) {
               orderNumber: late.order_number,
               status: late.status,
               email: late.customer_email,
+              amount: amountPaid,
+              quantity,
             });
           }
         }
@@ -88,6 +96,8 @@ export async function GET(request: NextRequest) {
             orderNumber: created.order_number,
             status: created.status,
             email: created.customer_email,
+            amount: amountPaid,
+            quantity,
           });
         }
 

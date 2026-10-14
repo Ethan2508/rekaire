@@ -42,11 +42,14 @@ export function trackGA4Event(
 
 export function trackMetaEvent(
   eventName: string,
-  params?: Record<string, unknown>
+  params?: Record<string, unknown>,
+  eventId?: string
 ) {
   if (!isClient || !window.fbq) return;
-  
-  window.fbq("track", eventName, params);
+
+  // eventID : permet à Meta de dédoublonner un même événement envoyé deux fois
+  if (eventId) window.fbq("track", eventName, params, { eventID: eventId });
+  else window.fbq("track", eventName, params);
 }
 
 // ============================================
@@ -83,12 +86,10 @@ export function trackEvent({ event, data }: TrackingEvent) {
   trackGA4Event(event, data);
 
   // Meta Pixel
-  const metaEventMap: Record<TrackingEventName, string> = {
-    page_view: "PageView",
-    cta_click: "Lead",
+  // PageView est déjà envoyé au chargement du pixel ; un clic sur un bouton n'est pas un prospect
+  const metaEventMap: Partial<Record<TrackingEventName, string>> = {
     checkout_start: "InitiateCheckout",
     payment_success: "Purchase",
-    payment_failed: "PaymentFailed",
     add_to_cart: "AddToCart",
     view_item: "ViewContent",
     begin_checkout: "InitiateCheckout",
@@ -102,7 +103,9 @@ export function trackEvent({ event, data }: TrackingEvent) {
       currency: (data?.currency as string) || "EUR",
       content_ids: data?.product_id ? [data.product_id] : undefined,
       content_name: data?.product_name,
-    });
+      content_type: data?.product_id ? "product" : undefined,
+      num_items: data?.quantity ? Number(data.quantity) : undefined,
+    }, data?.order_id ? `${metaEventName}-${data.order_id}` : undefined);
   }
 
   // Google Ads Conversion (pour payment_success uniquement)
@@ -158,8 +161,17 @@ export function trackPaymentSuccess(
   value: number,
   currency: string = "EUR",
   productId?: string,
-  productName?: string
+  productName?: string,
+  quantity?: number
 ) {
+  // Une seule conversion par commande, même si la page de succès est rechargée
+  const key = `rk_purchase_tracked_${orderId}`;
+  try {
+    if (orderId && localStorage.getItem(key)) return;
+    if (orderId) localStorage.setItem(key, "1");
+  } catch {
+    // Storage indisponible : l'eventID permet quand même à Meta de dédoublonner
+  }
   trackEvent({
     event: "payment_success",
     data: {
@@ -168,6 +180,7 @@ export function trackPaymentSuccess(
       currency,
       product_id: productId,
       product_name: productName,
+      quantity,
     },
   });
 }
