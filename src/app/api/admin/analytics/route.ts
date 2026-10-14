@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
     // 1. Ventes par jour (graphique)
     const { data: salesByDay } = await supabaseAdmin
       .from('orders')
-      .select('created_at, total_ttc, status')
+      .select('created_at, total_ttc, status, refund_amount')
       .gte('created_at', startDate.toISOString())
       .order('created_at', { ascending: true });
 
@@ -93,16 +93,16 @@ export async function GET(request: NextRequest) {
 
     const { data: weekOrders } = await supabaseAdmin
       .from('orders')
-      .select('total_ttc')
+      .select('total_ttc, status, refund_amount')
       .gte('created_at', startOfWeek.toISOString());
 
     const { data: monthOrders } = await supabaseAdmin
       .from('orders')
-      .select('total_ttc')
+      .select('total_ttc, status, refund_amount')
       .gte('created_at', startOfMonth.toISOString());
 
-    const weekRevenue = weekOrders?.reduce((sum, o) => sum + o.total_ttc, 0) || 0;
-    const monthRevenue = monthOrders?.reduce((sum, o) => sum + o.total_ttc, 0) || 0;
+    const weekRevenue = weekOrders?.reduce((sum, o) => sum + netRevenue(o), 0) || 0;
+    const monthRevenue = monthOrders?.reduce((sum, o) => sum + netRevenue(o), 0) || 0;
 
     return NextResponse.json({
       salesChart,
@@ -151,7 +151,7 @@ function processSalesChart(orders: any[], days: number) {
   orders.forEach(order => {
     const dateStr = order.created_at.split('T')[0];
     if (chart[dateStr]) {
-      chart[dateStr].revenue += order.total_ttc / 100;
+      chart[dateStr].revenue += netRevenue(order) / 100;
       chart[dateStr].orders += 1;
     }
   });
@@ -182,4 +182,10 @@ function processStatusDistribution(orders: any[]) {
     count: data.count,
     revenue: data.revenue
   }));
+}
+
+// Chiffre d'affaires net d'une commande : remboursements déduits, annulations exclues
+function netRevenue(o: { total_ttc: number; status?: string; refund_amount?: number | null }) {
+  if (o.status === 'cancelled') return 0;
+  return Math.max(0, o.total_ttc - (o.refund_amount || 0));
 }

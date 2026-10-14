@@ -434,9 +434,14 @@ export default function AdminDashboard() {
       // Fetch all orders for stats calculation
       const { data: allOrders, error } = await supabase
         .from('orders')
-        .select('status, total_ttc, created_at');
+        .select('status, total_ttc, created_at, refund_amount');
 
       if (error) throw error;
+
+      // Chiffre d'affaires net : on retire les remboursements et on ignore les commandes annulées
+      const net = (o: { status: string; total_ttc: number | null; refund_amount?: number | null }) =>
+        o.status === 'cancelled' ? 0 : Math.max(0, (o.total_ttc || 0) - (o.refund_amount || 0));
+      const sales = allOrders?.filter((o) => o.status !== 'cancelled' && o.status !== 'refunded') || [];
 
       const now = new Date();
       const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
@@ -444,20 +449,20 @@ export default function AdminDashboard() {
       const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
 
       const calculatedStats: Stats = {
-        totalOrders: allOrders?.length || 0,
-        totalRevenue: allOrders?.reduce((sum, o) => sum + (o.total_ttc || 0), 0) || 0,
-        avgOrderValue: allOrders && allOrders.length > 0 
-          ? Math.round(allOrders.reduce((sum, o) => sum + (o.total_ttc || 0), 0) / allOrders.length) 
+        totalOrders: sales.length,
+        totalRevenue: allOrders?.reduce((sum, o) => sum + net(o), 0) || 0,
+        avgOrderValue: sales.length > 0
+          ? Math.round(sales.reduce((sum, o) => sum + net(o), 0) / sales.length)
           : 0,
         toShip: allOrders?.filter(o => o.status === 'paid').length || 0,
         inTransit: allOrders?.filter(o => o.status === 'shipped').length || 0,
         delivered: allOrders?.filter(o => o.status === 'delivered').length || 0,
-        todayOrders: allOrders?.filter(o => o.created_at >= todayStart).length || 0,
-        todayRevenue: allOrders?.filter(o => o.created_at >= todayStart).reduce((sum, o) => sum + (o.total_ttc || 0), 0) || 0,
-        weekOrders: allOrders?.filter(o => o.created_at >= weekStart).length || 0,
-        weekRevenue: allOrders?.filter(o => o.created_at >= weekStart).reduce((sum, o) => sum + (o.total_ttc || 0), 0) || 0,
-        monthOrders: allOrders?.filter(o => o.created_at >= monthStart).length || 0,
-        monthRevenue: allOrders?.filter(o => o.created_at >= monthStart).reduce((sum, o) => sum + (o.total_ttc || 0), 0) || 0,
+        todayOrders: sales.filter(o => o.created_at >= todayStart).length,
+        todayRevenue: allOrders?.filter(o => o.created_at >= todayStart).reduce((sum, o) => sum + net(o), 0) || 0,
+        weekOrders: sales.filter(o => o.created_at >= weekStart).length,
+        weekRevenue: allOrders?.filter(o => o.created_at >= weekStart).reduce((sum, o) => sum + net(o), 0) || 0,
+        monthOrders: sales.filter(o => o.created_at >= monthStart).length,
+        monthRevenue: allOrders?.filter(o => o.created_at >= monthStart).reduce((sum, o) => sum + net(o), 0) || 0,
       };
 
       setStats(calculatedStats);
