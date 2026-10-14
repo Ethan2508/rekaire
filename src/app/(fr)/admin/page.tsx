@@ -247,7 +247,6 @@ export default function AdminDashboard() {
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [loginStatus, setLoginStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
   const [loginError, setLoginError] = useState('');
-  const [loginMethod, setLoginMethod] = useState<'magic' | 'password'>('magic');
 
   // Navigation
   const [activeTab, setActiveTab] = useState<'dashboard' | 'orders' | 'promos' | 'history' | 'settings'>('dashboard');
@@ -385,34 +384,6 @@ export default function AdminDashboard() {
     }
   }
 
-  async function handleMagicLinkLogin(e: React.FormEvent) {
-    e.preventDefault();
-    setLoginStatus('sending');
-    setLoginError('');
-
-    try {
-      const response = await fetch('/api/admin/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email })
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        setLoginError(data.error || 'Erreur de connexion');
-        setLoginStatus('error');
-        return;
-      }
-
-      setLoginStatus('sent');
-    } catch (error) {
-      console.error('Login error:', error);
-      setLoginError('Erreur de connexion');
-      setLoginStatus('error');
-    }
-  }
-
   async function handlePasswordLogin(e: React.FormEvent) {
     e.preventDefault();
     setLoginStatus('sending');
@@ -425,11 +396,12 @@ export default function AdminDashboard() {
       });
 
       if (error) {
-        setLoginError(error.message);
+        setLoginError(error.message === 'Invalid login credentials' ? 'Email ou mot de passe incorrect' : error.message);
         setLoginStatus('error');
         return;
       }
 
+      // La whitelist reste vérifiée côté serveur sur chaque appel API admin
       if (data.session) {
         setIsAuthenticated(true);
         setUserEmail(data.session.user.email || null);
@@ -973,66 +945,55 @@ export default function AdminDashboard() {
             <p className="text-gray-500 mt-2">Connexion sécurisée</p>
           </div>
 
-          {loginStatus === 'sent' ? (
-            <div className="text-center py-8">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Icons.Check />
-              </div>
-              <h2 className="text-xl font-semibold text-gray-900 mb-2">Lien envoyé !</h2>
-              <p className="text-gray-600 mb-4">
-                Vérifiez votre boîte mail <strong className="text-gray-900">{email}</strong>
-              </p>
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-left">
-                <p className="font-medium text-blue-800 mb-2">📧 Vérifiez :</p>
-                <ul className="text-blue-700 space-y-1 list-disc list-inside">
-                  <li>Votre boîte de réception</li>
-                  <li>Le dossier Spam</li>
-                </ul>
-              </div>
-              <button
-                onClick={() => setLoginStatus('idle')}
-                className="mt-4 text-orange-600 hover:text-orange-700 font-medium"
-              >
-                Renvoyer le lien
-              </button>
+          <form onSubmit={handlePasswordLogin} className="space-y-4">
+            <div>
+              <label htmlFor="admin-email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+              <input
+                id="admin-email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                autoComplete="username"
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900 placeholder:text-gray-400"
+                placeholder="prenom.nom@rekaire.fr"
+                required
+              />
             </div>
-          ) : (
-            <form onSubmit={handleMagicLinkLogin} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900 placeholder:text-gray-400"
-                  placeholder="contact@rekaire.fr"
-                  required
-                />
+            <div>
+              <label htmlFor="admin-password" className="block text-sm font-medium text-gray-700 mb-1">Mot de passe</label>
+              <input
+                id="admin-password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                autoComplete="current-password"
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900"
+                required
+              />
+            </div>
+
+            {loginError && (
+              <div className="flex items-center gap-2 p-3 bg-red-50 text-red-600 rounded-lg text-sm">
+                <Icons.AlertTriangle />
+                {loginError}
               </div>
+            )}
 
-              {loginError && (
-                <div className="flex items-center gap-2 p-3 bg-red-50 text-red-600 rounded-lg text-sm">
-                  <Icons.AlertTriangle />
-                  {loginError}
-                </div>
+            <button
+              type="submit"
+              disabled={loginStatus === 'sending'}
+              className="w-full py-3 bg-orange-500 text-white rounded-xl font-semibold hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+            >
+              {loginStatus === 'sending' ? (
+                <>
+                  <div className="animate-spin"><Icons.Refresh /></div>
+                  Connexion...
+                </>
+              ) : (
+                'Se connecter'
               )}
-
-              <button
-                type="submit"
-                disabled={loginStatus === 'sending'}
-                className="w-full py-3 bg-orange-500 text-white rounded-xl font-semibold hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
-              >
-                {loginStatus === 'sending' ? (
-                  <>
-                    <div className="animate-spin"><Icons.Refresh /></div>
-                    Envoi en cours...
-                  </>
-                ) : (
-                  'Recevoir le lien magique'
-                )}
-              </button>
-            </form>
-          )}
+            </button>
+          </form>
 
           <p className="mt-6 text-center text-xs text-gray-500">
             Accès réservé aux administrateurs autorisés

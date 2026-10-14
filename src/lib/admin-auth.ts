@@ -1,6 +1,6 @@
 // ============================================
 // REKAIRE - Admin Authentication Utilities
-// Supabase Auth with Magic Link
+// Supabase Auth (email + mot de passe)
 // ============================================
 
 import { createClient } from '@supabase/supabase-js';
@@ -19,26 +19,6 @@ export const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
 
 // Durée de session: 8 heures
 const SESSION_DURATION = 8 * 60 * 60; // en secondes
-
-/**
- * Envoie un Magic Link à l'email spécifié
- */
-export async function sendMagicLink(email: string): Promise<{ success: boolean; error?: string }> {
-  const { error } = await supabaseAuth.auth.signInWithOtp({
-    email,
-    options: {
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL || 'https://rekaire.fr'}/admin/callback`,
-      shouldCreateUser: false, // Ne pas créer de nouveaux utilisateurs
-    }
-  });
-
-  if (error) {
-    console.error('Magic link error:', error);
-    return { success: false, error: error.message };
-  }
-
-  return { success: true };
-}
 
 /**
  * Vérifie si l'utilisateur est connecté et admin
