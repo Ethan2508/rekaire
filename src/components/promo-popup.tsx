@@ -10,9 +10,7 @@ import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { Copy, Check, X, Gift } from "lucide-react";
-import { getMainProduct, formatPrice } from "@/config/product";
 import { promoCampaign, isPromoCampaignRunning, rememberPromoCode, promoTimeLeft } from "@/config/promo-campaign";
-import { PRICES } from "@/config/product";
 import { trackEvent } from "@/lib/tracking";
 
 const SEEN_KEY = `rk_promo_popup_seen_${promoCampaign.code}`;
@@ -113,10 +111,6 @@ export function PromoPopup() {
     }
   };
 
-  const product = getMainProduct();
-  // Remise calculée sur le HT, comme côté serveur ; la TVA s'applique ensuite
-  const discountedHT = Math.round(PRICES.singleHT * (1 - promoCampaign.percent / 100));
-  const discountedTTC = Math.round(discountedHT * 1.2);
 
   return (
     <AnimatePresence>
@@ -163,16 +157,9 @@ export function PromoPopup() {
             </div>
 
             <div className="px-6 py-6 text-center">
-              <p className="text-gray-700">
-                <span className="text-gray-400 line-through mr-2">{formatPrice(PRICES.singleHT, "EUR")}</span>
-                <span className="text-2xl font-bold text-gray-900">{formatPrice(discountedHT, "EUR")}</span>
-                <span className="text-gray-500 text-sm"> HT</span>
-              </p>
-              <p className="mt-1 text-sm text-gray-500">soit {formatPrice(discountedTTC, "EUR")} TTC au lieu de {formatPrice(product.priceCents, "EUR")}</p>
-
               <button
                 onClick={copyCode}
-                className="mt-4 w-full flex items-center justify-between gap-3 px-4 py-3 rounded-xl border-2 border-dashed border-orange-300 bg-orange-50 text-left"
+                className="w-full flex items-center justify-between gap-3 px-4 py-3 rounded-xl border-2 border-dashed border-orange-300 bg-orange-50 text-left"
                 aria-label={`Copier le code ${promoCampaign.code}`}
               >
                 <span>
