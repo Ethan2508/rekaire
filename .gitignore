@@ -45,3 +45,6 @@ next-env.d.ts
 .env.sentry-build-plugin
 *.pdf
 test-facture.pdf
+
+# Rendus 3D sources (8 Mo/image) : versions optimisées dans public/images/product/angles
+scripts/RK01-angles/

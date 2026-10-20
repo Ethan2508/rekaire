@@ -17,6 +17,11 @@ const productImages = [
   { src: "/images/product/gallery/fiche1.png", alt: "RK01 - Vue principale" },
   { src: "/images/product/gallery/fiche2.png", alt: "RK01 - Packaging" },
   { src: "/images/product/gallery/fiche3.png", alt: "RK01 - Détails techniques" },
+  // Rendus 3D (Blender) sous différents angles, fond transparent
+  { src: "/images/product/angles/rk01-angle-3-4.webp", alt: "RK01 - Vue 3/4, buses de diffusion" },
+  { src: "/images/product/angles/rk01-angle-rapproche.webp", alt: "RK01 - Vue rapprochée" },
+  { src: "/images/product/angles/rk01-angle-dessous.webp", alt: "RK01 - Dessous avec adhésif de fixation" },
+  { src: "/images/product/angles/rk01-vue-eclatee.webp", alt: "RK01 - Vue éclatée des composants" },
 ];
 
 export function ProductHero() {
@@ -105,14 +110,14 @@ export function ProductHero() {
             </div>
 
             {/* Premium Thumbnails - Hidden on mobile */}
-            <div className="hidden sm:flex justify-center gap-4 mt-5">
+            <div className="hidden sm:flex flex-wrap justify-center gap-3 mt-5">
               {productImages.map((img, index) => (
                 <motion.button
                   key={index}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setCurrentImage(index)}
-                  className={`relative w-24 h-24 rounded-2xl border-2 transition-all cursor-pointer bg-white p-2 overflow-hidden ${
+                  className={`relative w-16 h-16 rounded-xl border-2 transition-all cursor-pointer bg-white p-1.5 overflow-hidden ${
                     index === currentImage 
                       ? "border-orange-500 shadow-lg shadow-orange-500/20 ring-4 ring-orange-500/10" 
                       : "border-gray-200 hover:border-orange-300 hover:shadow-md"
