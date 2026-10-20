@@ -7,6 +7,7 @@
 
 import { useEffect } from "react";
 import { trackingConfig } from "@/config/tracking";
+import { flushMetaQueue } from "@/lib/tracking";
 
 interface CookiePreferences {
   necessary: boolean;
@@ -67,6 +68,8 @@ export function Analytics() {
       const getFbq = () => window.fbq;
       getFbq()?.("init", meta.pixelId);
       getFbq()?.("track", "PageView");
+      // Événements survenus avant le consentement (ex. arrivée sur la page produit)
+      flushMetaQueue();
     };
 
     // Vérifier le consentement existant au chargement

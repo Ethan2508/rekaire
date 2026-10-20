@@ -8,7 +8,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Minus, Plus, ArrowRight, MessageSquare, ShoppingCart } from "lucide-react";
-import { trackCTAClick } from "@/lib/tracking";
+import { trackCTAClick, trackAddToCart } from "@/lib/tracking";
 import { getMainProduct, formatPrice, calculateTotal } from "@/config/product";
 import Link from "next/link";
 
@@ -39,6 +39,9 @@ export function ProductOrder({ location, className = "" }: ProductOrderProps) {
 
   const handleCTAClick = () => {
     trackCTAClick(location);
+    if (!isQuoteMode) {
+      trackAddToCart(product.id, product.name, quantity, totalTTC / 100, product.currency);
+    }
   };
 
   return (

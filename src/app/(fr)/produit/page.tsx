@@ -9,6 +9,7 @@ import { ProductSpecs } from "@/components/pages/product/product-specs";
 import { ProductFAQ } from "@/components/pages/product/product-faq";
 import { CTASection } from "@/components/sections";
 import { ProductSchema, BreadcrumbSchema } from "@/components/schema-org";
+import { TrackViewContent } from "@/components/track-view-content";
 import { siteConfig } from "@/config/site";
 import type { Metadata } from "next";
 import { hreflangAlternates } from "@/config/sites";
@@ -28,6 +29,7 @@ export default function ProductPage() {
 
   return (
     <>
+      <TrackViewContent />
       <ProductSchema />
       <BreadcrumbSchema items={breadcrumbs} />
       <Header />

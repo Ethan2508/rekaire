@@ -40,12 +40,34 @@ export function trackGA4Event(
 // Meta Pixel
 // ============================================
 
+// Événements émis avant le chargement du pixel (le pixel n'est chargé qu'après le
+// consentement marketing, souvent après l'arrivée sur la page) : ils sont gardés en
+// mémoire et envoyés dès que le pixel se charge. Sans consentement, ils ne partent jamais.
+type QueuedMetaEvent = [string, Record<string, unknown> | undefined, string | undefined];
+declare global {
+  interface Window {
+    __rkMetaQueue?: QueuedMetaEvent[];
+  }
+}
+
+export function flushMetaQueue() {
+  if (!isClient || !window.fbq) return;
+  const queue = window.__rkMetaQueue || [];
+  window.__rkMetaQueue = [];
+  queue.forEach(([name, params, eventId]) => trackMetaEvent(name, params, eventId));
+}
+
 export function trackMetaEvent(
   eventName: string,
   params?: Record<string, unknown>,
   eventId?: string
 ) {
-  if (!isClient || !window.fbq) return;
+  if (!isClient) return;
+  if (!window.fbq) {
+    const item: QueuedMetaEvent = [eventName, params, eventId];
+    window.__rkMetaQueue = [...(window.__rkMetaQueue || []), item].slice(-20);
+    return;
+  }
 
   // eventID : permet à Meta de dédoublonner un même événement envoyé deux fois
   if (eventId) window.fbq("track", eventName, params, { eventID: eventId });
@@ -134,6 +156,28 @@ export function trackCTAClick(location: string) {
   trackEvent({
     event: "cta_click",
     data: { cta_location: location },
+  });
+}
+
+// Visite de la page produit
+export function trackViewContent(productId: string, productName: string, value: number, currency: string = "EUR") {
+  trackEvent({
+    event: "view_item",
+    data: { product_id: productId, product_name: productName, order_value: value, currency },
+  });
+}
+
+// Clic sur « Commander » (passage au tunnel de commande)
+export function trackAddToCart(
+  productId: string,
+  productName: string,
+  quantity: number,
+  value: number,
+  currency: string = "EUR"
+) {
+  trackEvent({
+    event: "add_to_cart",
+    data: { product_id: productId, product_name: productName, quantity, order_value: value, currency },
   });
 }
 
