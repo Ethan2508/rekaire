@@ -8,6 +8,7 @@ import Script from "next/script";
 import "../globals.css";
 import { Analytics, GTMNoScript } from "@/components/analytics";
 import { CookieConsent } from "@/components/cookie-consent";
+import { PromoPopup } from "@/components/promo-popup";
 import { OrganizationSchema, WebSiteSchema, LocalBusinessSchema } from "@/components/schema-org";
 
 import { siteConfig } from "@/config/site";
@@ -156,6 +157,7 @@ export default function RootLayout({
         />
         <Script src="/_vercel/insights/script.js" strategy="afterInteractive" />
         <CookieConsent />
+        <PromoPopup />
       </body>
     </html>
   );

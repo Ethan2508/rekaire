@@ -10,6 +10,7 @@ import { motion } from "framer-motion";
 import { Minus, Plus, ArrowRight, MessageSquare, ShoppingCart } from "lucide-react";
 import { trackCTAClick, trackAddToCart } from "@/lib/tracking";
 import { getMainProduct, formatPrice, calculateTotal } from "@/config/product";
+import { promoCampaign, isPromoCampaignRunning, rememberPromoCode } from "@/config/promo-campaign";
 import Link from "next/link";
 
 // Seuil pour demande de devis (100+ = devis obligatoire)
@@ -39,6 +40,7 @@ export function ProductOrder({ location, className = "" }: ProductOrderProps) {
 
   const handleCTAClick = () => {
     trackCTAClick(location);
+    if (!isQuoteMode && isPromoCampaignRunning()) rememberPromoCode(promoCampaign.code);
     if (!isQuoteMode) {
       trackAddToCart(product.id, product.name, quantity, totalTTC / 100, product.currency);
     }
@@ -54,6 +56,17 @@ export function ProductOrder({ location, className = "" }: ProductOrderProps) {
               {formatPrice(unitPriceHT, "EUR")}
             </span>
             <span className="text-gray-500">/ unité HT</span>
+          </div>
+        )}
+
+        {/* Offre en cours */}
+        {!isQuoteMode && isPromoCampaignRunning() && (
+          <div className="flex items-center justify-between gap-3 px-4 py-3 rounded-xl bg-orange-50 border border-orange-200">
+            <span className="text-sm text-gray-800">
+              <strong className="text-orange-600">-{promoCampaign.percent} %</strong> avec le code{" "}
+              <span className="font-mono font-bold">{promoCampaign.code}</span>
+            </span>
+            <span className="text-xs text-gray-500">appliqué au paiement</span>
           </div>
         )}
 

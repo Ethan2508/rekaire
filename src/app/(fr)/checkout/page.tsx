@@ -33,6 +33,7 @@ import { CheckoutProgress } from "@/components/checkout-progress";
 import { trackCTAClick, trackCheckoutStart } from "@/lib/tracking";
 import { generateOrderId } from "@/lib/order";
 import { validatePromoCode, formatDiscount } from "@/lib/promo";
+import { getRememberedPromoCode } from "@/config/promo-campaign";
 import { getMainProduct, formatPrice, calculateTotal } from "@/config/product";
 import Link from "next/link";
 import Image from "next/image";
@@ -138,6 +139,23 @@ function CheckoutContent() {
 
     setIsValidatingPromo(false);
   };
+
+  // Code de la pop-up promo (ou ?promo= dans l'URL) : appliqué automatiquement une fois
+  const autoPromoTried = useRef(false);
+  useEffect(() => {
+    if (autoPromoTried.current) return;
+    autoPromoTried.current = true;
+    const code = (searchParams.get("promo") || getRememberedPromoCode() || "").toUpperCase().trim();
+    if (!code) return;
+    setPromoCode(code);
+    (async () => {
+      const validation = await validatePromoCode(code, totalHT);
+      if (validation.valid && validation.discount && validation.code) {
+        setPromoDiscount(validation.discount);
+        setAppliedPromoCode(validation.code);
+      }
+    })();
+  }, [searchParams, totalHT]);
 
   const handleRemovePromo = () => {
     setPromoCode("");
