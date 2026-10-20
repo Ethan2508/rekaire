@@ -6,7 +6,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Cookie, X, Check, Settings } from "lucide-react";
+import { Cookie, X } from "lucide-react";
 
 type ConsentStatus = "pending" | "accepted" | "rejected" | "custom";
 
@@ -82,7 +82,7 @@ export function CookieConsent({ locale = "fr" }: { locale?: keyof typeof texts }
 
     if (!consent) {
       // Attendre un peu avant d'afficher la bannière
-      const timer = setTimeout(() => setShowBanner(true), 1000);
+      const timer = setTimeout(() => setShowBanner(true), 600);
       return () => clearTimeout(timer);
     } else if (savedPrefs) {
       try {
@@ -152,54 +152,39 @@ export function CookieConsent({ locale = "fr" }: { locale?: keyof typeof texts }
 
   return (
     <>
-      {/* Overlay */}
-      <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-[9998]" />
-
-      {/* Banner */}
-      <div className="fixed bottom-0 left-0 right-0 z-[9999] p-4 sm:p-6">
-        <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden">
+      {/* Bandeau compact en bas d'écran, sans voile : la page reste visible et lisible.
+          « Tout refuser » est aussi visible que « Tout accepter » (exigence CNIL / AEPD). */}
+      <div className="fixed bottom-0 left-0 right-0 z-[9999] p-3 sm:p-4" role="dialog" aria-live="polite" aria-label={t.title}>
+        <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-[0_8px_40px_rgba(0,0,0,0.18)] border border-gray-200 overflow-hidden">
           {!showSettings ? (
             // Vue principale
-            <div className="p-6 sm:p-8">
-              <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center">
-                  <Cookie className="w-6 h-6 text-orange-600" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                    {t.title}
-                  </h3>
-                  <p className="text-gray-600 text-sm leading-relaxed mb-4">
-                    {t.intro}{" "}
-                    <Link href={t.policyHref} className="text-orange-600 hover:underline">
-                      {t.more}
-                    </Link>
-                  </p>
-
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    <button
-                      onClick={handleAcceptAll}
-                      className="flex-1 sm:flex-none px-6 py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
-                    >
-                      <Check className="w-4 h-4" />
-                      {t.acceptAll}
-                    </button>
-                    <button
-                      onClick={handleRejectAll}
-                      className="flex-1 sm:flex-none px-6 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
-                    >
-                      <X className="w-4 h-4" />
-                      {t.rejectAll}
-                    </button>
-                    <button
-                      onClick={() => setShowSettings(true)}
-                      className="flex-1 sm:flex-none px-6 py-2.5 border border-gray-300 hover:border-gray-400 text-gray-700 font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
-                    >
-                      <Settings className="w-4 h-4" />
-                      {t.customize}
-                    </button>
-                  </div>
-                </div>
+            <div className="p-4 sm:p-5">
+              <p className="text-gray-700 text-[13px] sm:text-sm leading-snug">
+                <Cookie className="inline w-4 h-4 text-orange-600 mr-1.5 -mt-0.5" aria-hidden="true" />
+                <strong className="font-semibold text-gray-900">{t.title}.</strong> {t.intro}{" "}
+                <Link href={t.policyHref} className="text-orange-600 underline">
+                  {t.more}
+                </Link>
+              </p>
+              <div className="mt-3 flex flex-wrap items-center gap-2">
+                <button
+                  onClick={handleAcceptAll}
+                  className="flex-1 sm:flex-none min-w-[8rem] px-5 py-2.5 bg-orange-600 hover:bg-orange-700 text-white text-sm font-semibold rounded-lg transition-colors"
+                >
+                  {t.acceptAll}
+                </button>
+                <button
+                  onClick={handleRejectAll}
+                  className="flex-1 sm:flex-none min-w-[8rem] px-5 py-2.5 bg-gray-900 hover:bg-gray-800 text-white text-sm font-semibold rounded-lg transition-colors"
+                >
+                  {t.rejectAll}
+                </button>
+                <button
+                  onClick={() => setShowSettings(true)}
+                  className="w-full sm:w-auto px-3 py-2 text-gray-600 hover:text-gray-900 text-sm underline underline-offset-2"
+                >
+                  {t.customize}
+                </button>
               </div>
             </div>
           ) : (

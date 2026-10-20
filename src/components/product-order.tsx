@@ -57,6 +57,13 @@ export function ProductOrder({ location, className = "" }: ProductOrderProps) {
           </div>
         )}
 
+        {/* Ramener le prix à la durée de protection (5 ans = 60 mois) */}
+        {!isQuoteMode && (
+          <p className="-mt-2 text-sm text-gray-600">
+            Soit <strong className="text-gray-900">{formatPrice(Math.round(totalTTC / quantity / 60), "EUR")} TTC par mois</strong> pour 5 ans de protection
+          </p>
+        )}
+
         {/* Mode devis - message */}
         {isQuoteMode && (
           <div className="text-center py-2">

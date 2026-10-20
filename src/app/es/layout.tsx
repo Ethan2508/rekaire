@@ -107,6 +107,13 @@ export default function EsRootLayout({ children }: Readonly<{ children: React.Re
         <GTMNoScript />
         {children}
         <Analytics />
+        {/* Mesure d'audience Vercel : sans cookie ni donnée personnelle, hors consentement */}
+        <Script
+          id="vercel-insights-init"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{ __html: "window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };" }}
+        />
+        <Script src="/_vercel/insights/script.js" strategy="afterInteractive" />
         <CookieConsent locale="es" />
       </body>
     </html>
