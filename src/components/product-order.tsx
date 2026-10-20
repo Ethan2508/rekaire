@@ -63,7 +63,7 @@ export function ProductOrder({ location, className = "" }: ProductOrderProps) {
         {!isQuoteMode && isPromoCampaignRunning() && (
           <div className="flex items-center justify-between gap-3 px-4 py-3 rounded-xl bg-orange-50 border border-orange-200">
             <span className="text-sm text-gray-800">
-              <strong className="text-orange-600">-{promoCampaign.percent} % sur le HT</strong> avec le code{" "}
+              <strong className="text-orange-600">-{promoCampaign.percent} %</strong> avec le code{" "}
               <span className="font-mono font-bold">{promoCampaign.code}</span>
             </span>
             <span className="text-xs text-gray-500 text-right">
