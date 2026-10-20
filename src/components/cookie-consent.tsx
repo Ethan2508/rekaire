@@ -21,8 +21,8 @@ const PREFERENCES_KEY = "rekaire_cookie_preferences";
 
 const texts = {
   fr: {
-    title: "🍪 Nous utilisons des cookies",
-    intro: "Nous utilisons des cookies pour améliorer votre expérience, analyser le trafic et personnaliser le contenu. En cliquant sur \"Tout accepter\", vous consentez à l'utilisation de tous les cookies.",
+    title: "Cookies",
+    intro: "Nous les utilisons pour mesurer l'audience et nos publicités. Vous pouvez les accepter, les refuser ou les configurer.",
     more: "En savoir plus",
     policyHref: "/confidentialite",
     acceptAll: "Tout accepter",
@@ -39,7 +39,7 @@ const texts = {
     close: "Fermer",
   },
   es: {
-    title: "Utilizamos cookies",
+    title: "Cookies",
     intro: "Utilizamos cookies propias y de terceros para analizar el uso del sitio y medir nuestras campañas. Puede aceptarlas, rechazarlas o configurarlas.",
     more: "Política de cookies",
     policyHref: "/politica-de-cookies",
