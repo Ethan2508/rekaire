@@ -11,7 +11,8 @@ import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { Copy, Check, X, Gift } from "lucide-react";
 import { getMainProduct, formatPrice } from "@/config/product";
-import { promoCampaign, isPromoCampaignRunning, rememberPromoCode } from "@/config/promo-campaign";
+import { promoCampaign, isPromoCampaignRunning, rememberPromoCode, promoTimeLeft } from "@/config/promo-campaign";
+import { PRICES } from "@/config/product";
 import { trackEvent } from "@/lib/tracking";
 
 const SEEN_KEY = `rk_promo_popup_seen_${promoCampaign.code}`;
@@ -32,6 +33,7 @@ export function PromoPopup() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [timeLeft, setTimeLeft] = useState<string | null>(null);
   const hiddenHere = HIDDEN_ON.some((p) => pathname === p || pathname.startsWith(`${p}/`));
 
   useEffect(() => {
@@ -50,6 +52,15 @@ export function PromoPopup() {
       window.removeEventListener("cookieConsent", schedule);
     };
   }, [hiddenHere]);
+
+  // Compte à rebours, rafraîchi chaque minute tant que la pop-up est ouverte
+  useEffect(() => {
+    if (!open) return;
+    const tick = () => setTimeLeft(promoTimeLeft());
+    tick();
+    const id = setInterval(tick, 30_000);
+    return () => clearInterval(id);
+  }, [open]);
 
   const markSeen = () => {
     try {
@@ -103,7 +114,9 @@ export function PromoPopup() {
   };
 
   const product = getMainProduct();
-  const discounted = Math.round(product.priceCents * (1 - promoCampaign.percent / 100));
+  // Remise calculée sur le HT, comme côté serveur ; la TVA s'applique ensuite
+  const discountedHT = Math.round(PRICES.singleHT * (1 - promoCampaign.percent / 100));
+  const discountedTTC = Math.round(discountedHT * 1.2);
 
   return (
     <AnimatePresence>
@@ -136,20 +149,26 @@ export function PromoPopup() {
 
             <div className="bg-gradient-to-br from-orange-500 to-orange-600 px-6 pt-7 pb-6 text-white text-center">
               <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider bg-white/20 rounded-full px-3 py-1">
-                <Gift className="w-3.5 h-3.5" /> Offre de lancement
+                <Gift className="w-3.5 h-3.5" /> Offre spéciale 48 h
               </span>
               <h2 id="promo-title" className="mt-3 text-4xl font-extrabold tracking-tight">
                 -{promoCampaign.percent} %
               </h2>
-              <p className="mt-1 text-white/90">sur votre RK01, jusqu&apos;au {promoCampaign.endsLabel}</p>
+              <p className="mt-1 text-white/90">sur le prix HT de votre RK01</p>
+              {timeLeft && (
+                <p className="mt-3 inline-block rounded-full bg-black/20 px-3 py-1 text-sm font-semibold">
+                  Plus que {timeLeft}
+                </p>
+              )}
             </div>
 
             <div className="px-6 py-6 text-center">
               <p className="text-gray-700">
-                <span className="text-gray-400 line-through mr-2">{formatPrice(product.priceCents, "EUR")}</span>
-                <span className="text-2xl font-bold text-gray-900">{formatPrice(discounted, "EUR")}</span>
-                <span className="text-gray-500 text-sm"> TTC</span>
+                <span className="text-gray-400 line-through mr-2">{formatPrice(PRICES.singleHT, "EUR")}</span>
+                <span className="text-2xl font-bold text-gray-900">{formatPrice(discountedHT, "EUR")}</span>
+                <span className="text-gray-500 text-sm"> HT</span>
               </p>
+              <p className="mt-1 text-sm text-gray-500">soit {formatPrice(discountedTTC, "EUR")} TTC au lieu de {formatPrice(product.priceCents, "EUR")}</p>
 
               <button
                 onClick={copyCode}
@@ -171,7 +190,9 @@ export function PromoPopup() {
               >
                 J&apos;en profite
               </button>
-              <p className="mt-3 text-xs text-gray-500">Le code est appliqué automatiquement au moment de la commande.</p>
+              <p className="mt-3 text-xs text-gray-500">
+                Code appliqué automatiquement à la commande · valable jusqu&apos;au {promoCampaign.endsLabel}
+              </p>
             </div>
           </motion.div>
         </div>
