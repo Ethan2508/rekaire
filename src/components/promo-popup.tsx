@@ -148,7 +148,6 @@ export function PromoPopup() {
               <h2 id="promo-title" className="mt-3 text-4xl font-extrabold tracking-tight">
                 -{promoCampaign.percent} %
               </h2>
-              <p className="mt-1 text-white/90">sur le prix HT de votre RK01</p>
               {timeLeft && (
                 <p className="mt-3 inline-block rounded-full bg-black/20 px-3 py-1 text-sm font-semibold">
                   Plus que {timeLeft}
