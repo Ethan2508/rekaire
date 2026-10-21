@@ -48,3 +48,8 @@ test-facture.pdf
 
 # Rendus 3D sources (8 Mo/image) : versions optimisées dans public/images/product/angles
 scripts/RK01-angles/
+
+# Supabase CLI (liaison locale)
+supabase/.temp/
+# Vidéos sources (Pexels) pour la pub, hors dépôt
+scripts/*.mp4
