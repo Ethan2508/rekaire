@@ -115,7 +115,8 @@ export function PromoPopup() {
 
   return (
     <AnimatePresence>
-      {open && (
+      {/* hiddenHere : une pop-up programmée sur /produit ne doit jamais s'ouvrir après un passage au tunnel */}
+      {open && !hiddenHere && (
         <div className="fixed inset-0 z-[9990] flex items-end sm:items-center justify-center p-3 sm:p-6">
           <motion.div
             className="absolute inset-0 bg-black/40"
@@ -144,7 +145,7 @@ export function PromoPopup() {
 
             <div className="bg-gradient-to-br from-orange-500 to-orange-600 px-6 pt-7 pb-6 text-white text-center">
               <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider bg-white/20 rounded-full px-3 py-1">
-                <Gift className="w-3.5 h-3.5" /> Offre spéciale 48 h
+                <Gift className="w-3.5 h-3.5" /> Offre spéciale
               </span>
               <h2 id="promo-title" className="mt-3 text-4xl font-extrabold tracking-tight">
                 -{promoCampaign.percent} %

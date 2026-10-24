@@ -14,6 +14,7 @@ import {
   getNextInvoiceNumber,
   setOrderInvoiceNumber,
   OrderInsertError,
+  supabaseAdmin,
 } from "@/lib/supabase-admin";
 import { generateInvoicePDFBase64 } from "@/lib/invoice";
 import type { InvoiceData } from "@/lib/invoice";
@@ -151,7 +152,7 @@ export async function fulfillPaidSession(
       total_ht: totalHT,
       total_ttc: totalTTC,
       customer_email: customerEmail,
-      customer_name: session.customer_details?.name || undefined,
+      customer_name: session.metadata?.customer_name || session.customer_details?.name || undefined,
       customer_phone: session.customer_details?.phone || session.metadata?.customer_phone || undefined,
       // Adresse de LIVRAISON
       shipping_address_line1: shippingDetails?.address?.line1 || session.metadata?.shipping_address || undefined,
@@ -175,6 +176,12 @@ export async function fulfillPaidSession(
       invoice_url: undefined, // On n'héberge pas le PDF, il est envoyé par email
     });
     log("Order created in Supabase with full billing/shipping addresses");
+
+    // Le prospect est devenu client : plus de relance panier abandonné
+    if (customerEmail) {
+      const { error: leadError } = await supabaseAdmin.from("leads").update({ converted: true }).ilike("email", customerEmail);
+      if (leadError) console.error(`[Fulfillment:${source}] Lead conversion update failed:`, leadError.message);
+    }
 
     // Numéro de facture attribué uniquement à une commande réellement enregistrée
     try {

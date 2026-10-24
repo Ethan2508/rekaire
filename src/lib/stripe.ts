@@ -74,6 +74,17 @@ export async function createCheckoutSession({
       },
       name: customerAddress.name,
       phone: customerAddress.phone,
+      // Adresse de livraison saisie sur le site, gardée sur la fiche client Stripe
+      shipping: {
+        name: customerAddress.name,
+        phone: customerAddress.phone,
+        address: {
+          line1: customerAddress.line1,
+          city: customerAddress.city,
+          postal_code: customerAddress.postal_code,
+          country: customerAddress.country || 'FR',
+        },
+      },
     } : undefined;
     
     if (existingCustomers.data.length > 0) {
@@ -164,11 +175,10 @@ export async function createCheckoutSession({
       ...metadata,
     },
 
-    // Options France
-    billing_address_collection: "required",
-    shipping_address_collection: {
-      allowed_countries: ["FR"],
-    },
+    // Les adresses de livraison et de facturation sont déjà saisies sur le site
+    // (transmises en metadata, reprises par fulfillment) : Stripe ne les redemande pas,
+    // il ne collecte que ce que la carte exige.
+    billing_address_collection: "auto",
     
     // ============================================
     // FACTURE STRIPE - DÉSACTIVÉ

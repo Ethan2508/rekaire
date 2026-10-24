@@ -925,3 +925,106 @@ export async function sendAdminAlertEmail(params: {
     return { success: false, error };
   }
 }
+
+// ============================================
+// Relance panier abandonné (2 envois : ~1 h puis ~24 h après)
+// ============================================
+export interface CartRecoveryEmailData {
+  customerEmail: string;
+  firstName?: string;
+  step: 1 | 2;
+  promo?: { code: string; percent: number; endsLabel: string }; // offre en cours uniquement
+  unsubscribeUrl: string;
+}
+
+export async function sendCartRecoveryEmail(data: CartRecoveryEmailData) {
+  const escape = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const hello = `Bonjour${data.firstName ? ` ${escape(data.firstName)}` : ""},`;
+  const productUrl = "https://www.rekaire.fr/produit?utm_source=email&utm_medium=relance&utm_campaign=panier-abandonne";
+  const subject = data.step === 1
+    ? "Votre commande RK01 n'est pas finalisée"
+    : data.promo
+      ? `Dernier rappel : -${data.promo.percent} % sur votre RK01 jusqu'au ${data.promo.endsLabel}`
+      : "Une question avant de protéger votre tableau électrique ?";
+  const intro = data.step === 1
+    ? "Vous avez commencé une commande de RK01 sur rekaire.fr sans aller jusqu'au paiement. Rien n'a été débité, votre commande vous attend."
+    : "Petit rappel : votre RK01 n'est toujours pas commandé. Un départ de feu dans un tableau électrique peut arriver n'importe quand, souvent la nuit.";
+  const promoHtml = data.promo
+    ? `<div style="background:#fff7ed;border:2px dashed #eb5122;border-radius:10px;padding:16px;text-align:center;margin:20px 0;">
+        <div style="font-size:14px;color:#9a3412;">-${data.promo.percent} % avec le code, jusqu'au ${escape(data.promo.endsLabel)}</div>
+        <div style="font-size:24px;font-weight:bold;color:#eb5122;letter-spacing:2px;margin-top:4px;">${escape(data.promo.code)}</div>
+      </div>`
+    : "";
+  const promoText = data.promo ? `\n-${data.promo.percent} % avec le code ${data.promo.code}, jusqu'au ${data.promo.endsLabel}.\n` : "";
+
+  try {
+    const result = await resend.emails.send({
+      from: `${FROM_NAME} <${FROM_EMAIL}>`,
+      to: data.customerEmail,
+      replyTo: FROM_EMAIL,
+      subject,
+      headers: {
+        "List-Unsubscribe": `<${data.unsubscribeUrl}>`,
+        "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+      },
+      html: `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head>
+<body style="margin:0;background:#f5f5f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.6;color:#333;">
+  <div style="max-width:600px;margin:0 auto;padding:30px 16px;">
+    <div style="text-align:center;background:#ffffff;padding:24px;border-radius:12px 12px 0 0;">
+      <img src="${COMPANY_INFO.logo}" alt="Rekaire" style="max-width:160px;height:auto;" />
+    </div>
+    <div style="background:#ffffff;padding:8px 28px 28px;border-radius:0 0 12px 12px;">
+      <p>${hello}</p>
+      <p>${intro}</p>
+      ${promoHtml}
+      <p style="margin:18px 0 6px;"><strong>Le RK01, en bref :</strong></p>
+      <ul style="margin:0;padding-left:20px;">
+        <li>se déclenche tout seul dès 170 °C et étouffe le feu dans le tableau ;</li>
+        <li>sans électricité, sans pile, sans entretien pendant 5 ans ;</li>
+        <li>se colle en moins de 2 minutes, sans outil ;</li>
+        <li>livraison gratuite en France.</li>
+      </ul>
+      <p style="text-align:center;margin:26px 0;">
+        <a href="${productUrl}" style="display:inline-block;padding:14px 30px;background:#eb5122;color:#ffffff;text-decoration:none;border-radius:8px;font-weight:bold;">Finaliser ma commande</a>
+      </p>
+      <p>Une question avant de vous décider ? Répondez simplement à cet email, nous vous répondons rapidement.</p>
+      <p>L'équipe Rekaire</p>
+    </div>
+    <div style="text-align:center;font-size:12px;color:#999;margin-top:24px;">
+      <p>${COMPANY_INFO.name} - ${COMPANY_INFO.address}, ${COMPANY_INFO.city}</p>
+      <p>Vous recevez cet email car vous avez commencé une commande sur rekaire.fr.
+      <a href="${data.unsubscribeUrl}" style="color:#999;">Ne plus recevoir de rappel</a></p>
+    </div>
+  </div>
+</body>
+</html>
+      `,
+      text: `${data.firstName ? `Bonjour ${data.firstName},` : "Bonjour,"}
+
+${intro}
+${promoText}
+Le RK01, en bref :
+- se déclenche tout seul dès 170 °C et étouffe le feu dans le tableau ;
+- sans électricité, sans pile, sans entretien pendant 5 ans ;
+- se colle en moins de 2 minutes, sans outil ;
+- livraison gratuite en France.
+
+Finaliser ma commande : ${productUrl}
+
+Une question ? Répondez simplement à cet email.
+
+L'équipe Rekaire
+
+Ne plus recevoir de rappel : ${data.unsubscribeUrl}
+`,
+    });
+    if (result.error) throw new Error(result.error.message);
+    return { success: true, data: result };
+  } catch (error) {
+    console.error("[Email] Cart recovery email failed:", error);
+    return { success: false, error };
+  }
+}

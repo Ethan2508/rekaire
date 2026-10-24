@@ -20,12 +20,14 @@ export function isPromoCampaignRunning(now = new Date()) {
   return promoCampaign.active && now <= new Date(promoCampaign.endsAt);
 }
 
-// Temps restant, ex. « 47 h 12 min » ; null si l'offre est terminée
+// Temps restant, ex. « 7 j 23 h », « 47 h 12 min » ; null si l'offre est terminée
 export function promoTimeLeft(now = new Date()): string | null {
   const ms = new Date(promoCampaign.endsAt).getTime() - now.getTime();
   if (ms <= 0) return null;
+  const d = Math.floor(ms / 86_400_000);
   const h = Math.floor(ms / 3_600_000);
   const m = Math.floor((ms % 3_600_000) / 60_000);
+  if (d >= 2) return `${d} j ${h % 24} h`;
   return h > 0 ? `${h} h ${String(m).padStart(2, "0")} min` : `${m} min`;
 }
 
