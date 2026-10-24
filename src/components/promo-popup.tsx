@@ -13,7 +13,8 @@ import { Copy, Check, X, Gift } from "lucide-react";
 import { promoCampaign, isPromoCampaignRunning, rememberPromoCode, promoTimeLeft } from "@/config/promo-campaign";
 import { trackEvent } from "@/lib/tracking";
 
-const SEEN_KEY = `rk_promo_popup_seen_${promoCampaign.code}`;
+// La date de fin fait partie de la clé : une prolongation réaffiche la pop-up
+const SEEN_KEY = `rk_promo_popup_seen_${promoCampaign.code}_${promoCampaign.endsAt}`;
 const CONSENT_KEY = "rekaire_cookie_consent";
 const HIDDEN_ON = ["/checkout", "/success", "/cancel", "/admin", "/cgv", "/mentions-legales", "/confidentialite"];
 const DELAY_MS = 2500;

@@ -8,9 +8,9 @@ export const promoCampaign = {
   active: true,
   code: "REKAIRE20",
   percent: 20,
-  // Fin de l'offre (48 h à partir du 20/10/2026 17 h, heure de Paris)
-  endsAt: "2026-10-22T17:00:00+02:00",
-  endsLabel: "jeudi 22 octobre à 17 h",
+  // Fin de l'offre : dimanche 1er novembre 2026 inclus (heure de Paris)
+  endsAt: "2026-11-01T23:59:59+01:00",
+  endsLabel: "dimanche 1er novembre inclus",
 } as const;
 
 // Clé de stockage : code mémorisé pour l'appliquer automatiquement au paiement
