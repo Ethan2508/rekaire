@@ -4,6 +4,24 @@
 
 import * as Sentry from "@sentry/nextjs";
 
+// Traduction automatique du navigateur (Google Traduction, extensions) : elle remplace
+// les textes de la page par ses propres balises, et React plante ensuite en voulant
+// retirer ou insérer un nœud qui n'est plus à sa place (« removeChild » / « insertBefore »
+// « is not a child of this node »), ce qui peut casser la page du visiteur.
+// Contournement connu (facebook/react#11538) : on ignore l'opération au lieu de planter.
+if (typeof Node === "function" && Node.prototype) {
+  const originalRemoveChild = Node.prototype.removeChild;
+  Node.prototype.removeChild = function <T extends Node>(this: Node, child: T): T {
+    if (child.parentNode !== this) return child;
+    return originalRemoveChild.call(this, child) as T;
+  };
+  const originalInsertBefore = Node.prototype.insertBefore;
+  Node.prototype.insertBefore = function <T extends Node>(this: Node, newNode: T, referenceNode: Node | null): T {
+    if (referenceNode && referenceNode.parentNode !== this) return newNode;
+    return originalInsertBefore.call(this, newNode, referenceNode) as T;
+  };
+}
+
 Sentry.init({
   dsn: "https://c53acaf83829d958daa835e45cda10e3@o4510830181548032.ingest.de.sentry.io/4510830183252048",
 
