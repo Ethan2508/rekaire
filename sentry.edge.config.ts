@@ -8,6 +8,10 @@ import * as Sentry from "@sentry/nextjs";
 Sentry.init({
   dsn: "https://c53acaf83829d958daa835e45cda10e3@o4510830181548032.ingest.de.sentry.io/4510830183252048",
 
+  // Uniquement sur les builds de production (site en ligne et prévisualisations Vercel) :
+  // un `next dev` en local n'envoie plus ses erreurs (ex. « aborted » à l'arrêt du serveur)
+  enabled: process.env.NODE_ENV === "production",
+
   // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
   tracesSampleRate: 1,
 
