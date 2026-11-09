@@ -4,7 +4,7 @@
 // REKAIRE - Chiffres incendie, version sombre : compteurs animés
 // ============================================
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
 import { ShieldAlert } from "lucide-react";
 
@@ -16,13 +16,18 @@ const STATS = [
 ];
 
 // Anime la partie numérique de la valeur (« 300 000 » → compteur ; « 1 sur 4 » → le 1)
+function parseValue(value: string) {
+  const m = value.match(/^(\d+(?:\s\d+)*)(.*)$/);
+  if (!m) return null;
+  return { target: parseInt(m[1].replace(/\s/g, ""), 10), suffix: m[2] };
+}
+
 function CountUp({ value, start }: { value: string; start: boolean }) {
-  const m = value.match(/^(\d[\d\s]*)(.*)$/);
-  const target = m ? parseInt(m[1].replace(/\s/g, ""), 10) : 0;
-  const suffix = m ? m[2] : value;
+  const parsed = useMemo(() => parseValue(value), [value]);
   const [n, setN] = useState(0);
   useEffect(() => {
-    if (!start || !m) return;
+    if (!start || !parsed) return;
+    const { target } = parsed;
     const t0 = performance.now(), dur = 1600;
     let raf = 0;
     const tick = (t: number) => {
@@ -32,9 +37,9 @@ function CountUp({ value, start }: { value: string; start: boolean }) {
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [start, target, m]);
-  if (!m) return <>{value}</>;
-  return <>{n.toLocaleString("fr-FR")}{suffix}</>;
+  }, [start, parsed]);
+  if (!parsed) return <>{value}</>;
+  return <>{n.toLocaleString("fr-FR")}{parsed.suffix}</>;
 }
 
 export function StatsDark() {
