@@ -17,7 +17,14 @@ import { Embers } from "./embers";
 
 const FRAMES = 126;
 const LAST = FRAMES - 1;
-const src = (size: "lg" | "sm", i: number) => `/images/product/seq/${size}/${String(i).padStart(3, "0")}.webp`;
+type Tier = "xl" | "lg" | "sm";
+// xl = résolution native des rendus (écrans Retina), lg = 1280 px, sm = 640 px
+const pickTier = (): Tier => {
+  const retina = (window.devicePixelRatio || 1) > 1.25;
+  if (window.innerWidth >= 900) return retina ? "xl" : "lg";
+  return retina ? "lg" : "sm";
+};
+const src = (size: Tier, i: number) => `/images/product/seq/${size}/${String(i).padStart(3, "0")}.webp`;
 
 // Repères de la narration (fraction du scroll de la section)
 const T = { titleOut: 0.1, rotateEnd: 0.52, explodeEnd: 0.92 };
@@ -56,7 +63,7 @@ export function ScrollSequence() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const imagesRef = useRef<(HTMLImageElement | null)[]>([]);
   const frameRef = useRef(0);
-  const sizeRef = useRef<"lg" | "sm">("lg");
+  const sizeRef = useRef<Tier>("lg");
   const [ready, setReady] = useState(false);
   const [desktop, setDesktop] = useState(true);
   useEffect(() => {
@@ -85,6 +92,8 @@ export function ScrollSequence() {
     const W = canvas.clientWidth, H = canvas.clientHeight;
     if (canvas.width !== Math.round(W * dpr)) { canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr); }
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
     ctx.clearRect(0, 0, W, H);
     if (!img) return;
     const scale = Math.min(W / img.naturalWidth, H / img.naturalHeight) * (W < 768 ? 1.15 : 1);
@@ -99,7 +108,7 @@ export function ScrollSequence() {
 
   // Chargement : la 1re image tout de suite, puis par passes de plus en plus fines
   useEffect(() => {
-    sizeRef.current = window.innerWidth >= 900 ? "lg" : "sm";
+    sizeRef.current = pickTier();
     const size = sizeRef.current;
     const order: number[] = [0];
     for (const step of [16, 8, 4, 2, 1]) for (let i = 0; i < FRAMES; i += step) if (!order.includes(i)) order.push(i);

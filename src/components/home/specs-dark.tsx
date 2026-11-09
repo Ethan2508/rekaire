@@ -22,8 +22,8 @@ export function SpecsDark() {
           <Image
             src="/images/product/angles/rk01-vue-eclatee.webp"
             alt="Vue éclatée du RK01"
-            width={885}
-            height={664}
+            width={1396}
+            height={1047}
             className="relative w-full drop-shadow-[0_40px_60px_rgba(0,0,0,0.7)]"
           />
           <p className="mt-4 text-center text-sm text-gray-500">Rendu 3D du RK01 : boîtier, mécanisme, agent extincteur, support adhésif</p>
