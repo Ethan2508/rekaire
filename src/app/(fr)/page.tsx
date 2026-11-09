@@ -1,22 +1,20 @@
 // ============================================
 // REKAIRE - Home Page (Landing + Vente)
+// Première moitié sombre et cinématique (RK01 en 3D piloté par le scroll),
+// puis retour à la lumière pour la confiance et la commande.
 // ============================================
 
 import dynamic from "next/dynamic";
 import type { Metadata } from "next";
 import { hreflangAlternates } from "@/config/sites";
-import {
-  Header,
-  Footer,
-  HeroSection,
-  FireStatsSection,
-  PartnersSection,
-} from "@/components";
+import { Header, Footer, PartnersSection } from "@/components";
+import { ScrollSequence } from "@/components/home/scroll-sequence";
 
 // Lazy-load des sections sous le fold pour réduire le JS bundle initial
-const FeaturesSection = dynamic(() => import("@/components/sections/features").then((m) => ({ default: m.FeaturesSection })));
-const HowItWorksSection = dynamic(() => import("@/components/sections/how-it-works").then((m) => ({ default: m.HowItWorksSection })));
-const SpecificationsSection = dynamic(() => import("@/components/sections/specifications").then((m) => ({ default: m.SpecificationsSection })));
+const StatsDark = dynamic(() => import("@/components/home/stats-dark").then((m) => ({ default: m.StatsDark })));
+const StepsDark = dynamic(() => import("@/components/home/steps-dark").then((m) => ({ default: m.StepsDark })));
+const FeaturesDark = dynamic(() => import("@/components/home/features-dark").then((m) => ({ default: m.FeaturesDark })));
+const SpecsDark = dynamic(() => import("@/components/home/specs-dark").then((m) => ({ default: m.SpecsDark })));
 const BlogPreviewSection = dynamic(() => import("@/components/sections/blog-preview").then((m) => ({ default: m.BlogPreviewSection })));
 const GuaranteesSection = dynamic(() => import("@/components/sections/guarantees").then((m) => ({ default: m.GuaranteesSection })));
 const CTASection = dynamic(() => import("@/components/sections/cta").then((m) => ({ default: m.CTASection })));
@@ -29,14 +27,14 @@ export const metadata: Metadata = {
 export default function HomePage() {
   return (
     <>
-      <Header />
-      <main>
-        <HeroSection />
-        <FireStatsSection />
+      <Header theme="auto" />
+      <main className="bg-[#0a0a0b]">
+        <ScrollSequence />
+        <StatsDark />
+        <StepsDark />
+        <FeaturesDark />
+        <SpecsDark />
         <PartnersSection />
-        <FeaturesSection />
-        <HowItWorksSection />
-        <SpecificationsSection />
         <BlogPreviewSection />
         <GuaranteesSection />
         <CTASection />

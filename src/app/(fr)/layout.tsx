@@ -3,7 +3,7 @@
 // ============================================
 
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Bricolage_Grotesque } from "next/font/google";
 import Script from "next/script";
 import "../globals.css";
 import { Analytics, GTMNoScript } from "@/components/analytics";
@@ -13,6 +13,13 @@ import { PetitionPopup } from "@/components/petition-popup";
 import { OrganizationSchema, WebSiteSchema, LocalBusinessSchema } from "@/components/schema-org";
 
 import { siteConfig } from "@/config/site";
+
+const bricolage = Bricolage_Grotesque({
+  subsets: ["latin"],
+  variable: "--font-bricolage",
+  display: "swap",
+  weight: ["400", "600", "700", "800"],
+});
 
 const inter = Inter({
   subsets: ["latin"],
@@ -97,7 +104,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr" className={`${inter.variable}`}>
+    <html lang="fr" className={`${inter.variable} ${bricolage.variable}`}>
       <head>
         {/* Preload de l'image LCP (premier frame du viewer 360°) */}
         <link

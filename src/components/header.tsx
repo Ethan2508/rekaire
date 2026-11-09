@@ -31,11 +31,32 @@ interface HeaderProps {
   navLinks?: NavLink[];
   renderCTA?: (placement: "desktop" | "mobile") => React.ReactNode;
   menuLabel?: string;
+  // "auto" : sombre au-dessus des sections marquées data-header-theme="dark", clair ailleurs
+  theme?: "light" | "dark" | "auto";
 }
 
-export function Header({ navLinks = defaultNavLinks, renderCTA, menuLabel = "Menu" }: HeaderProps = {}) {
+export function Header({ navLinks = defaultNavLinks, renderCTA, menuLabel = "Menu", theme = "light" }: HeaderProps = {}) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [autoDark, setAutoDark] = useState(theme === "auto");
+  const dark = theme === "dark" || (theme === "auto" && autoDark);
+
+  // Thème automatique : quelle section se trouve sous le header ?
+  useEffect(() => {
+    if (theme !== "auto") return;
+    const update = () => {
+      const probeY = 40;
+      const el = document.elementFromPoint(Math.min(window.innerWidth - 1, 8), probeY + 60);
+      setAutoDark(!!el?.closest('[data-header-theme="dark"]'));
+    };
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    return () => {
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    };
+  }, [theme]);
   // Sur rekaire.es, les pages sont servies via le préfixe interne /es
   const pathname = usePathname()?.replace(/^\/es(?=\/|$)/, "") || "/";
 
@@ -54,9 +75,13 @@ export function Header({ navLinks = defaultNavLinks, renderCTA, menuLabel = "Men
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          scrolled
-            ? "bg-white/95 backdrop-blur-lg border-b border-gray-200 shadow-sm"
-            : "bg-white/80 backdrop-blur-sm"
+          dark
+            ? scrolled
+              ? "bg-[#0b0b0c]/80 backdrop-blur-lg border-b border-white/10"
+              : "bg-transparent"
+            : scrolled
+              ? "bg-white/95 backdrop-blur-lg border-b border-gray-200 shadow-sm"
+              : "bg-white/80 backdrop-blur-sm"
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -64,7 +89,7 @@ export function Header({ navLinks = defaultNavLinks, renderCTA, menuLabel = "Men
             {/* Logo */}
             <Link href="/" className="flex items-center group">
               <Image
-                src="/logo.png"
+                src={dark ? "/logo-white.png" : "/logo.png"}
                 alt="Rekaire"
                 width={234}
                 height={68}
@@ -89,15 +114,15 @@ export function Header({ navLinks = defaultNavLinks, renderCTA, menuLabel = "Men
                     }}
                     className={`relative px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
                       isActive
-                        ? "text-orange-500"
-                        : "text-gray-600 hover:text-gray-900"
+                        ? dark ? "text-orange-400" : "text-orange-500"
+                        : dark ? "text-gray-300 hover:text-white" : "text-gray-600 hover:text-gray-900"
                     }`}
                   >
                     {link.label}
                     {isActive && (
                       <motion.div
                         layoutId="activeNav"
-                        className="absolute inset-0 bg-orange-100 border border-orange-200 rounded-full -z-10"
+                        className={`absolute inset-0 rounded-full -z-10 border ${dark ? "bg-orange-500/15 border-orange-500/30" : "bg-orange-100 border-orange-200"}`}
                         transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                       />
                     )}
@@ -114,7 +139,7 @@ export function Header({ navLinks = defaultNavLinks, renderCTA, menuLabel = "Men
             {/* Mobile Menu Button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-gray-200 transition-colors"
+              className={`lg:hidden w-10 h-10 rounded-lg flex items-center justify-center transition-colors ${dark ? "bg-white/10 text-white hover:bg-white/20" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}
               aria-label={menuLabel}
             >
               <AnimatePresence mode="wait">
