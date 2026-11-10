@@ -38,7 +38,7 @@ const progressToFrame = (p: number) => {
 const CHAPTERS = [
   { at: 0.16, title: "Sans électricité", text: "Aucun branchement, aucun câblage : il fonctionne seul.", side: "left" as const },
   { at: 0.29, title: "Sans pile", text: "Rien à recharger, rien à changer pendant 5 ans.", side: "right" as const },
-  { at: 0.42, title: "Se colle en 30 secondes", text: "Un adhésif haute résistance, sous le plafond du tableau.", side: "left" as const },
+  { at: 0.42, title: "S'installe en 30 secondes", text: "Un adhésif haute résistance, sous le plafond du tableau.", side: "left" as const },
 ];
 
 const PARTS = [
@@ -195,7 +195,7 @@ export function ScrollSequence() {
         <motion.div style={{ opacity: titleOpacity }} className="absolute inset-x-0 bottom-0 pb-10 lg:pb-14">
           <div className="mx-auto flex max-w-7xl flex-col items-center gap-6 px-4 sm:px-6 lg:flex-row lg:items-end lg:justify-between lg:px-8">
             <p className="hidden max-w-xl text-center text-base leading-relaxed text-gray-300 sm:block lg:text-left lg:text-lg">
-              Le <span className="font-semibold text-orange-400">RK01</span>, l&apos;extincteur autonome qui protège votre maison, votre bureau, votre local 24h/24. Installation : 5 minutes.
+              Le <span className="font-semibold text-orange-400">RK01</span>, l&apos;extincteur autonome qui protège votre maison, votre bureau, votre local 24h/24.
             </p>
             <div className="flex flex-col items-center gap-4 lg:items-end">
               <div className="flex flex-wrap justify-center gap-3">
@@ -226,7 +226,7 @@ export function ScrollSequence() {
         {/* Vue éclatée : titre + 4 pièces */}
         <Fade p={p} at={T.rotateEnd + 0.02} span={0.36} className="left-1/2 top-20 w-[92vw] -translate-x-1/2 text-center lg:top-24">
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-orange-400">Vue éclatée</p>
-          <p className="mt-2 font-display text-2xl font-bold sm:text-4xl">4 pièces. Zéro électronique.</p>
+          <p className="mt-2 font-display text-2xl font-bold sm:text-4xl">Un mécanisme 100 % mécanique. Zéro électronique.</p>
         </Fade>
         <motion.div style={{ opacity: partsLines }} className="absolute inset-y-0 left-0 hidden w-[42%] lg:block">
           {PARTS.map((part, i) => (
@@ -259,10 +259,10 @@ export function ScrollSequence() {
 
         {/* Fin : rappel des chiffres clés */}
         <Fade p={p} at={0.94} span={0.2} className="inset-x-0 bottom-8">
-          <div className="mx-auto grid max-w-3xl grid-cols-3 gap-4 px-4 text-center">
-            {[["< 5 s", "Temps d'activation"], ["5 min", "Installation"], ["5 ans", "Durée de vie"]].map(([v, l]) => (
+          <div className="mx-auto grid max-w-xl grid-cols-2 gap-4 px-4 text-center">
+            {[["< 5 s", "Temps d'activation"], ["5 ans", "Durée de vie"]].map(([v, l]) => (
               <div key={l}>
-                <p className="font-display text-2xl font-bold sm:text-4xl">{v}</p>
+                <p className="font-display text-2xl font-bold text-orange-400 sm:text-4xl">{v}</p>
                 <p className="mt-1 text-xs text-gray-400 sm:text-sm">{l}</p>
               </div>
             ))}

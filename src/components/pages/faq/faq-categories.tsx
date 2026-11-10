@@ -20,7 +20,7 @@ const faqCategories = [
       },
       {
         question: "Le RK01 est-il adapté à mon tableau électrique ?",
-        answer: "Oui, le RK01 est compatible avec tous types de tableaux électriques résidentiels et professionnels. Ses dimensions compactes (Ø32mm x 95mm) lui permettent de s'intégrer facilement."
+        answer: "Oui, le RK01 est compatible avec tous types de tableaux électriques résidentiels et professionnels. Ses dimensions compactes (12,1 × 1,8 × 1 cm) lui permettent de s'intégrer facilement."
       },
       {
         question: "Quelle est la durée de vie du RK01 ?",
@@ -32,7 +32,7 @@ const faqCategories = [
       },
       {
         question: "Combien de RK01 faut-il pour mon installation ?",
-        answer: "Un RK01 couvre un volume d'environ 1m³. Pour un tableau standard, une unité suffit généralement. Pour les grandes armoires électriques, nous recommandons plusieurs unités."
+        answer: "Un RK01 protège un volume de 0,1 m³. Pour un tableau de 1 ou 2 rangées, un RK01 placé en haut du coffret suffit ; à partir de 3 rangées, on en ajoute un sous chaque paire de rangées. Le calculateur de la page produit vous donne le nombre exact et l'emplacement. Pour une armoire, contactez-nous : nous vous conseillons gratuitement."
       },
     ]
   },
