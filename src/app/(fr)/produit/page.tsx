@@ -5,7 +5,6 @@
 import { Header, Footer } from "@/components";
 import { ProductHero } from "@/components/pages/product/product-hero";
 import { ProductDetails } from "@/components/pages/product/product-details";
-import { ProductCalculator } from "@/components/pages/product/product-calculator";
 import { ProductSpecs } from "@/components/pages/product/product-specs";
 import { ProductFAQ } from "@/components/pages/product/product-faq";
 import { CTASection } from "@/components/sections";
@@ -36,7 +35,6 @@ export default function ProductPage() {
       <Header />
       <main>
         <ProductHero />
-        <ProductCalculator />
         <ProductDetails />
         <ProductSpecs />
         <ProductFAQ />

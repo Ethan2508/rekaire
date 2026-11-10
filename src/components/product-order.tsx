@@ -5,14 +5,13 @@
 // Sélection quantité + CTA vers page Checkout
 // ============================================
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Minus, Plus, ArrowRight, MessageSquare, ShoppingCart } from "lucide-react";
 import { trackCTAClick, trackAddToCart } from "@/lib/tracking";
 import { getMainProduct, formatPrice, calculateTotal } from "@/config/product";
 import { promoCampaign, isPromoCampaignRunning, rememberPromoCode } from "@/config/promo-campaign";
 import Link from "next/link";
-import { SET_QUANTITY_EVENT } from "@/components/pages/product/product-calculator";
 
 // Seuil pour demande de devis (100+ = devis obligatoire)
 const QUOTE_THRESHOLD = 100;
@@ -27,16 +26,6 @@ export function ProductOrder({ location, className = "" }: ProductOrderProps) {
   const product = getMainProduct();
 
   const isQuoteMode = quantity >= QUOTE_THRESHOLD;
-
-  // Quantité conseillée par le calculateur (« Commander N RK01 »)
-  useEffect(() => {
-    const onSet = (e: Event) => {
-      const n = Number((e as CustomEvent<number>).detail);
-      if (Number.isInteger(n) && n >= 1) setQuantity(Math.min(n, QUOTE_THRESHOLD));
-    };
-    window.addEventListener(SET_QUANTITY_EVENT, onSet);
-    return () => window.removeEventListener(SET_QUANTITY_EVENT, onSet);
-  }, []);
 
   // Prix calculés
   const { totalHT, totalTTC, unitPriceHT } = calculateTotal(quantity);
@@ -126,9 +115,6 @@ export function ProductOrder({ location, className = "" }: ProductOrderProps) {
               <Plus className="w-4 h-4" />
             </button>
           </div>
-          <a href="#calculateur" className="text-sm text-orange-600 hover:text-orange-700 underline underline-offset-2">
-            Combien m&apos;en faut-il ?
-          </a>
         </div>
 
         {/* Total - caché si mode devis */}

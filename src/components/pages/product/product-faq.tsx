@@ -12,7 +12,7 @@ import Link from "next/link";
 const faqs = [
   {
     question: "Le RK01 est-il adapté à mon tableau électrique ?",
-    answer: "Oui, le RK01 est compatible avec tous types de tableaux électriques résidentiels et professionnels. Ses dimensions compactes (12,1 × 1,8 × 1 cm) lui permettent de s'intégrer dans la plupart des configurations. Pour les tableaux de 3 rangées ou plus, utilisez le calculateur ci-dessus pour connaître le nombre de RK01 à installer."
+    answer: "Oui, le RK01 est compatible avec tous types de tableaux électriques résidentiels et professionnels. Ses dimensions compactes (Ø32mm x 95mm) lui permettent de s'intégrer dans la plupart des configurations. Pour les tableaux de grande taille, nous recommandons l'installation de plusieurs unités."
   },
   {
     question: "Comment se déclenche le RK01 ?",

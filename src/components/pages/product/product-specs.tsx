@@ -10,7 +10,7 @@ import { getMainProduct } from "@/config/product";
 export function ProductSpecs() {
   const specs = {
     "Certifications": "CE, Norme EN3",
-    "Température de déclenchement": "170°C ± 10°C",
+    "Température de déclenchement": "170°C ± 5°C",
     "Temps de réaction": "< 5 secondes",
     "Couverture": "0,1 m³",
     "Dimensions": "12,1 cm × 1,8 cm × 1,0 cm",
