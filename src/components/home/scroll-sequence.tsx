@@ -226,7 +226,7 @@ export function ScrollSequence() {
         {/* Vue éclatée : titre + 4 pièces */}
         <Fade p={p} at={T.rotateEnd + 0.02} span={0.36} className="left-1/2 top-20 w-[92vw] -translate-x-1/2 text-center lg:top-24">
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-orange-400">Vue éclatée</p>
-          <p className="mt-2 font-display text-2xl font-bold sm:text-4xl">Un mécanisme 100 % mécanique. Zéro électronique.</p>
+          <p className="mt-2 font-display text-2xl font-bold sm:text-4xl">Tout est mécanique. Zéro électronique.</p>
         </Fade>
         <motion.div style={{ opacity: partsLines }} className="absolute inset-y-0 left-0 hidden w-[42%] lg:block">
           {PARTS.map((part, i) => (
