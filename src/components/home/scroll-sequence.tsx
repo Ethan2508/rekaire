@@ -259,8 +259,8 @@ export function ScrollSequence() {
 
         {/* Fin : rappel des chiffres clés */}
         <Fade p={p} at={0.94} span={0.2} className="inset-x-0 bottom-8">
-          <div className="mx-auto grid max-w-xl grid-cols-2 gap-4 px-4 text-center">
-            {[["< 5 s", "Temps d'activation"], ["5 ans", "Durée de vie"]].map(([v, l]) => (
+          <div className="mx-auto grid max-w-3xl grid-cols-3 gap-4 px-4 text-center">
+            {[["< 5 s", "Temps d'activation"], ["5 min", "Installation"], ["5 ans", "Durée de vie"]].map(([v, l]) => (
               <div key={l}>
                 <p className="font-display text-2xl font-bold text-orange-400 sm:text-4xl">{v}</p>
                 <p className="mt-1 text-xs text-gray-400 sm:text-sm">{l}</p>
