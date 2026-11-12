@@ -45,7 +45,7 @@ export function Footer() {
               {[
                 { href: "/produit", label: "RK01" },
                 { href: "/produit#specifications", label: "Spécifications" },
-                { href: "/#how-it-works", label: "Fonctionnement" },
+                { href: "/produit", label: "Fonctionnement" },
                 { href: "/faq", label: "FAQ" },
               ].map((link) => (
                 <li key={link.href}>
