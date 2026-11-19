@@ -22,7 +22,8 @@ export function VideoModal({ videoSrc, buttonText = "Voir la vidéo" }: VideoMod
 
   useEffect(() => {
     if (isOpen && videoRef.current) {
-      videoRef.current.play();
+      // Lecture auto refusée (navigateur sans codec, autoplay bloqué) : l'utilisateur a les contrôles
+      videoRef.current.play().catch(() => {});
     }
   }, [isOpen]);
 
