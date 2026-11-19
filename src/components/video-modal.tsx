@@ -5,6 +5,7 @@
 // ============================================
 
 import { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Play, X } from "lucide-react";
 
@@ -15,6 +16,8 @@ interface VideoModalProps {
 
 export function VideoModal({ videoSrc, buttonText = "Voir la vidéo" }: VideoModalProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
@@ -48,7 +51,8 @@ export function VideoModal({ videoSrc, buttonText = "Voir la vidéo" }: VideoMod
         <span className="font-semibold">{buttonText}</span>
       </motion.button>
 
-      {/* Modal */}
+      {/* Modal : rendu dans <body> pour échapper aux conteneurs transformés ou en fondu du hero */}
+      {mounted && createPortal(
       <AnimatePresence>
         {isOpen && (
           <>
@@ -97,7 +101,8 @@ export function VideoModal({ videoSrc, buttonText = "Voir la vidéo" }: VideoMod
             </motion.div>
           </>
         )}
-      </AnimatePresence>
+      </AnimatePresence>,
+      document.body)}
     </>
   );
 }
